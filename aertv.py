@@ -104,8 +104,8 @@ class AerTVProvider(BrightCoveProvider):
                 msg = "epgJSON:\n\n%s\n\n" % repr(epgJSON)
                 exception.addLogMessage(msg)
             
-            # Error showing root menu
-            exception.addLogMessage(self.language(40070))
+            # Cannot show root menu
+            exception.addLogMessage(self.language(30010))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
 
@@ -150,7 +150,7 @@ class AerTVProvider(BrightCoveProvider):
                     exception = LoggingException.fromException(exception)
     
                 # Error processing channel 
-                message = self.language(40350)
+                message = self.language(32350)
             
                 try:
                     message = message + " " + anchor.text
@@ -260,11 +260,11 @@ class AerTVProvider(BrightCoveProvider):
                     streamUrl = defaultRTMPUrl + channelToStream[channel]
         
                     # Error getting rtmp url. Using default: %s
-                    exception.addLogMessage(self.language(40320) % streamUrl)
+                    exception.addLogMessage(self.language(32320) % streamUrl)
                     exception.printLogMessages(severity = xbmc.LOGWARNING)
                 else:
                     # Error getting rtmp url.
-                    exception.addLogMessage(self.language(40325))
+                    exception.addLogMessage(self.language(32325))
                     # Cannot play video stream
                     raise exception
                 
@@ -272,7 +272,7 @@ class AerTVProvider(BrightCoveProvider):
             infoLabels, logo = self.GetInfoLabelsAndLogo(channel, epgUrl)
             
             #RTMP
-            if streamUrl.upper().startswith(self.language(40671)):
+            if streamUrl.upper().startswith(self.language(32671)):
                 playPathIndex = streamUrl.index('&') + 1
                 playPath = streamUrl[playPathIndex:]
                 qsData = self.GetQSData(channel, playerId, publisherId, playerKey)
@@ -302,7 +302,7 @@ class AerTVProvider(BrightCoveProvider):
                 exception.addLogMessage(msg)
             
             # Error preparing or playing stream
-            exception.addLogMessage(self.language(40340))
+            exception.addLogMessage(self.language(32340))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
 
@@ -322,7 +322,7 @@ class AerTVProvider(BrightCoveProvider):
                 exception = LoggingException.fromException(exception)
 
             # Error getting title and logo info for %s
-            exception.addLogMessage(self.language(40370) % channel)
+            exception.addLogMessage(self.language(32370) % channel)
             exception.process(severity = xbmc.LOGWARNING)
 
         return infoLabels, logo

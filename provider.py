@@ -152,16 +152,16 @@ class Provider(object):
             return None
         
         bitRates = {
-            self.language(40400):None,           #Default
-            self.language(40410):-1,             #Lowest Available
-            self.language(40430):200 * 1024,     #Max 200kps
-            self.language(40440):350 * 1024,     #Max 350kps
-            self.language(40450):500 * 1024,     #Max 500kps
-            self.language(40460):750 * 1024,     #Max 750kps
-            self.language(40470):1000 * 1024,    #Max 1000kps
-            self.language(40480):1500 * 1024,    #Max 1500kps
-            self.language(40490):2000 * 1024,    #Max 2000kps
-            self.language(40420):20000 * 1024    #Highest Available
+            self.language(32400):None,           #Default
+            self.language(32410):-1,             #Lowest Available
+            self.language(32430):200 * 1024,     #Max 200kps
+            self.language(32440):350 * 1024,     #Max 350kps
+            self.language(32450):500 * 1024,     #Max 500kps
+            self.language(32460):750 * 1024,     #Max 750kps
+            self.language(32470):1000 * 1024,    #Max 1000kps
+            self.language(32480):1500 * 1024,    #Max 1500kps
+            self.language(32490):2000 * 1024,    #Max 2000kps
+            self.language(32420):20000 * 1024    #Highest Available
             }
 
         bitrate_string = self.addon.getSetting(u'bitrate')
@@ -241,7 +241,7 @@ class Provider(object):
                 exception = LoggingException.fromException(exception)
     
             # Error playing or downloading episode %s
-            exception.process(self.language(40120), u'', self.logLevel(xbmc.LOGERROR))
+            exception.process(self.language(32120), u'', self.logLevel(xbmc.LOGERROR))
             return False
     
     def Play(self, infoLabels, thumbnail, rtmpVar = None, url = None):
@@ -439,13 +439,13 @@ class Provider(object):
                 exception.addLogMessage(msg)
                 
             # Error getting web page %s
-            exception.addLogMessage(self.language(40050) % url)
+            exception.addLogMessage(self.language(30050) + ": " + url)
             raise exception
     
     def PlayVideoWithDialog(self, method, parameters):
         try:
             dialog = xbmcgui.DialogProgress()
-            dialog.create(self.GetProviderId(), self.language(40640))
+            dialog.create(self.GetProviderId(), self.language(32640))
             
             return method(*parameters)
         finally:

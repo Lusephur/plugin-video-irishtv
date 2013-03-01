@@ -55,12 +55,12 @@ class RTMP:
     def getSimpleParameters(self):
         if self.downloadFolder is None or self.downloadFolder == '':
             # Download Folder is not set
-            exception = Exception(self.language(40010))
+            exception = Exception(self.language(32010))
             raise exception;
 
         if self.rtmp is None or self.rtmp == '':
             # rtmp url is not set
-            exception = Exception(self.language(40020))
+            exception = Exception(self.language(32020))
             raise exception;
 
         parameters = {}

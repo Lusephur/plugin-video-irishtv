@@ -116,8 +116,8 @@ class RTEProvider(Provider):
                 msg = "html:\n\n%s\n\n" % html
                 exception.addLogMessage(msg)
                 
-            # Error showing root menu
-            exception.addLogMessage(self.language(40070))
+            # Cannot show root menu
+            exception.addLogMessage(self.language(30010))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
 
@@ -212,7 +212,7 @@ class RTEProvider(Provider):
                 msg = "html:\n\n%s\n\n" % html
                 exception.addLogMessage(msg)
                 
-            exception.addLogMessage(self.language(30525) + defaultLiveTVPage)
+            exception.addLogMessage(self.language(30520) + defaultLiveTVPage)
             exception.process('', '', severity = xbmc.LOGWARNING)
 
             page = defaultLiveTVPage
@@ -269,7 +269,7 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error getting Live TV information
-            exception.addLogMessage(self.language(40080))
+            exception.addLogMessage(self.language(32080))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
 
@@ -292,7 +292,7 @@ class RTEProvider(Provider):
                 exception = LoggingException.fromException(exception)
 
             # Error creating Search item
-            exception.addLogMessage(self.language(40220))
+            exception.addLogMessage(self.language(32220))
             raise exception
 
     #==============================================================================
@@ -327,7 +327,7 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error adding links
-            exception.addLogMessage(self.language(40080))
+            exception.addLogMessage(self.language(32080))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
 
@@ -388,7 +388,7 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error listing submenu
-            exception.addLogMessage(self.language(40090))
+            exception.addLogMessage(self.language(32090))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
 
@@ -544,7 +544,7 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error getting list of shows
-            exception.addLogMessage(self.language(40100))
+            exception.addLogMessage(self.language(32100))
             # Error getting list of shows
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
@@ -647,7 +647,7 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error getting list of shows
-            exception.addLogMessage(self.language(40100))
+            exception.addLogMessage(self.language(32100))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
 
@@ -679,8 +679,8 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error getting count of available episodes
-            exception.addLogMessage(self.language(40030))
-            exception.process(self.language(40040), self.language(40030), self.logLevel(xbmc.LOGERROR))
+            exception.addLogMessage(self.language(32030))
+            exception.process(self.language(32040), self.language(32030), self.logLevel(xbmc.LOGERROR))
             return False
     
     #==============================================================================
@@ -727,7 +727,7 @@ class RTEProvider(Provider):
                 exception = LoggingException.fromException(exception)
     
             # Error getting live swf player: Using default %s
-            exception.addLogMessage(self.language(40160) % swfLiveDefault)
+            exception.addLogMessage(self.language(32160) % swfLiveDefault)
             exception.process(severity = self.logLevel(xbmc.LOGWARNING))
             playerUrl = swfLiveDefault
 
@@ -755,8 +755,8 @@ class RTEProvider(Provider):
                 msg = "html:\n\n%s\n\n" % html
                 exception.addLogMessage(msg)
                 
-            # Error processing web page %s
-            exception.addLogMessage(self.language(40060) % (showUrl % episodeId))
+            # Error processing web page
+            exception.addLogMessage(self.language(30780) + ": " + (showUrl % episodeId))
             exception.process(u"Error getting thumbnail", "", self.logLevel(xbmc.LOGWARNING))
             raise exception
     
@@ -784,7 +784,7 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error processing web page %s
-            exception.addLogMessage(self.language(40060) % (showUrl % episodeId))
+            exception.addLogMessage(self.language(30780) + ": " + (showUrl % episodeId))
             exception.process(u"Error getting episode information", "", self.logLevel(xbmc.LOGWARNING))
     
             # Initialise values in case they are None
@@ -870,9 +870,9 @@ class RTEProvider(Provider):
                 except:
                     exception.addLogMessage("Execption getting " + feedUrl)
             # Error playing or downloading episode %s
-            exception.addLogMessage(self.language(40120) % episodeId)
+            exception.addLogMessage(self.language(32120) % episodeId)
             # Error playing or downloading episode %s
-            exception.process(self.language(40120) % ' ' , '', self.logLevel(xbmc.LOGERROR))
+            exception.process(self.language(32120) % ' ' , '', self.logLevel(xbmc.LOGERROR))
             return False
     
 
@@ -918,7 +918,7 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error playing live TV
-            exception.addLogMessage(self.language(40190))
+            exception.addLogMessage(self.language(32190))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
     
@@ -958,7 +958,7 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error getting player.js url: Using default %s
-            exception.addLogMessage(self.language(40210) % playerJSDefault)
+            exception.addLogMessage(self.language(32210) % playerJSDefault)
             exception.process(severity = self.logLevel(xbmc.LOGWARNING))
             playerJS = playerJSDefault
 
@@ -991,7 +991,7 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error getting search url: Using default %s
-            exception.addLogMessage(self.language(40200) + searchUrlDefault)
+            exception.addLogMessage(self.language(32200) + searchUrlDefault)
             exception.process(severity = self.logLevel(xbmc.LOGWARNING))
             searchURL = searchUrlDefault
 
@@ -1025,7 +1025,7 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error performing query %s
-            exception.addLogMessage(self.language(40170) % query)
+            exception.addLogMessage(self.language(32170) % query)
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
         

@@ -66,7 +66,7 @@ class TV3Provider(Provider):
             listItems = []
     
             # Search
-            newLabel = self.language(40290)
+            newLabel = self.language(30500)
             thumbnailPath = self.GetThumbnailPath(newLabel)
             newListItem = xbmcgui.ListItem( label=newLabel )
             newListItem.setThumbnailImage(thumbnailPath)
@@ -77,7 +77,7 @@ class TV3Provider(Provider):
             self.AddCategories(listItems, categories)        
     
             # All Shows - A to Z
-            newLabel = self.language(40270)
+            newLabel = self.language(32270)
             thumbnailPath = self.GetThumbnailPath(newLabel)
             newListItem = xbmcgui.ListItem( label=newLabel )
             newListItem.setThumbnailImage(thumbnailPath)
@@ -85,7 +85,7 @@ class TV3Provider(Provider):
             listItems.append( (url, newListItem, True) )
 
             # All Shows - By Date
-            newLabel = self.language(40280)
+            newLabel = self.language(32280)
             thumbnailPath = self.GetThumbnailPath(newLabel)
             newListItem = xbmcgui.ListItem( label=newLabel )
             newListItem.setThumbnailImage(thumbnailPath)
@@ -102,8 +102,8 @@ class TV3Provider(Provider):
                 msg = "html:\n\n%s\n\n" % html
                 exception.addLogMessage(msg)
                 
-            # Error showing root menu
-            exception.addLogMessage(self.language(40070))
+            # Cannot show root menu
+            exception.addLogMessage(self.language(30010))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
 
@@ -142,7 +142,7 @@ class TV3Provider(Provider):
             # "Can't find 'page' parameter "
             logException = LoggingException(logMessage = self.language(30030))
             # 'Cannot proceed', Error processing command
-            logException.process(self.language(30010), self.language(30780), logLevel)
+            logException.process(self.language(30755), self.language(30780), logLevel)
             return False
 
         self.log(u"page = %s" % page, xbmc.LOGDEBUG)
@@ -179,7 +179,7 @@ class TV3Provider(Provider):
                 exception = LoggingException.fromException(exception)
             
             # "Error playing or downloading episode %s"
-            exception.addLogMessage(self.language(40120) % "")
+            exception.addLogMessage(self.language(32120) % "")
             # "Error processing video"
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
@@ -201,7 +201,7 @@ class TV3Provider(Provider):
             exception = LoggingException.fromException(exception)
     
             # Error processing categories
-            exception.addLogMessage(self.language(40240))
+            exception.addLogMessage(self.language(32240))
             exception.process(severity = self.logLevel(xbmc.LOGWARNING))
             
         return categories
@@ -295,8 +295,8 @@ class TV3Provider(Provider):
                 
                 programme = self.GetNameFromGridshow(gridshow)
                 # "Error processing <programme>"
-                exception.addLogMessage(self.language(40300) % programme + "\n" + repr(gridshow))
-                exception.process(self.language(40300) % programme, "", xbmc.LOGWARNING)
+                exception.addLogMessage(self.language(32300) % programme + "\n" + repr(gridshow))
+                exception.process(self.language(32300) % programme, "", xbmc.LOGWARNING)
             
         xbmcplugin.addDirectoryItems( handle=self.pluginhandle, items=listItems )
         xbmcplugin.endOfDirectory( handle=self.pluginhandle, succeeded=True )
@@ -317,7 +317,7 @@ class TV3Provider(Provider):
                 exception = LoggingException.fromException(exception)
             
             # Unable to determine "All Shows" URL. Using default: %s
-            exception.addLogMessage(self.language(40260) % allShowsDefaultUrl)
+            exception.addLogMessage(self.language(32260) % allShowsDefaultUrl)
             exception.process(severity = xbmc.LOGWARNING)
             return allShowsDefaultUrl
 
@@ -411,8 +411,8 @@ class TV3Provider(Provider):
                         
                         programme = self.GetNameFromGridshow(gridshow)
                         # "Error processing <programme>"
-                        exception.addLogMessage(logMessage = self.language(40300) % programme + "\n" + repr(gridshow))
-                        exception.process(self.language(40300) % programme, "", xbmc.LOGWARNING)
+                        exception.addLogMessage(logMessage = self.language(32300) % programme + "\n" + repr(gridshow))
+                        exception.process(self.language(32300) % programme, "", xbmc.LOGWARNING)
                         
             else:
                 imageTag = soup.find(src=page)
@@ -433,8 +433,8 @@ class TV3Provider(Provider):
                             exception = LoggingException.fromException(exception)
                         
                         # "Error processing <programme>"
-                        exception.addLogMessage(logMessage = self.language(40300) % title + "\n" + repr(video))
-                        exception.process(self.language(40300) % title, "", xbmc.LOGWARNING)
+                        exception.addLogMessage(logMessage = self.language(32300) % title + "\n" + repr(video))
+                        exception.process(self.language(32300) % title, "", xbmc.LOGWARNING)
                         
 
             xbmcplugin.addDirectoryItems( handle=self.pluginhandle, items=listItems )
@@ -448,7 +448,7 @@ class TV3Provider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error processing "Show All" menu
-            exception.addLogMessage(self.language(40390))
+            exception.addLogMessage(self.language(20650))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
 
@@ -491,8 +491,8 @@ class TV3Provider(Provider):
                     exception = LoggingException.fromException(exception)
             
                 # "Error processing search result"
-                exception.addLogMessage(logMessage = self.language(40380) + "\n" + repr(video))
-                exception.process(self.language(40380), "", xbmc.LOGWARNING)
+                exception.addLogMessage(logMessage = self.language(32380) + "\n" + repr(video))
+                exception.process(self.language(32380), "", xbmc.LOGWARNING)
             
 
         xbmcplugin.addDirectoryItems( handle=self.pluginhandle, items=listItems )
@@ -588,7 +588,7 @@ class TV3Provider(Provider):
                 exception = LoggingException.fromException(exception)
 
             # Error getting RTMP data
-            exception.addLogMessage(self.language(40230))
+            exception.addLogMessage(self.language(32230))
             raise exception
         
     def PlayEpisode(self, page, html):
@@ -612,10 +612,10 @@ class TV3Provider(Provider):
                     exception.addLogMessage(msg)
                     
                 # Error getting web page: %s
-                exception.addLogMessage(self.language(40050) % ( urlRoot + page ) )
+                exception.addLogMessage(self.language(30050) + ": " + ( urlRoot + page ) )
     
                 # Error getting web page
-                exception.process(self.language(40050) % u'', u'', severity = self.logLevel(xbmc.LOGERROR))
+                exception.process(self.language(30050), u'', severity = self.logLevel(xbmc.LOGERROR))
                 return False
     
         rtmpVar = self.InitialiseRTMP(soup)
@@ -713,7 +713,7 @@ class TV3Provider(Provider):
                 exception.addLogMessage(msg)
                 
             # "Error creating calendar list"
-            message = self.language(40310)
+            message = self.language(32310)
             details = utils.valueIfDefined(minDateString, 'minDateString') + ", "
             details = details + utils.valueIfDefined(maxDateString, 'maxDateString') + ", "
             
@@ -782,9 +782,9 @@ class TV3Provider(Provider):
                     exception.addLogMessage(msg)
                     
                 # "Error processing video"
-                exception.addLogMessage(logMessage = self.language(40300) % "video\n" + repr(video))
+                exception.addLogMessage(logMessage = self.language(32300) % "video\n" + repr(video))
                 # "Error processing video"
-                exception.process(self.language(40300) % programme % "video\n", "", xbmc.LOGWARNING)
+                exception.process(self.language(32300) % programme % "video\n", "", xbmc.LOGWARNING)
                 continue
             
         xbmcplugin.addDirectoryItems( handle=self.pluginhandle, items=listItems )

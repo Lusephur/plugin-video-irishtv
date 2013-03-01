@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: XBMC-Addons\n"
 "Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
-"POT-Creation-Date: 2013-02-25 16:50+0000\n"
+"POT-Creation-Date: 2013-03-01 22:05+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE\n"
@@ -12,18 +12,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-
-msgctxt "#0"
-msgid "OK"
-msgstr ""
-
-#empty strings from id 1 to 9999
-
-msgctxt "#10000"
-msgid "RTE"
-msgstr ""
-
-#empty strings from id 10001 to 19999
 
 msgctxt "#20000"
 msgid "Error getting %s Player Home page"
@@ -59,7 +47,103 @@ msgctxt "#20103"
 msgid "TG4"
 msgstr ""
 
-#empty strings from id 20104 to 24999
+#empty strings from id 20104 to 20299
+
+msgctxt "#20300"
+msgid "Proxy General"
+msgstr ""
+
+#empty strings from id 20301 to 20304
+
+msgctxt "#20305"
+msgid "Proxy Per Service"
+msgstr ""
+
+#empty strings from id 20306 to 20361
+
+msgctxt "#20362"
+msgid "Segment 1 (e.g. 46.X.X.X)"
+msgstr ""
+
+msgctxt "#20363"
+msgid "Segment 2 (e.g. X.7.X.X)"
+msgstr ""
+
+#empty strings from id 20364 to 20379
+
+msgctxt "#20380"
+msgid "[RTE] Get programme descriptions (slows down episode listings)"
+msgstr ""
+
+#empty strings from id 20381 to 20389
+
+msgctxt "#20390"
+msgid "[TG4] Language"
+msgstr ""
+
+msgctxt "#20391"
+msgid "Gaeilge"
+msgstr ""
+
+msgctxt "#20392"
+msgid "English"
+msgstr ""
+
+#empty strings from id 20393 to 20394
+
+msgctxt "#20395"
+msgid "[AerTV, TG4] Bit rate"
+msgstr ""
+
+#empty strings from id 20396 to 20599
+
+msgctxt "#20600"
+msgid "Unable to determine qsdata. Using default values."
+msgstr ""
+
+#empty strings from id 20601 to 20609
+
+msgctxt "#20610"
+msgid "Error getting bit.ly API parameters. Using default values."
+msgstr ""
+
+#empty strings from id 20611 to 20619
+
+msgctxt "#20620"
+msgid "Error calling bit.ly API"
+msgstr ""
+
+#empty strings from id 20621 to 20629
+
+msgctxt "#20630"
+msgid "Error getting player url. Using default."
+msgstr ""
+
+#empty strings from id 20631 to 20639
+
+msgctxt "#20640"
+msgid "Unable to determine live video parameters. Using default values."
+msgstr ""
+
+#empty strings from id 20641 to 20649
+
+msgctxt "#20650"
+msgid "Error processing \"Show All\" menu"
+msgstr ""
+
+#empty strings from id 20651 to 20659
+
+msgctxt "#20660"
+msgid "Now: Unknown, Next: "
+msgstr ""
+
+#empty strings from id 20661 to 20669
+
+msgctxt "#20670"
+msgid "[AerTV] Stream Type"
+msgstr ""
+
+#empty strings from id 20671 to 24999
 
 msgctxt "#25000"
 msgid "Test failed"
@@ -119,13 +203,7 @@ msgctxt "#30030"
 msgid "Can't find 'page' parameter"
 msgstr ""
 
-#empty strings from id 30031 to 30039
-
-msgctxt "#30040"
-msgid "Error processing command"
-msgstr ""
-
-#empty strings from id 30041 to 30049
+#empty strings from id 30031 to 30049
 
 msgctxt "#30050"
 msgid "Error getting web page"
@@ -167,13 +245,7 @@ msgctxt "#30140"
 msgid "Download"
 msgstr ""
 
-#empty strings from id 30141 to 30149
-
-msgctxt "#30150"
-msgid "Use paging (list 50 programmes at a time)"
-msgstr ""
-
-#empty strings from id 30151 to 30159
+#empty strings from id 30141 to 30159
 
 msgctxt "#30160"
 msgid "Subtitles"
@@ -215,31 +287,13 @@ msgctxt "#30240"
 msgid "Ask for filename"
 msgstr ""
 
-#empty strings from id 30241 to 30299
-
-msgctxt "#30300"
-msgid "Proxy General"
-msgstr ""
-
-#empty strings from id 30301 to 30304
-
-msgctxt "#30305"
-msgid "Proxy Per Service"
-msgstr ""
-
-#empty string with id 30306
+#empty strings from id 30241 to 30306
 
 msgctxt "#30307"
 msgid "Proxy"
 msgstr ""
 
-#empty strings from id 30308 to 30309
-
-msgctxt "#30310"
-msgid "Use Proxy"
-msgstr ""
-
-#empty strings from id 30311 to 30314
+#empty strings from id 30308 to 30314
 
 msgctxt "#30315"
 msgid "Type"
@@ -269,43 +323,13 @@ msgctxt "#30350"
 msgid "Password"
 msgstr ""
 
-#empty strings from id 30351 to 30361
-
-msgctxt "#30362"
-msgid "Segment 1 (e.g. 46.X.X.X)"
-msgstr ""
-
-msgctxt "#30363"
-msgid "Segment 2 (e.g. X.7.X.X)"
-msgstr ""
-
-#empty strings from id 30364 to 30369
+#empty strings from id 30351 to 30369
 
 msgctxt "#30370"
 msgid "Forwarded IP"
 msgstr ""
 
-#empty strings from id 30371 to 30379
-
-msgctxt "#30380"
-msgid "[RTE] Get programme descriptions (slows down episode listings)"
-msgstr ""
-
-#empty strings from id 30381 to 30389
-
-msgctxt "#30390"
-msgid "[TG4] Language"
-msgstr ""
-
-msgctxt "#30391"
-msgid "Gaeilge"
-msgstr ""
-
-msgctxt "#30392"
-msgid "English"
-msgstr ""
-
-#empty strings from id 30393 to 30399
+#empty strings from id 30371 to 30399
 
 msgctxt "#30400"
 msgid "Advanced"
@@ -335,13 +359,7 @@ msgctxt "#30530"
 msgid "Do you want to play or download?"
 msgstr ""
 
-#empty strings from id 30531 to 30539
-
-msgctxt "#30540"
-msgid "Playback Error"
-msgstr ""
-
-#empty strings from id 30541 to 30559
+#empty strings from id 30531 to 30559
 
 msgctxt "#30560"
 msgid "Download Error"
@@ -383,43 +401,7 @@ msgctxt "#30620"
 msgid "Download Finished"
 msgstr ""
 
-#empty strings from id 30621 to 30699
-
-msgctxt "#30700"
-msgid "See log for details"
-msgstr ""
-
-#empty strings from id 30701 to 30704
-
-msgctxt "#30705"
-msgid "Can't find pattern in string"
-msgstr ""
-
-#empty strings from id 30706 to 30709
-
-msgctxt "#30710"
-msgid "Can't determine genre"
-msgstr ""
-
-#empty strings from id 30711 to 30714
-
-msgctxt "#30715"
-msgid "Error getting image"
-msgstr ""
-
-#empty strings from id 30716 to 30719
-
-msgctxt "#30720"
-msgid "HTTP Method"
-msgstr ""
-
-#empty strings from id 30721 to 30729
-
-msgctxt "#30730"
-msgid "Stream Method"
-msgstr ""
-
-#empty strings from id 30731 to 30754
+#empty strings from id 30621 to 30754
 
 msgctxt "#30755"
 msgid "Cannot proceed"
@@ -431,382 +413,246 @@ msgctxt "#30780"
 msgid "Error processing web page"
 msgstr ""
 
-#empty strings from id 30781 to 30859
+#empty strings from id 30781 to 32009
 
-msgctxt "#30860"
-msgid "Trying again. Change the socket timeout in the plugin settings if you see this problem a lot"
-msgstr ""
-
-#empty strings from id 30861 to 30864
-
-msgctxt "#30865"
-msgid "Timeout occurred two times in a row"
-msgstr ""
-
-#empty strings from id 30866 to 30869
-
-msgctxt "#30870"
-msgid "Socket timed out"
-msgstr ""
-
-#empty strings from id 30871 to 30894
-
-msgctxt "#30895"
-msgid "Timed out - trying again"
-msgstr ""
-
-#empty strings from id 30896 to 39999
-
-msgctxt "#40000"
-msgid "rtmpdump path is not set"
-msgstr ""
-
-#empty strings from id 40001 to 40009
-
-msgctxt "#40010"
+msgctxt "#32010"
 msgid "Download Folder is not set"
 msgstr ""
 
-#empty strings from id 40011 to 40019
+#empty strings from id 32011 to 32019
 
-msgctxt "#40020"
+msgctxt "#32020"
 msgid "rtmp url is not set"
 msgstr ""
 
-#empty strings from id 40021 to 40029
+#empty strings from id 32021 to 32029
 
-msgctxt "#40030"
+msgctxt "#32030"
 msgid "Error getting count of available episodes"
 msgstr ""
 
-#empty strings from id 40031 to 40039
+#empty strings from id 32031 to 32039
 
-msgctxt "#40040"
+msgctxt "#32040"
 msgid "Cannot show available episodes"
 msgstr ""
 
-#empty strings from id 40041 to 40049
+#empty strings from id 32041 to 32079
 
-msgctxt "#40050"
-msgid "Error getting web page: %s"
-msgstr ""
-
-#empty strings from id 40051 to 40059
-
-msgctxt "#40060"
-msgid "Error processing web page: %s"
-msgstr ""
-
-#empty strings from id 40061 to 40069
-
-msgctxt "#40070"
-msgid "Error showing root menu"
-msgstr ""
-
-#empty strings from id 40071 to 40079
-
-msgctxt "#40080"
+msgctxt "#32080"
 msgid "Error adding links"
 msgstr ""
 
-#empty strings from id 40081 to 40089
+#empty strings from id 32081 to 32089
 
-msgctxt "#40090"
+msgctxt "#32090"
 msgid "Error listing submenu"
 msgstr ""
 
-#empty strings from id 40091 to 40099
+#empty strings from id 32091 to 32099
 
-msgctxt "#40100"
+msgctxt "#32100"
 msgid "Error getting list of shows"
 msgstr ""
 
-#empty strings from id 40101 to 40109
+#empty strings from id 32101 to 32119
 
-msgctxt "#40110"
-msgid "Error getting count of available episodes"
-msgstr ""
-
-#empty strings from id 40111 to 40119
-
-msgctxt "#40120"
+msgctxt "#32120"
 msgid "Error playing or downloading episode %s"
 msgstr ""
 
-#empty strings from id 40121 to 40129
+#empty strings from id 32121 to 32159
 
-msgctxt "#40130"
-msgid "Error processing rtmp"
-msgstr ""
-
-#empty strings from id 40131 to 40139
-
-msgctxt "#40140"
-msgid "Provider '%s' not found"
-msgstr ""
-
-#empty strings from id 40141 to 40149
-
-msgctxt "#40150"
-msgid "Error getting provider"
-msgstr ""
-
-#empty strings from id 40151 to 40159
-
-msgctxt "#40160"
+msgctxt "#32160"
 msgid "Unable to determine swfPlayer URL. Using default %s"
 msgstr ""
 
-#empty strings from id 40161 to 40169
+#empty strings from id 32161 to 32169
 
-msgctxt "#40170"
+msgctxt "#32170"
 msgid "Error performing query %s"
 msgstr ""
 
-#empty strings from id 40171 to 40179
+#empty strings from id 32171 to 32189
 
-msgctxt "#40180"
-msgid "Error getting Live TV information"
-msgstr ""
-
-#empty strings from id 40181 to 40189
-
-msgctxt "#40190"
+msgctxt "#32190"
 msgid "Error playing Live TV"
 msgstr ""
 
-#empty strings from id 40191 to 40199
+#empty strings from id 32191 to 32199
 
-msgctxt "#40200"
+msgctxt "#32200"
 msgid "Error getting search url: Using default "
 msgstr ""
 
-#empty strings from id 40201 to 40209
+#empty strings from id 32201 to 32209
 
-msgctxt "#40210"
+msgctxt "#32210"
 msgid "Error getting player.js url: Using default %s"
 msgstr ""
 
-#empty strings from id 40211 to 40219
+#empty strings from id 32211 to 32219
 
-msgctxt "#40220"
+msgctxt "#32220"
 msgid "Error creating Search item"
 msgstr ""
 
-#empty strings from id 40221 to 40229
+#empty strings from id 32221 to 32229
 
-msgctxt "#40230"
+msgctxt "#32230"
 msgid "Error getting RTMP data"
 msgstr ""
 
-#empty strings from id 40231 to 40239
+#empty strings from id 32231 to 32239
 
-msgctxt "#40240"
+msgctxt "#32240"
 msgid "Error processing categories"
 msgstr ""
 
-#empty strings from id 40241 to 40259
+#empty strings from id 32241 to 32259
 
-msgctxt "#40260"
+msgctxt "#32260"
 msgid "Unable to determine \"All Shows\" URL. Using default %s"
 msgstr ""
 
-#empty strings from id 40261 to 40269
+#empty strings from id 32261 to 32269
 
-msgctxt "#40270"
+msgctxt "#32270"
 msgid "All Shows - A to Z"
 msgstr ""
 
-#empty strings from id 40271 to 40279
+#empty strings from id 32271 to 32279
 
-msgctxt "#40280"
+msgctxt "#32280"
 msgid "All Shows - By Date"
 msgstr ""
 
-#empty strings from id 40281 to 40289
+#empty strings from id 32281 to 32299
 
-msgctxt "#40290"
-msgid "Search"
-msgstr ""
-
-#empty strings from id 40291 to 40299
-
-msgctxt "#40300"
+msgctxt "#32300"
 msgid "Error processing %s"
 msgstr ""
 
-#empty strings from id 40301 to 40309
+#empty strings from id 32301 to 32309
 
-msgctxt "#40310"
+msgctxt "#32310"
 msgid "Error creating calendar list"
 msgstr ""
 
-#empty strings from id 40311 to 40319
+#empty strings from id 32311 to 32319
 
-msgctxt "#40320"
+msgctxt "#32320"
 msgid "Error getting rtmp url. Using default: %s"
 msgstr ""
 
-#empty strings from id 40321 to 40324
+#empty strings from id 32321 to 32324
 
-msgctxt "#40325"
+msgctxt "#32325"
 msgid "Error getting rtmp url"
 msgstr ""
 
-#empty strings from id 40326 to 40329
+#empty strings from id 32326 to 32339
 
-msgctxt "#40330"
-msgid "Your IP seems to be BLOCKED by AerTV"
-msgstr ""
-
-#empty strings from id 40331 to 40339
-
-msgctxt "#40340"
+msgctxt "#32340"
 msgid "Error preparing or playing stream"
 msgstr ""
 
-#empty strings from id 40341 to 40349
+#empty strings from id 32341 to 32349
 
-msgctxt "#40350"
+msgctxt "#32350"
 msgid "Error processing channel"
 msgstr ""
 
-#empty strings from id 40351 to 40359
+#empty strings from id 32351 to 32369
 
-msgctxt "#40360"
-msgid "Cannot play video stream"
-msgstr ""
-
-#empty strings from id 40361 to 40369
-
-msgctxt "#40370"
+msgctxt "#32370"
 msgid "Error getting title and logo info for %s"
 msgstr ""
 
-#empty strings from id 40371 to 40379
+#empty strings from id 32371 to 32379
 
-msgctxt "#40380"
+msgctxt "#32380"
 msgid "Error processing search result"
 msgstr ""
 
-#empty strings from id 40381 to 40389
+#empty strings from id 32381 to 32399
 
-msgctxt "#40390"
-msgid "[AerTV, TG4] Bit rate"
-msgstr ""
-
-#empty strings from id 40391 to 40399
-
-msgctxt "#40400"
+msgctxt "#32400"
 msgid "Default"
 msgstr ""
 
-#empty strings from id 40401 to 40409
+#empty strings from id 32401 to 32409
 
-msgctxt "#40410"
+msgctxt "#32410"
 msgid "Lowest Available"
 msgstr ""
 
-#empty strings from id 40411 to 40419
+#empty strings from id 32411 to 32419
 
-msgctxt "#40420"
+msgctxt "#32420"
 msgid "Highest Available"
 msgstr ""
 
-#empty strings from id 40421 to 40429
+#empty strings from id 32421 to 32429
 
-msgctxt "#40430"
+msgctxt "#32430"
 msgid "Max 200kps"
 msgstr ""
 
-#empty strings from id 40431 to 40439
+#empty strings from id 32431 to 32439
 
-msgctxt "#40440"
+msgctxt "#32440"
 msgid "Max 350kps"
 msgstr ""
 
-#empty strings from id 40441 to 40449
+#empty strings from id 32441 to 32449
 
-msgctxt "#40450"
+msgctxt "#32450"
 msgid "Max 500kps"
 msgstr ""
 
-#empty strings from id 40451 to 40459
+#empty strings from id 32451 to 32459
 
-msgctxt "#40460"
+msgctxt "#32460"
 msgid "Max 750kps"
 msgstr ""
 
-#empty strings from id 40461 to 40469
+#empty strings from id 32461 to 32469
 
-msgctxt "#40470"
+msgctxt "#32470"
 msgid "Max 1000kps"
 msgstr ""
 
-#empty strings from id 40471 to 40479
+#empty strings from id 32471 to 32479
 
-msgctxt "#40480"
+msgctxt "#32480"
 msgid "Max 1500kps"
 msgstr ""
 
-#empty strings from id 40481 to 40489
+#empty strings from id 32481 to 32489
 
-msgctxt "#40490"
+msgctxt "#32490"
 msgid "Max 2000kps"
 msgstr ""
 
-#empty strings from id 40491 to 40599
+#empty strings from id 32491 to 32639
 
-msgctxt "#40600"
-msgid "Unable to determine qsdata. Using default values."
-msgstr ""
-
-#empty strings from id 40601 to 40609
-
-msgctxt "#40610"
-msgid "Error getting bit.ly API parameters. Using default values."
-msgstr ""
-
-#empty strings from id 40611 to 40619
-
-msgctxt "#40620"
-msgid "Error calling bit.ly API"
-msgstr ""
-
-#empty strings from id 40621 to 40629
-
-msgctxt "#40630"
-msgid "Error getting player url. Using default."
-msgstr ""
-
-#empty strings from id 40631 to 40639
-
-msgctxt "#40640"
+msgctxt "#32640"
 msgid "Preparing to play video"
 msgstr ""
 
-#empty strings from id 40641 to 40649
+#empty strings from id 32641 to 32670
 
-msgctxt "#40650"
-msgid "Error getting live schedule"
-msgstr ""
-
-#empty strings from id 40651 to 40659
-
-msgctxt "#40660"
-msgid "Now: Unknown, Next: "
-msgstr ""
-
-#empty strings from id 40661 to 40669
-
-msgctxt "#40670"
-msgid "[AerTV] Stream Type"
-msgstr ""
-
-msgctxt "#40671"
+msgctxt "#32671"
 msgid "RTMP"
 msgstr ""
 
-msgctxt "#40672"
+msgctxt "#32672"
 msgid "HTTP"
+msgstr ""
+
+#empty strings from id 32673 to 32679
+
+msgctxt "#32680"
+msgid "Error processing date string"
 msgstr ""
