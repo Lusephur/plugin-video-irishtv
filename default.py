@@ -4,7 +4,7 @@
 
 # http://wiki.xbmc.org/index.php?title=How-to:Debug_Python_Scripts_with_Eclipse
 
-REMOTE_DBG = True
+REMOTE_DBG = False
 
 # append pydev remote debugger
 if REMOTE_DBG:
