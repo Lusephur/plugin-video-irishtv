@@ -233,6 +233,8 @@ class AerTVProvider(BrightCoveProvider):
             url = urlRoot + self.GetJSONPath()
             values = {'source':'player', 'type':'name', 'val':channel}
         
+            # "Getting channel information"
+            self.dialog.update(10, self.language(32730))
             jsonData = self.httpManager.GetWebPage(url, 20000, values = values)
     
             jsonText = utils.extractJSON (jsonData)
@@ -249,6 +251,10 @@ class AerTVProvider(BrightCoveProvider):
             #self.log(u"Stream type setting: " + streamType)
             
             try:
+                if self.dialog.iscanceled():
+                    return False
+                # "Getting stream url"
+                self.dialog.update(25, self.language(32740))
                 streamUrl = self.GetStreamUrl(playerKey, viewExperienceUrl, playerId, contentRefId = channel)
                 self.log("streamUrl: %s" % streamUrl)
             except (Exception) as exception:
@@ -268,6 +274,11 @@ class AerTVProvider(BrightCoveProvider):
                     # Cannot play video stream
                     raise exception
                 
+            if self.dialog.iscanceled():
+                return False
+            # "Getting \"Now Playing\" data
+            self.dialog.update(35, self.language(32750))
+
             # Set up info for "Now Playing" screen
             infoLabels, logo = self.GetInfoLabelsAndLogo(channel, epgUrl)
             

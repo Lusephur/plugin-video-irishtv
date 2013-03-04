@@ -80,10 +80,11 @@ class TG4Provider(BrightCoveProvider):
 
     def ExecuteCommand(self, mycgi):
         self.log(u"Language: " + self.addon.getSetting( u'TG4_language' ))
-        if self.addon.getSetting( u'TG4_language' ) == self.language(20391):
-            self.languageCode = u"ie"
-        else:
+        # 20391 = "Gaeilge"
+        if self.addon.getSetting( u'TG4_language' ) != self.language(20391):
             self.languageCode = u"en"
+        else:
+            self.languageCode = u"ie"
 
         self.log(u"languageCode: " + self.languageCode)
         return super(TG4Provider, self).ExecuteCommand(mycgi)

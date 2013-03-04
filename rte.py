@@ -805,9 +805,15 @@ class RTEProvider(Provider):
     def PlayEpisode(self, episodeId, dummy):
         self.log(u"%s" % episodeId, xbmc.LOGDEBUG)
         
+        # "Getting SWF url"
+        self.dialog.update(5, self.language(32760))
         swfPlayer = self.GetSWFPlayer()
     
         try:
+            if self.dialog.iscanceled():
+                return False
+            # "Getting episode web page"
+            self.dialog.update(15, self.language(32770))
             feedProcessStatus = 0
             html = None
             html = self.httpManager.GetWebPage(showUrl % episodeId, 20000)
@@ -815,11 +821,20 @@ class RTEProvider(Provider):
             soup = BeautifulSoup(html, selfClosingTags=[u'img'])
             feedsPrefix = soup.find(u'meta', { u'name' : u"feeds-prefix"} )[u'content']
 
+            if self.dialog.iscanceled():
+                return False
+            # "Getting episode info"
+            self.dialog.update(25, self.language(32710))
             infoLabels = self.GetEpisodeInfo(episodeId, soup)
             thumbnail = self.GetThumbnailFromEpisode(episodeId, soup)
     
             urlGroups = None
             feedProcessStatus = 1
+
+            if self.dialog.iscanceled():
+                return False
+            # "Getting playpath data"
+            self.dialog.update(35, self.language(32780))
             urlGroups = self.GetStringFromURL(feedsPrefix + episodeId, u"\"url\": \"(/[0-9][0-9][0-9][0-9]/[0-9][0-9][0-9][0-9]/)([a-zA-Z0-9]+/)?(.+).f4m\"", 20000)
             feedProcessStatus = 2
             if urlGroups is None:
@@ -879,7 +894,6 @@ class RTEProvider(Provider):
     def PlayLiveTV(self, html, dummy):
         self.log(u"", xbmc.LOGDEBUG)
         
-        #swfPlayer = self.GetLiveSWFPlayer()
         swfPlayer = self.GetSWFPlayer()
     
         liveChannels = {

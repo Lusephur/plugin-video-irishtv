@@ -310,8 +310,6 @@ class HttpManager:
             data =  gzipper.read()
         else:
             data = response.read()
-        #self.log(repr(response), xbmc.LOGDEBUG)
-        #self.log(utils.drepr(response), xbmc.LOGDEBUG)
         
         if charset is None:
             try:
@@ -530,8 +528,7 @@ class HttpManager:
         try:
             if values is not None:
                 url = url + "?" + urllib.urlencode(values)
-            
-            #    url = unicodedata.normalize('NFKD', url).encode('ASCII', 'ignore')
+
             self.log("url: " + url)
             from hashlib import md5
             return md5(url).hexdigest()

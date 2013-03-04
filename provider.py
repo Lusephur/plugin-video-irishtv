@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-#TODO Verify all language strings here work in 4oD too
 import os
 import sys
 import re
@@ -28,13 +27,8 @@ from subprocess import Popen, PIPE, STDOUT
 import mycgi
 import utils
 
-METHOD_IP_FORWARD = 1
-METHOD_PROXY = 2
-METHOD_PROXY_STREAMS = 3
-
 countryInfoUrl = "http://api.hostip.info/country.php"
 
-#__downloader__ = SimpleDownloader.SimpleDownloader()
 class Provider(object):
 
     def __init__(self):
@@ -48,6 +42,10 @@ class Provider(object):
 
             self.log("")
 
+        self.player = xbmc.Player
+
+    def SetPlayer(self, player):
+        self.player = player
 
     def CreateForwardedForIP(self, currentForwardedForIP):
         currentSegments = currentForwardedForIP.split('.')
@@ -100,6 +98,11 @@ class Provider(object):
         self.addon = sys.modules[u"__main__"].addon
         self.language = sys.modules[u"__main__"].language
         
+        self.METHOD_IP_FORWARD = self.language(30370) 
+        self.METHOD_PROXY = self.language(31010)
+        self.METHOD_PROXY_STREAMS = self.language(31020)
+        
+        
         self.InitialiseHTTP(httpManager)
         
     def GetProxyConfig(self):
@@ -140,11 +143,13 @@ class Provider(object):
         self.httpManager = httpManager
         self.httpManager.SetDefaultHeaders( self.GetHeaders() )
 
-        proxy_method = int(self.addon.getSetting(self.GetProviderId() + u'_proxy_method')) 
-        if proxy_method == METHOD_PROXY or proxy_method == METHOD_PROXY_STREAMS:
+        proxy_method = self.addon.getSetting(self.GetProviderId() + u'_proxy_method') 
+        self.log("proxy_method: %s" % proxy_method)
+        
+        if proxy_method == self.METHOD_PROXY or proxy_method == self.METHOD_PROXY_STREAMS:
             proxyConfig = self.GetProxyConfig()
             self.httpManager.SetProxyConfig( proxyConfig )
-        elif proxy_method == METHOD_IP_FORWARD:
+        elif proxy_method == self.METHOD_IP_FORWARD:
             self.httpManager.EnableForwardedForIP()
 
     def GetBitRateSetting(self):
@@ -152,6 +157,7 @@ class Provider(object):
             return None
         
         bitRates = {
+            u"":None,                            #Setting not set, so use default value
             self.language(32400):None,           #Default
             self.language(32410):-1,             #Lowest Available
             self.language(32430):200 * 1024,     #Max 200kps
@@ -217,23 +223,29 @@ class Provider(object):
     
     #==============================================================================
     def AddSocksToRTMP(self, rtmpVar):
-        stream_method = int(self.addon.getSetting(self.GetProviderId() + u'_proxy_method')) 
-        if stream_method == METHOD_PROXY_STREAMS:
+        stream_method = self.addon.getSetting(self.GetProviderId() + u'_proxy_method') 
+        if stream_method == self.METHOD_PROXY_STREAMS:
             proxyConfig = self.GetProxyConfig()
             rtmpVar.setProxyString(proxyConfig.toString())
         
-    def PlayOrDownloadEpisode(self, infoLabels, thumbnail, rtmpVar = None, defaultFilename = '', url = None):
+    def PlayOrDownloadEpisode(self, infoLabels, thumbnail, rtmpVar = None, defaultFilename = '', url = None, subtitles = None):
         try:
             action = self.GetAction(infoLabels['Title'])
     
+            if self.dialog.iscanceled():
+                return False
+            
             if ( action == 1 ):
                 # Play
-                self.Play(infoLabels, thumbnail, rtmpVar, url)
+                # "Preparing to play video"
+                self.dialog.update(50, self.language(32720))
+                self.Play(infoLabels, thumbnail, rtmpVar, url, subtitles)
         
-            else:
-                if ( action == 0 ):
+            elif ( action == 0 ):
                     # Download
-                    self.Download(rtmpVar, defaultFilename)
+                    # "Preparing to download video"
+                self.dialog.update(50, self.language(32730))
+                self.Download(rtmpVar, defaultFilename, subtitles)
     
             return True
         except (Exception) as exception:
@@ -241,10 +253,13 @@ class Provider(object):
                 exception = LoggingException.fromException(exception)
     
             # Error playing or downloading episode %s
-            exception.process(self.language(32120), u'', self.logLevel(xbmc.LOGERROR))
+            exception.process(self.language(32120) % u'', u'', self.logLevel(xbmc.LOGERROR))
             return False
     
-    def Play(self, infoLabels, thumbnail, rtmpVar = None, url = None):
+    def GetPlayer(self):
+        return xbmc.Player(xbmc.PLAYER_CORE_AUTO) 
+    
+    def Play(self, infoLabels, thumbnail, rtmpVar = None, url = None, subtitles = None):
         if infoLabels is None:
             self.log (u'Play titleId: Unknown Title')
             listItem = xbmcgui.ListItem(u'Unknown Title')
@@ -252,28 +267,64 @@ class Provider(object):
             self.log (u'Play titleId: ' + infoLabels[u'Title'])
             listItem = xbmcgui.ListItem(infoLabels[u'Title'])
             listItem.setInfo(u'video', infoLabels)
-        
+
         if thumbnail is not None:
             listItem.setThumbnailImage(thumbnail)
     
-        play=xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
-        play.clear()
+        playList=xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+        playList.clear()
         
         if url is None:
             url = rtmpVar.getPlayUrl()
             
-        play.add(url, listItem)
+        playList.add(url, listItem)
     
-        xbmc.Player(xbmc.PLAYER_CORE_AUTO).play(play)
-    
+        if self.dialog.iscanceled():
+            return False
+        
+        player = self.GetPlayer()
+        player.play(playList)
+        
+        self.dialog.close()
+        
+        if subtitles is not None:
+            try:
+                subtitleFile = subtitles.GetSubtitleFile()
+                self.player().setSubtitles(subtitleFile)
+            except (Exception) as exception:
+                if not isinstance(exception, LoggingException):
+                    exception = LoggingException.fromException(exception)
+            
+                # Error getting subtitles
+                exception.addLogMessage(self.language(30970))
+                exception.process('', '', severity = xbmc.LOGWARNING)
 
-    def Download(self, rtmpVar, defaultFilename):
+        # Keep script alive so that player can process the onPlayBackStart event
+        if player.isPlaying():
+            xbmc.sleep(5000)
+
+    def Download(self, rtmpVar, defaultFilename, subtitles = None):
         (rtmpdumpPath, downloadFolder, filename) = self.GetDownloadSettings(defaultFilename)
     
         savePath = os.path.join( downloadFolder, filename )
         rtmpVar.setDownloadDetails(rtmpdumpPath, savePath)
         parameters = rtmpVar.getParameters()
-    
+
+        if subtitles is not None:
+            self.log (u"Getting subtitles")
+
+        if subtitles is not None:
+            try:
+                # Replace '.flv' or other 3 character extension with '.smi'
+                subtitleFile = subtitles.GetSubtitleFile(savePath[0:-4] + u'.smi')
+            except (Exception) as exception:
+                if not isinstance(exception, LoggingException):
+                    exception = LoggingException.fromException(exception)
+            
+                # Error getting subtitles
+                exception.addLogMessage(self.language(30970))
+                exception.process('', '', severity = xbmc.LOGWARNING)
+
         # Starting downloads 
         self.log (u"Starting download: " + rtmpdumpPath + u" " + parameters)
     
@@ -302,8 +353,6 @@ class Provider(object):
             self.log (u'stderr: ' + str(stderr), xbmc.LOGERROR)
             self.log (u"Download Failed!")
             xbmc.executebuiltin(('XBMC.Notification(%s,%s,2000)' % ( u"Download Failed! See log for details", filename)).encode('utf8'))
-#        except:
-#            pass
 
     #==============================================================================
     
@@ -444,10 +493,15 @@ class Provider(object):
     
     def PlayVideoWithDialog(self, method, parameters):
         try:
-            dialog = xbmcgui.DialogProgress()
-            dialog.create(self.GetProviderId(), self.language(32640))
+            self.dialog = xbmcgui.DialogProgress()
+            self.dialog.create(self.GetProviderId(), self.language(32640))
             
             return method(*parameters)
         finally:
-            dialog.close()
+            self.dialog.close()
 
+
+class Subtitle(object):
+    
+    def GetSubtitleFile(self, filename = None):
+        return sys.modules[u"__main__"].NO_SUBTITLE_FILE

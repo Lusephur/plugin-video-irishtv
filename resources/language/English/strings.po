@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: XBMC-Addons\n"
 "Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
-"POT-Creation-Date: 2013-03-01 22:05+0000\n"
+"POT-Creation-Date: 2013-03-04 14:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE\n"
@@ -413,7 +413,31 @@ msgctxt "#30780"
 msgid "Error processing web page"
 msgstr ""
 
-#empty strings from id 30781 to 32009
+#empty strings from id 30781 to 30969
+
+msgctxt "#30970"
+msgid "Error getting subtitles"
+msgstr ""
+
+#empty strings from id 30971 to 31009
+
+msgctxt "#31010"
+msgid "Proxy for HTTP"
+msgstr ""
+
+#empty strings from id 31011 to 31019
+
+msgctxt "#31020"
+msgid "Proxy for HTTP and RTMP"
+msgstr ""
+
+#empty strings from id 31021 to 31999
+
+msgctxt "#32000"
+msgid "rtmpdump path is not set"
+msgstr ""
+
+#empty strings from id 32001 to 32009
 
 msgctxt "#32010"
 msgid "Download Folder is not set"
@@ -655,4 +679,52 @@ msgstr ""
 
 msgctxt "#32680"
 msgid "Error processing date string"
+msgstr ""
+
+#empty strings from id 32681 to 32709
+
+msgctxt "#32710"
+msgid "Getting episode information"
+msgstr ""
+
+#empty strings from id 32711 to 32719
+
+msgctxt "#32720"
+msgid "Preparing to play video"
+msgstr ""
+
+#empty strings from id 32721 to 32729
+
+msgctxt "#32730"
+msgid "Getting channel information"
+msgstr ""
+
+#empty strings from id 32731 to 32739
+
+msgctxt "#32740"
+msgid "Getting stream url"
+msgstr ""
+
+#empty strings from id 32741 to 32749
+
+msgctxt "#32750"
+msgid "Getting \\"Now Playing\\" data"
+msgstr ""
+
+#empty strings from id 32751 to 32759
+
+msgctxt "#32760"
+msgid "Getting SWF url"
+msgstr ""
+
+#empty strings from id 32761 to 32769
+
+msgctxt "#32770"
+msgid "Getting episode web page"
+msgstr ""
+
+#empty strings from id 32771 to 32779
+
+msgctxt "#32780"
+msgid "Getting playpath data"
 msgstr ""

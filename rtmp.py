@@ -5,8 +5,8 @@ import sys
 
 class RTMP:
     def __init__(self, rtmp, tcUrl = None, auth = None, app = None, playPath = None, swfUrl = None, swfVfy = None, pageUrl = None, live = None, socks = None):
-        if hasattr(sys.modules["__main__"], "log"):
-            self.log = sys.modules["__main__"].log
+        if hasattr(sys.modules[u"__main__"], u"log"):
+            self.log = sys.modules[u"__main__"].log
         else:
             from utils import log
         
@@ -40,7 +40,7 @@ class RTMP:
     def getDumpCommand(self):
         if self.rtmpdumpPath is None or self.rtmpdumpPath == '':
             # rtmpdump path is not set
-            exception = Exception(self.language(40000))
+            exception = Exception(self.language(32000))
             raise exception
 
         args = [ self.rtmpdumpPath ]
@@ -65,35 +65,35 @@ class RTMP:
 
         parameters = {}
 
-        parameters["url"] = self.rtmp
-        parameters["download_path"] = self.downloadFolder
+        parameters[u"url"] = self.rtmp
+        parameters[u"download_path"] = self.downloadFolder
 
         if self.auth is not None:
-            parameters["auth"] = self.auth
+            parameters[u"auth"] = self.auth
 
         if self.app is not None:
-            parameters["app"] = self.app
+            parameters[u"app"] = self.app
 
         if self.playPath is not None:
-            parameters["playpath"] = self.playPath
+            parameters[u"playpath"] = self.playPath
 
         if self.tcUrl is not None:
-            parameters["tcUrl"] = self.tcUrl
+            parameters[u"tcUrl"] = self.tcUrl
 
         if self.swfUrl is not None:
-            parameters["swfUrl"] = self.swfUrl
+            parameters[u"swfUrl"] = self.swfUrl
 
         if self.swfVfy is not None:
-            parameters["swfVfy"] = self.swfVfy
+            parameters[u"swfVfy"] = self.swfVfy
 
         if self.pageUrl is not None:
-            parameters["pageUrl"] = self.pageUrl
+            parameters[u"pageUrl"] = self.pageUrl
 
         if self.live is not None and self.live is not False:
-            parameters["live"] = "true"
+            parameters[u"live"] = u"true"
 
         if self.socks is not None:
-            parameters["socks"] = self.socks
+            parameters[u"socks"] = self.socks
 
         self.log(u"parameters: " + unicode(parameters), xbmc.LOGDEBUG)
         return parameters
@@ -101,12 +101,12 @@ class RTMP:
     def getParameters(self):
         if self.downloadFolder is None or self.downloadFolder == '':
             # Download Folder is not set
-            exception = Exception(self.language(40010))
+            exception = Exception(self.language(32010))
             raise exception;
 
         if self.rtmp is None or self.rtmp == '':
             # rtmp url is not set
-            exception = Exception(self.language(40020))
+            exception = Exception(self.language(32020))
             raise exception;
 
         args = [ u"--rtmp", u'"%s"' % self.rtmp, u"-o", u'"%s"' % self.downloadFolder ]
@@ -154,7 +154,7 @@ class RTMP:
     def getPlayUrl(self):
         if self.rtmp is None or self.rtmp == '':
             # rtmp url is not set
-            exception = Exception(self.language(40020))
+            exception = Exception(self.language(32020))
             raise exception;
 
         args = [u"%s" % self.rtmp]

@@ -21,7 +21,7 @@ class ProxyConfig:
         self.urllib2_socket = None
         self.httplib_socket = None
         
-        log = sys.modules["__main__"].log
+        log = sys.modules[u"__main__"].log
         
         try:
             log(u"Using proxy: type %i rdns: %i server: %s port: %s user: %s pass: %s" % (self.type, self.dns, self.server, self.port, u"***", u"***") )
@@ -54,6 +54,6 @@ class ProxyConfig:
         #    string = "%s:%s@" % (self.user, self.password)
         
         #string = string + "%s:%s" % (self.server, self.port)
-        string = "%s:%s" % (self.server, self.port)
+        string = u"%s:%s" % (self.server, self.port)
         
         return string

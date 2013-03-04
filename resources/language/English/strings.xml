@@ -69,6 +69,10 @@
   <string id="30620">Download Finished</string>
   <string id="30755">Cannot proceed</string>
   <string id="30780">Error processing web page</string>
+  <string id="30970">Error getting subtitles</string>
+  <string id="31010">Proxy for HTTP</string>
+  <string id="31020">Proxy for HTTP and RTMP</string>
+  <string id="32000">rtmpdump path is not set</string>
   <string id="32010">Download Folder is not set</string>
   <string id="32020">rtmp url is not set</string>
   <string id="32030">Error getting count of available episodes</string>
@@ -110,4 +114,12 @@
   <string id="32671">RTMP</string>
   <string id="32672">HTTP</string>
   <string id="32680">Error processing date string</string>
+  <string id="32710">Getting episode information</string>
+  <string id="32720">Preparing to play video</string>
+  <string id="32730">Getting channel information</string>
+  <string id="32740">Getting stream url</string>
+  <string id="32750">Getting \"Now Playing\" data</string>
+  <string id="32760">Getting SWF url</string>
+  <string id="32770">Getting episode web page</string>
+  <string id="32780">Getting playpath data</string>
 </strings>

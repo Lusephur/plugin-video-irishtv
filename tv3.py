@@ -600,6 +600,10 @@ class TV3Provider(Provider):
         
         if ageCheck is not None:
             
+            if self.dialog.iscanceled():
+                return False
+            # "Getting episode info"
+            self.dialog.update(25, self.language(32710))
             try:
                 html = None
                 html = self.httpManager.GetWebPage( urlRoot + page, 1800, values = {'age_ok':'1'} )
