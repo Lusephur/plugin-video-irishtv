@@ -118,8 +118,10 @@
   <string id="32720">Preparing to play video</string>
   <string id="32730">Getting channel information</string>
   <string id="32740">Getting stream url</string>
-  <string id="32750">Getting \"Now Playing\" data</string>
+  <string id="32750">Getting "Now Playing" data</string>
   <string id="32760">Getting SWF url</string>
   <string id="32770">Getting episode web page</string>
   <string id="32780">Getting playpath data</string>
+  <string id="32790">Getting player functions</string>
+  
 </strings>

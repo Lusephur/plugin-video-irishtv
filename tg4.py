@@ -596,6 +596,8 @@ class TG4Provider(BrightCoveProvider):
     def ShowEpisode(self, episodeId, series, appFormat, live = False):
         self.log(u"episodeId: %s, series: %s, live: %s" % (episodeId, series, live), xbmc.LOGDEBUG)
 
+        # "Getting player functions"
+        self.dialog.update(5, self.language(32790))
         try:
             playerFunctionsJs = None
             playerFunctionsJs = self.httpManager.GetWebPage(playerFunctionsUrl, 20000)
@@ -605,11 +607,20 @@ class TG4Provider(BrightCoveProvider):
             
             bitUrl = self.GetBitUrl(episodeId, series, fullLLinkUrl, playerFunctionsJs)
             qsData = self.GetQSData(episodeId, bitUrl, playerFunctionsJs)
+
+            if self.dialog.iscanceled():
+                return False
+            # "Getting SWF url"
+            self.dialog.update(15, self.language(32760))
             swfUrl = self.GetSwfUrl(qsData)
 
             playerId = qsData[u'playerId']
             playerKey = qsData[u'playerKey']
             
+            if self.dialog.iscanceled():
+                return False
+            # "Getting stream url"
+            self.dialog.update(30, self.language(32740))
             rtmpUrl = self.GetStreamUrl(playerKey, playerUrl, playerId, contentId = episodeId)
             
             publisherId = unicode(int(float(self.amfResponse[u'publisherId']))) 

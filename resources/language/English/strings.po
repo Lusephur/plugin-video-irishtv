@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: XBMC-Addons\n"
 "Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
-"POT-Creation-Date: 2013-03-04 17:10+0000\n"
+"POT-Creation-Date: 2013-03-04 19:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE\n"
@@ -708,7 +708,7 @@ msgstr ""
 #empty strings from id 32741 to 32749
 
 msgctxt "#32750"
-msgid "Getting \\"Now Playing\\" data"
+msgid "Getting \"Now Playing\" data"
 msgstr ""
 
 #empty strings from id 32751 to 32759
@@ -727,4 +727,10 @@ msgstr ""
 
 msgctxt "#32780"
 msgid "Getting playpath data"
+msgstr ""
+
+#empty strings from id 32781 to 32789
+
+msgctxt "#32790"
+msgid "Getting player functions"
 msgstr ""
