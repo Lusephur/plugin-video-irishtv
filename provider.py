@@ -346,6 +346,8 @@ class Provider(object):
         (stdout, stderr) = p.communicate()
         self.log (u"rtmpdump has stopped executing", xbmc.LOGDEBUG)
     
+        stderr = utils.normalize(stderr) 
+
         if u'Download complete' in stderr:
             # Download Finished!
             self.log (u'stdout: ' + str(stdout), xbmc.LOGDEBUG)
