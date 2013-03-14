@@ -325,6 +325,11 @@ class Provider(object):
                 exception.addLogMessage(self.language(30970))
                 exception.process('', '', severity = xbmc.LOGWARNING)
 
+        if self.dialog.iscanceled():
+            return False
+
+        self.dialog.close()
+
         # Starting downloads 
         self.log (u"Starting download: " + rtmpdumpPath + u" " + parameters)
     
