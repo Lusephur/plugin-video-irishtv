@@ -1,3 +1,10 @@
+Version 2.0.9
+- Fix Now and Next times in AerTV. There is now a local time offset option in the plugin settings for people in foreign timezones.
+- Fix: TV3 RTMP streams now require verification
+- Fix: After a successful download sometimes a download error message appears
+- Close progress dialog on download start
+
+
 Version 2.0.8
 - Improve progress dialog
 
