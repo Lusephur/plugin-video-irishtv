@@ -4,7 +4,6 @@ Version 2.0.9
 - Fix: After a successful download sometimes a download error message appears
 - Close progress dialog on download start
 
-
 Version 2.0.8
 - Improve progress dialog
 
