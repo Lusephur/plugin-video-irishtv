@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
-from time import strftime,strptime
+from time import strftime, strptime
 import time, random
 import simplejson
 import httplib, urllib
@@ -8,8 +8,8 @@ import pyamf
 from pyamf import remoting
 
 from datetime import timedelta
-from datetime import date
-from datetime import datetime
+import datetime
+
 import sys
 from urlparse import urljoin
 
@@ -44,6 +44,8 @@ c_brightcove = u"http://c.brightcove.com"
 
 # Default values only used if we can't get the info from the net, e.g. only used if we can't get the info from the net
 defaultRTMPUrl = u"rtmpe://85.91.5.163:1935/rtplive&" 
+
+TIME_FORMAT = u"%Y-%m-%dT%H:%M:%S"
 
 # RTMP stub 
 channelToStream = {
@@ -153,8 +155,8 @@ class AerTVProvider(BrightCoveProvider):
                 message = self.language(32350)
             
                 try:
-                    message = message + " " + anchor.text
-                    message = message.encode('utf8')
+                    message = message + u" " + anchor.text
+                    #message = message.encode('utf8')
                 except NameError:
                     pass
                       
@@ -167,15 +169,73 @@ class AerTVProvider(BrightCoveProvider):
         
         return True
 
+    def GetTimeCutOffs(self):
+        offset = int(self.addon.getSetting( u'AerTV_epg_offset' ))
+        startCutOff =  datetime.datetime.now() + timedelta(hours=offset)
+        startCutOff = startCutOff.replace(second=0,microsecond=0)
+
+        # round time
+        if startCutOff.minute > 29:
+            startRound = startCutOff.replace(minute=30)
+        else:
+            startRound = startCutOff.replace(minute=0)
+            
+        endCutOff = startRound + timedelta(hours=2)
+
+        return (startCutOff, endCutOff)
+
+    def GetEPGDetails(self, channelEntry, startCutOff, endCutOff):
+        detail = [channelEntry['channel']['logo']]
+        videoCount = 0
+        
+        for video in channelEntry['videos']:
+            try:
+                startTime = datetime.datetime.strptime(video['starttime'], TIME_FORMAT)
+                endTime = datetime.datetime.strptime(video['endtime'], TIME_FORMAT)
+                
+                if startTime >= startCutOff and startTime < endCutOff:
+                    videoCount = videoCount + 1
+    
+                    if endTime > endCutOff:
+                        # Add "Now ... Ends at ..." if count is 0, or "Next..."
+                        detail.append(video) 
+                        break
+                    else:
+                        # Add Now .../Next ... depending on count
+                        detail.append(video) 
+    
+                elif startTime < startCutOff and endTime > startCutOff:
+                    videoCount = videoCount + 1
+    
+                    # Add Now .../Next ... depending on count
+                    detail.append(video)
+    
+                if (videoCount > 1):
+                    break
+            except (Exception) as exception:
+                if not isinstance(exception, LoggingException):
+                    exception = LoggingException.fromException(exception)
+    
+                self.log("video: %s" % repr(video))
+                
+                # Error processing EPG entry
+                exception.addLogMessage(self.language(20690))
+                exception.printLogMessages(severity = xbmc.LOGWARNING)
+
+        return detail
+    
     #TODO Consider breaking the epgJSON processing into a separate class
     def ParseEPGData(self, epgJSON):
+        (startCutOff, endCutOff) = self.GetTimeCutOffs()
         channelDetails = {}
     
         # Using slug as the identifier for each channel, create a dictionary that allows details of each channel to be looked up by slug.
         for channelEntry in epgJSON['data']:
             slug = channelEntry['channel']['slug']
-            detail = [channelEntry['channel']['logo']]
             
+            detail = self.GetEPGDetails(channelEntry, startCutOff, endCutOff)
+                 
+            """
             # Now
             if len(channelEntry['videos']) > 0:
                 detail.append(channelEntry['videos'][0])
@@ -184,15 +244,19 @@ class AerTVProvider(BrightCoveProvider):
                 if len(channelEntry['videos']) > 1:
                     detail.append(channelEntry['videos'][1])
 
+            """
             channelDetails[slug] = detail
 
         return channelDetails
 
     def ParseEPGDataForOneChannel(self, slug, epgJSON):
+        (startCutOff, endCutOff) = self.GetTimeCutOffs()
+
         for channelEntry in epgJSON['data']:
             if slug == channelEntry['channel']['slug']:
-                detail = [channelEntry['channel']['logo']]
+                detail = self.GetEPGDetails(channelEntry, startCutOff, endCutOff)
                 
+                """
                 # Now
                 if len(channelEntry['videos']) > 0:
                     detail.append(channelEntry['videos'][0])
@@ -200,7 +264,7 @@ class AerTVProvider(BrightCoveProvider):
                     # Next
                     if len(channelEntry['videos']) > 1:
                         detail.append(channelEntry['videos'][1])
-                        
+                """
                 return detail
     
         return None
@@ -208,15 +272,19 @@ class AerTVProvider(BrightCoveProvider):
     def GetListItemData(self, detail):
         description = ''
         if len(detail) == 1:
-            label = 'Off Air'
+            label = 'Unknown or Off Air'
             self.log(repr(detail))
         else:
             description = detail[1]['description']
             label = detail[1]['name']
             if len(detail) > 2:
                 # E.g. "Nuacht [18:00 Six One]"
-                startTime = strptime(detail[2]['starttime'], u"%Y-%m-%dT%H:%M:%S")
+                startTime = strptime(detail[2]['starttime'], TIME_FORMAT)
                 label = "   " + label + "   [  " + strftime("%H:%M", startTime) + "  " + detail[2]['name']  + "  ]"
+            else:
+                # E.g. "Nuacht [  Ends at 18:00  ]"
+                endTime = strptime(detail[1]['endtime'], TIME_FORMAT)
+                label = "   " + label + "   [  Ends at " + strftime("%H:%M", endTime) + "  ]"
         
         return label, description, detail[0]
 

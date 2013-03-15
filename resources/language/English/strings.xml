@@ -24,6 +24,8 @@
   <string id="20650">Error getting live schedule</string>
   <string id="20660">Now: Unknown, Next: </string>
   <string id="20670">[AerTV] Stream Type</string>
+  <string id="20680">[AerTV] Hours to add/subtract from local time to get Irish time</string>
+  <string id="20690">Error processing EPG entry</string>
   <string id="25000">Test failed</string>
   <string id="25010">Test passed</string>
   <string id="25020">Test inconclusive</string>
@@ -123,5 +125,4 @@
   <string id="32770">Getting episode web page</string>
   <string id="32780">Getting playpath data</string>
   <string id="32790">Getting player functions</string>
-  
 </strings>
