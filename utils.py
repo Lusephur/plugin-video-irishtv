@@ -140,13 +140,14 @@ def drepr(x, sort = True, indent = 0):
     return r
 
 def normalize(text):
-    try:
-        text = text.decode('utf8')
-    except:
+    if isinstance(text, str):
         try:
-            text = text.decode('latin1')
+            text = text.decode('utf8')
         except:
-            text = text.decode('utf8', 'ignore')
+            try:
+                text = text.decode('latin1')
+            except:
+                text = text.decode('utf8', 'ignore')
             
     return unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore')
 
