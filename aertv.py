@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
 import re
+import sys
 from time import strftime, strptime
 import time, random
 import simplejson
-import httplib, urllib
-import pyamf
-from pyamf import remoting
 
-from datetime import timedelta
-import datetime
+from datetime import datetime, timedelta
 
-import sys
 from urlparse import urljoin
 
 if hasattr(sys.modules["__main__"], "xbmc"):
@@ -171,7 +167,7 @@ class AerTVProvider(BrightCoveProvider):
 
     def GetTimeCutOffs(self):
         offset = int(self.addon.getSetting( u'AerTV_epg_offset' ))
-        startCutOff =  datetime.datetime.now() + timedelta(hours=offset)
+        startCutOff =  datetime.now() + timedelta(hours=offset)
         startCutOff = startCutOff.replace(second=0,microsecond=0)
 
         # round time
@@ -187,29 +183,47 @@ class AerTVProvider(BrightCoveProvider):
     def GetEPGDetails(self, channelEntry, startCutOff, endCutOff):
         detail = [channelEntry['channel']['logo']]
         videoCount = 0
-        
+
+        self.log("startCutOff: %s, endCutOff: %s" % (repr(startCutOff), repr(endCutOff)), xbmc.LOGDEBUG)
         for video in channelEntry['videos']:
             try:
-                startTime = datetime.datetime.strptime(video['starttime'], TIME_FORMAT)
-                endTime = datetime.datetime.strptime(video['endtime'], TIME_FORMAT)
+                self.log("repr(datetime): " + repr(datetime))
+                self.log("video: " + utils.drepr(video))
+                self.log("video['starttime']: " + video['starttime'])
+
+                try:
+                    startTime = datetime.strptime(video['starttime'], TIME_FORMAT)
+                    endTime = datetime.strptime(video['endtime'], TIME_FORMAT)
+                except TypeError:
+                    startTime = datetime.fromtimestamp(time.mktime(time.strptime(video['starttime'], TIME_FORMAT)))
+                    endTime = datetime.fromtimestamp(time.mktime(time.strptime(video['endtime'], TIME_FORMAT)))
+                    
+#                    self.log("video['starttime']: %s, startTime: %s" % (video['starttime'], repr(startTime)))
+#                    self.log("video['endtime']: %s, endTime: %s" % (video['endtime'], repr(endTime)))
                 
                 if startTime >= startCutOff and startTime < endCutOff:
+                    self.log("startTime >= startCutOff and startTime < endCutOff", xbmc.LOGDEBUG)
                     videoCount = videoCount + 1
     
                     if endTime > endCutOff:
+                        self.log("endTime > endCutOff", xbmc.LOGDEBUG)
                         # Add "Now ... Ends at ..." if count is 0, or "Next..."
                         detail.append(video) 
                         break
                     else:
+                        self.log("endTime <= endCutOff", xbmc.LOGDEBUG)
                         # Add Now .../Next ... depending on count
                         detail.append(video) 
     
                 elif startTime < startCutOff and endTime > startCutOff:
+                    self.log("startTime < startCutOff and endTime > startCutOff", xbmc.LOGDEBUG)
                     videoCount = videoCount + 1
     
                     # Add Now .../Next ... depending on count
                     detail.append(video)
-    
+                else:
+                    self.log("Ignoring video: " + video['name'])
+                    
                 if (videoCount > 1):
                     break
             except (Exception) as exception:
@@ -252,8 +266,12 @@ class AerTVProvider(BrightCoveProvider):
     def ParseEPGDataForOneChannel(self, slug, epgJSON):
         (startCutOff, endCutOff) = self.GetTimeCutOffs()
 
+        self.log("\n\nepgJSON: %s\n\n" % utils.drepr(epgJSON), xbmc.LOGDEBUG)
+
         for channelEntry in epgJSON['data']:
             if slug == channelEntry['channel']['slug']:
+                self.log("\n\nchannelEntry: %s\n\n" % utils.drepr(channelEntry), xbmc.LOGDEBUG)
+
                 detail = self.GetEPGDetails(channelEntry, startCutOff, endCutOff)
                 
                 """
@@ -441,43 +459,6 @@ class AerTVProvider(BrightCoveProvider):
     def GetAmfConst(self):
         return 'a7ef6ffbfba938b174f5044af3343163a0877c48'
     
-    """
-    #TODO Considering breaking out these methods into a separate class
-    def get_episode_info(self, key, contentRefId, url, playerId):
-       envelope = self.BuildAmfRequest(key, contentRefId, url, playerId, self.GetAmfConst())
-    
-       self.log("POST c.brightcove.com/services/messagebroker/amf?playerKey=%s" % key, xbmc.LOGDEBUG)
-       self.log("Log key: %s" % repr(key), xbmc.LOGDEBUG)    
-
-       hub_data = remoting.encode(envelope).read()
-
-       amfData = self.httpManager.PostBinary(c_brightcove.encode("utf8"), "/services/messagebroker/amf?playerKey=" + key.encode('ascii'), hub_data, {'content-type': 'application/x-amf'})
-       response = remoting.decode(amfData).bodies[0][1].body
-
-       return response
-    
-    def build_amf_request(self, key, contentRefId, url, exp_id):
-       self.log('ContentRefId:' + str(contentRefId) + ', ExperienceId:' + str(exp_id) + ', URL:' + url)  
-
-       const = 'a7ef6ffbfba938b174f5044af3343163a0877c48'
-       pyamf.register_class(ViewerExperienceRequest, 'com.brightcove.experience.ViewerExperienceRequest')
-       pyamf.register_class(ContentOverride, 'com.brightcove.experience.ContentOverride')
-       content_override = ContentOverride(contentRefId)
-       viewer_exp_req = ViewerExperienceRequest(url, [content_override], int(exp_id), key)
-    
-       env = remoting.Envelope(amfVersion=3)
-       env.bodies.append(
-          (
-             "/1",
-             remoting.Request(
-                target="com.brightcove.experience.ExperienceRuntimeFacade.getDataForExperience",
-                body=[const, viewer_exp_req],
-                envelope=env
-             )
-          )
-       )
-       return env
-       """
 
     def GetQSData(self, videoPlayer, playerId, publisherId, playerKey):
         #TODO Use a default url, in case of exception and log response
