@@ -579,7 +579,7 @@ class TV3Provider(Provider):
             swfUrl = self.GetSWFPlayer(flowPlayerScript)
             playPath = utils.findString( u"TV3Provider::InitialiseRTMP()", "playlist:\s+\[\s+{\s+url:\s+\"(.+?)\"", flowPlayerScript)
         
-            rtmpVar = rtmp.RTMP(rtmp = rtmpStr, app = app, swfUrl = swfUrl, playPath = playPath)
+            rtmpVar = rtmp.RTMP(rtmp = rtmpStr, app = app, swfVfy = swfUrl, playPath = playPath)
             self.AddSocksToRTMP(rtmpVar)
 
             return rtmpVar

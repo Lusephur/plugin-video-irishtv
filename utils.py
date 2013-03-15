@@ -3,6 +3,7 @@ import re
 import urllib2
 import sys
 import inspect
+import unicodedata
 
 from time import mktime,strptime
 
@@ -137,3 +138,15 @@ def drepr(x, sort = True, indent = 0):
     else:
         r = repr(x)
     return r
+
+def normalize(text):
+    try:
+        text = text.decode('utf8')
+    except:
+        try:
+            text = text.decode('latin1')
+        except:
+            text = text.decode('utf8', 'ignore')
+            
+    return unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore')
+

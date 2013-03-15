@@ -325,6 +325,11 @@ class Provider(object):
                 exception.addLogMessage(self.language(30970))
                 exception.process('', '', severity = xbmc.LOGWARNING)
 
+        if self.dialog.iscanceled():
+            return False
+
+        self.dialog.close()
+
         # Starting downloads 
         self.log (u"Starting download: " + rtmpdumpPath + u" " + parameters)
     
@@ -341,6 +346,8 @@ class Provider(object):
         (stdout, stderr) = p.communicate()
         self.log (u"rtmpdump has stopped executing", xbmc.LOGDEBUG)
     
+        stderr = utils.normalize(stderr) 
+
         if u'Download complete' in stderr:
             # Download Finished!
             self.log (u'stdout: ' + str(stdout), xbmc.LOGDEBUG)
