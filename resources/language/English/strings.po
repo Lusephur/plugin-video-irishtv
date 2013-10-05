@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: XBMC-Addons\n"
 "Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
-"POT-Creation-Date: 2013-10-05 13:23+0000\n"
+"POT-Creation-Date: 2013-10-05 16:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE\n"
@@ -768,5 +768,15 @@ msgstr ""
 #empty string with id 33004
 
 msgctxt "#33005"
-msgid "Adding more parts"
+msgid "Adding more parts of this programme"
+msgstr ""
+
+msgctxt "#33006"
+msgid "%d more part%s been added to the Playlist"
+msgstr ""
+
+#empty string with id 33007
+
+msgctxt "#33008"
+msgid "Error getting episode details"
 msgstr ""
