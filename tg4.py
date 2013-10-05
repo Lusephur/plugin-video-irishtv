@@ -74,6 +74,8 @@ class TG4Provider(BrightCoveProvider):
 
     def __init__(self):
         super(TG4Provider, self).__init__()
+        self.icon = self.addon.getAddonInfo('icon')
+        self.addonName = addon.getAddonInfo('name')
 
     def GetProviderId(self):
         return u"TG4"
@@ -592,7 +594,105 @@ class TG4Provider(BrightCoveProvider):
             exception.process(self.language(32120) % ' ' , '', self.logLevel(xbmc.LOGERROR))
             return False
         
+    def AddSegments(self, playList):
+        self.log("", xbmc.LOGDEBUG)
+        self.amfResponse = None
+        if self.totalParts < 2:
+            return
+
+        msg = self.language(33005) # Adding more parts
+        xbmc.executebuiltin('XBMC.Notification(%s, %s, 5000, %s)' % (self.addonName, msg, self.icon))
+        partsMinus1 = self.totalParts - 1
+        parts = [None] * partsMinus1
+
+        partsFound = 0
+        getTotalCount = False
+        pageSize = 12
+        pageNumber = 0
+        maxPages = 10
+
         
+        self.log("Find related videos for refence Id %s" % self.referenceId, xbmc.LOGDEBUG)
+        while pageNumber < maxPages and partsFound < partsMinus1: 
+        
+            try:
+                self.log("Getting page %d of related videos" % pageNumber, xbmc.LOGDEBUG)
+                self.amfResponse = None
+                candidateId = None 
+                self.amfResponse = self.FindRelatedVideos(self.playerKey, self.playerId, self.publisherId, self.episodeId, pageSize, pageNumber, getTotalCount)
+
+                for mediaDTO in self.amfResponse[u'items']:
+                    candidateId = mediaDTO[u'referenceId']
+                    
+                    pattern = u"%s[-_](\d+)" % self.referenceId 
+                    match = re.search(pattern, candidateId, re.DOTALL)
+    
+                    self.log("Check candidate refence Id %s" % candidateId, xbmc.LOGDEBUG)
+                    if match is not None:
+                        partNumber = int(match.group(1))
+                        partsFound = partsFound + 1
+                        
+                        parts[partNumber - 2] = mediaDTO
+                        
+                        self.log("Matching refence id, part %d" % partNumber, xbmc.LOGDEBUG)
+                        if partsFound > (partsMinus1 - 1):
+                            break
+                        
+            except (Exception) as exception:
+                if not isinstance(exception, LoggingException):
+                    exception = LoggingException.fromException(exception)
+                    
+                if self.amfResponse is not None:
+                    msg = "self.amfResponse:\n\n%s\n\n" % utils.drepr(self.amfResponse)
+                    exception.addLogMessage(msg)
+
+                if candidateId is not None:
+                    msg = "pageNumber: %d, candidateId: %s" % (pageNumber, candidateId)
+                    exception.addLogMessage(msg)
+
+                # Error processing FindRelatedVideos
+                exception.addLogMessage(self.language(33000))
+
+                # Error playing or downloading episode %s
+                exception.process('' , '', self.logLevel(xbmc.LOGDEBUG))
+                
+            pageNumber = pageNumber + 1
+            
+        try:
+            if len(parts) < partsMinus1:
+                if partsMinus1 == 1:
+                    msg = self.language(33001) # "Part 2 of 2 is missing"
+                else: 
+                    missing = partsMinus1 - parts
+                    plural = ""
+                    if missing > 2:
+                        plural = "(s)"
+                        
+                    msg = self.language(33002) % (missing, plural) # "%d part%s missing"
+                    
+                exception = LoggingException(msg) 
+                exception.process(self.language(33003) , '', self.logLevel(xbmc.LOGWARNING))
+                 
+            for mediaDTO in parts:
+                (infoLabels, logo, rtmpVar, defaultFilename) = self.GetPlayListDetailsFromAMF(mediaDTO, appNormal, self.episodeId, live = False)
+                        
+                listItem = self.CreateListItem(infoLabels, logo) 
+                url = rtmpVar.getPlayUrl()
+                
+                if self.GetPlayer().isPlaying():
+                    playList.add(url, listItem)
+            
+
+        except (Exception) as exception:
+            if not isinstance(exception, LoggingException):
+                exception = LoggingException.fromException(exception)
+
+            if self.amfResponse is not None:
+                msg = "self.amfResponse:\n\n%s\n\n" % utils.drepr(self.amfResponse)
+                exception.addLogMessage(msg)
+
+            exception.process('' , '', self.logLevel(xbmc.LOGERROR))
+
     def ShowEpisode(self, episodeId, series, appFormat, live = False):
         self.log(u"episodeId: %s, series: %s, live: %s" % (episodeId, series, live), xbmc.LOGDEBUG)
 
@@ -612,38 +712,24 @@ class TG4Provider(BrightCoveProvider):
                 return False
             # "Getting SWF url"
             self.dialog.update(15, self.language(32760))
-            swfUrl = self.GetSwfUrl(qsData)
+            self.swfUrl = self.GetSwfUrl(qsData)
 
-            playerId = qsData[u'playerId']
-            playerKey = qsData[u'playerKey']
+            self.playerId = qsData[u'playerId']
+            self.playerKey = qsData[u'playerKey']
             
             if self.dialog.iscanceled():
                 return False
             # "Getting stream url"
             self.dialog.update(30, self.language(32740))
-            rtmpUrl = self.GetStreamUrl(playerKey, playerUrl, playerId, contentId = episodeId)
+            rtmpUrl = self.GetStreamUrl(self.playerKey, playerUrl, self.playerId, contentId = episodeId)
             
-            publisherId = unicode(int(float(self.amfResponse[u'publisherId']))) 
-            
-            # ondemand?videoId=2160442511001&lineUpId=&pubId=1290862567001&playerId=1364138050001&affiliateId=
-            app = appFormat % (episodeId, publisherId, playerId)
-            playPathIndex = rtmpUrl.index(u'&') + 1
-            #playPathIndex = rtmpUrl.index(u'live/') + 5
-            playPath = rtmpUrl[playPathIndex:]
-            rtmpUrl = rtmpUrl[:playPathIndex - 1]
-            rtmpVar = rtmp.RTMP(rtmp = rtmpUrl, playPath = playPath, app = app, swfUrl = swfUrl, tcUrl = rtmpUrl, pageUrl = urlRoot, live = live)
-            self.AddSocksToRTMP(rtmpVar)
-            
+            self.publisherId = unicode(int(float(self.amfResponse[u'publisherId']))) 
+            self.episodeId = episodeId
+            self.totalParts = 0 
+
             mediaDTO = self.amfResponse[u'programmedContent'][u'videoPlayer'][u'mediaDTO']
-            # Set up info for "Now Playing" screen
-            infoLabels = {
-                          u'Title': mediaDTO[u'displayName'],
-                          u'Plot': mediaDTO[u'shortDescription'],
-                          u'PlotOutline': mediaDTO[u'shortDescription']
-                          }
-            
-            logo = mediaDTO[u'videoStillURL']
-            defaultFilename = infoLabels[u'Title']
+
+            (infoLabels, logo, rtmpVar, defaultFilename) = self.GetPlayListDetailsFromAMF(mediaDTO, appFormat, episodeId, live)
 
             if live:
                 return self.Play(infoLabels, logo, rtmpVar)
@@ -663,10 +749,62 @@ class TG4Provider(BrightCoveProvider):
             # Error playing or downloading episode %s
             exception.process(self.language(32120) % ' ' , '', self.logLevel(xbmc.LOGERROR))
             return False
+
+    def GetPlayListDetailsFromAMF(self, mediaDTO, appFormat, episodeId, live):
+            # ondemand?videoId=2160442511001&lineUpId=&pubId=1290862567001&playerId=1364138050001&affiliateId=
+            app = appFormat % (episodeId, self.publisherId, self.playerId)
             
-    def GetAmfConst(self):
-        self.log("", xbmc.LOGDEBUG)
-        return u'2f5c3d72a1593b22fcedbca64cb6ff15cd6e97fe'
+            rtmpUrl = mediaDTO['FLVFullLengthURL']
+            playPathIndex = rtmpUrl.index(u'&') + 1
+            playPath = rtmpUrl[playPathIndex:]
+            rtmpUrl = rtmpUrl[:playPathIndex - 1]
+            rtmpVar = rtmp.RTMP(rtmp = rtmpUrl, playPath = playPath, app = app, swfUrl = self.swfUrl, tcUrl = rtmpUrl, pageUrl = urlRoot, live = live)
+            self.AddSocksToRTMP(rtmpVar)
+            
+            #partNumberTitle = ""
+            #partNumberFile = ""
+
+            if self.totalParts == 0:
+                self.totalParts = int(mediaDTO[u'customFields'][u'totalparts'])
+
+            if self.totalParts != 1:
+                partNumber = int(mediaDTO[u'customFields'][u'part'])
+                
+                if partNumber == 1:
+                    fullReferenceId = mediaDTO[u'referenceId']
+                    pattern = "(.+)[-_]1"
+                    match = re.search(pattern, fullReferenceId, re.DOTALL)
+                    self.referenceId = match.group(1)
+
+                #partNumberTitle = " (%d/%d)" % (partNumber, self.totalParts)
+
+
+            # Set up info for "Now Playing" screen
+            infoLabels = {
+                          u'Title': mediaDTO[u'displayName'],
+                          u'Plot': mediaDTO[u'shortDescription'],
+                          u'PlotOutline': mediaDTO[u'shortDescription']
+                          }
+            
+            logo = mediaDTO[u'videoStillURL']
+            defaultFilename = mediaDTO[u'displayName']
+            
+            return (infoLabels, logo, rtmpVar, defaultFilename)
+    #def GetPartNumber(self, mediaDTO):
+        #referenceId = mediaDTO[u'referenceid']
+
+        #partNumber = 
+        
+
+    def GetAmfClassHash(self, className):
+        self.log("className: " + className, xbmc.LOGDEBUG)
+
+	if className == "com.brightcove.experience.ExperienceRuntimeFacade":
+	        return u'2f5c3d72a1593b22fcedbca64cb6ff15cd6e97fe'
+
+	if className == "com.brightcove.player.runtime.PlayerSearchFacade":
+	        return u'c575e7f0658dcbf1ea459b097c80d052bdc7c375'
+
     
     def GetDefaultQSData(self, vidId, bitlyUrl):
         self.log("", xbmc.LOGDEBUG)

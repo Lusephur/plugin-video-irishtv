@@ -259,7 +259,11 @@ class Provider(object):
     def GetPlayer(self):
         return xbmc.Player(xbmc.PLAYER_CORE_AUTO) 
     
-    def Play(self, infoLabels, thumbnail, rtmpVar = None, url = None, subtitles = None):
+    # If the programme is in multiple parts, then second, etc. parts to the playList
+    def AddSegments(self, playList):
+        return
+
+    def CreateListItem(self, infoLabels, thumbnail):
         if infoLabels is None:
             self.log (u'Play titleId: Unknown Title')
             listItem = xbmcgui.ListItem(u'Unknown Title')
@@ -270,6 +274,11 @@ class Provider(object):
 
         if thumbnail is not None:
             listItem.setThumbnailImage(thumbnail)
+        
+        return listItem
+
+    def Play(self, infoLabels, thumbnail, rtmpVar = None, url = None, subtitles = None):
+        listItem = self.CreateListItem(infoLabels, thumbnail)
     
         playList=xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
         playList.clear()
@@ -302,6 +311,8 @@ class Provider(object):
         # Keep script alive so that player can process the onPlayBackStart event
         if player.isPlaying():
             xbmc.sleep(5000)
+
+        self.AddSegments(playList)
 
     def Download(self, rtmpVar, defaultFilename, subtitles = None):
         (rtmpdumpPath, downloadFolder, filename) = self.GetDownloadSettings(defaultFilename)
