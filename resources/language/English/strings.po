@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: XBMC-Addons\n"
 "Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
-"POT-Creation-Date: 2013-04-16 15:44+0000\n"
+"POT-Creation-Date: 2013-10-05 13:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE\n"
@@ -745,4 +745,28 @@ msgstr ""
 
 msgctxt "#32790"
 msgid "Getting player functions"
+msgstr ""
+
+#empty strings from id 32791 to 32999
+
+msgctxt "#33000"
+msgid "Error processing FindRelatedVideos"
+msgstr ""
+
+msgctxt "#33001"
+msgid "Part 2 of 2 is missing"
+msgstr ""
+
+msgctxt "#33002"
+msgid "%d part%s missing"
+msgstr ""
+
+msgctxt "#33003"
+msgid "Incomplete episode"
+msgstr ""
+
+#empty string with id 33004
+
+msgctxt "#33005"
+msgid "Adding more parts"
 msgstr ""
