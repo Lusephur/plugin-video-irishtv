@@ -125,4 +125,10 @@
   <string id="32770">Getting episode web page</string>
   <string id="32780">Getting playpath data</string>
   <string id="32790">Getting player functions</string>
+  <string id="33000">Error processing FindRelatedVideos</string>
+  <string id="33001">Part 2 of 2 is missing</string>
+  <string id="33002">%d part%s missing</string>
+  <string id="33003">Incomplete episode</string>
+  <string id="33004">Getting page %d of related videos</string>
+  <string id="33005">Adding more parts</string>
 </strings>
