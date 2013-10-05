@@ -479,43 +479,56 @@ class RTEProvider(Provider):
     
     def AddEpisodeToList(self, listItems, episode):
         self.log(u"", xbmc.LOGDEBUG)
-        htmlparser = HTMLParser.HTMLParser()
-
-        href = episode[u'href']
-        title = htmlparser.unescape( episode.find(u'span', u"thumbnail-title").contents[0] )
-        date = episode.find(u'span', u"thumbnail-date").contents[0]                    
-        #description = ...
-        thumbnail = episode.find('img', 'thumbnail')['src']
-    
-        newLabel = title + u", " + date
-                                        
-        newListItem = xbmcgui.ListItem( label=newLabel )
-        newListItem.setThumbnailImage(thumbnail)
         
-        if self.addon.getSetting( u'RTE_descriptions' ) == 'true':
-            infoLabels = self.GetEpisodeInfo(self.GetEpisodeIdFromURL(href))
-        else:
-            infoLabels = {u'Title': title, u'Plot': title}
+        try:
+            htmlparser = HTMLParser.HTMLParser()
+    
+            href = episode[u'href']
+            title = htmlparser.unescape( episode.find(u'span', u"thumbnail-title").contents[0] )
+            date = episode.find(u'span', u"thumbnail-date").contents[0]                    
+            #description = ...
+            thumbnail = episode.find('img', 'thumbnail')['src']
+        
+            newLabel = title + u", " + date
+                                            
+            newListItem = xbmcgui.ListItem( label=newLabel )
+            newListItem.setThumbnailImage(thumbnail)
             
-        newListItem.setInfo(u'video', infoLabels)
-    
-        self.log(u"label == " + newLabel, xbmc.LOGDEBUG)
-    
-        if u"episodes available" in date:
-            url = self.GetURLStart()  + u'&listavailable=1' + u'&page=' + mycgi.URLEscape(href)
-            folder = True
-        else:
-            folder = False
-            match = re.search( u"/player/[^/]+/show/([0-9]+)/", href )
-            if match is None:
-                self.log(u"No show id found in page href: '%s'" % href, xbmc.LOGWARNING)
-                return
+            if self.addon.getSetting( u'RTE_descriptions' ) == 'true':
+                infoLabels = self.GetEpisodeInfo(self.GetEpisodeIdFromURL(href))
+            else:
+                infoLabels = {u'Title': title, u'Plot': title}
+                
+            newListItem.setInfo(u'video', infoLabels)
         
-            episodeId = match.group(1)
-    
-            url = self.GetURLStart() + u'&episodeId=' +  mycgi.URLEscape(episodeId)
-    
-        listItems.append( (url, newListItem, folder) )
+            self.log(u"label == " + newLabel, xbmc.LOGDEBUG)
+        
+            if u"episodes available" in date:
+                url = self.GetURLStart()  + u'&listavailable=1' + u'&page=' + mycgi.URLEscape(href)
+                folder = True
+            else:
+                folder = False
+                match = re.search( u"/player/[^/]+/show/([0-9]+)/", href )
+                if match is None:
+                    self.log(u"No show id found in page href: '%s'" % href, xbmc.LOGWARNING)
+                    return
+            
+                episodeId = match.group(1)
+        
+                url = self.GetURLStart() + u'&episodeId=' +  mycgi.URLEscape(episodeId)
+        
+            listItems.append( (url, newListItem, folder) )
+        except (Exception) as exception:
+            if not isinstance(exception, LoggingException):
+                exception = LoggingException.fromException(exception)
+
+            msg = "episode:\n\n%s\n\n" % utils.drepr(episode)
+            exception.addLogMessage(msg)
+
+            # Error getting episode details
+            exception.addLogMessage(self.language(33008))
+            exception.process(self.logLevel(xbmc.LOGWARNING))
+                   
     
     
     #==============================================================================
@@ -530,7 +543,7 @@ class RTEProvider(Provider):
 
             for episode in episodes:
                 self.AddEpisodeToList(listItems, episode)
-    
+
             xbmcplugin.addDirectoryItems( handle=self.pluginhandle, items=listItems )
             xbmcplugin.endOfDirectory( handle=self.pluginhandle, succeeded=True )
     
