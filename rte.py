@@ -192,6 +192,19 @@ class RTEProvider(Provider):
             return self.ListShows(html)
         
         if listAvailable <> u'':
+            
+            soup = BeautifulSoup(html)
+            availableLink = soup.find('a', 'button-more-episodes')
+            
+            if availableLink is None:
+                pattern= "/player/ie/show/(.+)/"
+                match=re.search(pattern, html, re.DOTALL)
+                
+                if match is not None:
+                    episodeId = match.group(1) 
+                    return self.PlayVideoWithDialog(self.PlayEpisode, (episodeId, None))
+
+                
             return self.ListAvailable(html)
 
         return self.ListSubMenu(html)
