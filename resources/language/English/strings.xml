@@ -129,5 +129,7 @@
   <string id="33001">Part 2 of 2 is missing</string>
   <string id="33002">%d part%s missing</string>
   <string id="33003">Incomplete episode</string>
-  <string id="33005">Adding more parts</string>
+  <string id="33005">Adding more parts of this programme</string>
+  <string id="33006">%d more part%s been added to the Playlist</string>
+  <string id="33008">Error getting episode details</string>
 </strings>
