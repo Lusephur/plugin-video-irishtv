@@ -74,8 +74,6 @@ class TG4Provider(BrightCoveProvider):
 
     def __init__(self):
         super(TG4Provider, self).__init__()
-        self.icon = self.addon.getAddonInfo('icon')
-        self.addonName = addon.getAddonInfo('name')
 
     def GetProviderId(self):
         return u"TG4"
@@ -241,7 +239,7 @@ class TG4Provider(BrightCoveProvider):
             categories = soup.portfolio.findAll(u'category')
             
             for category in categories:
-                if category[u'id'] == u'live' or category[u'id'] == u'search':
+                if category[u'id'] == u'live' or category[u'id'] == u'search': #or category[u'id'] == u'news':
                     continue
                 
                 listItems.append( self.CreateCategoryItem(category) )
@@ -600,8 +598,10 @@ class TG4Provider(BrightCoveProvider):
         if self.totalParts < 2:
             return
 
+        title = self.addon.getAddonInfo('name')
+        icon = self.addon.getAddonInfo('icon')
         msg = self.language(33005) # Adding more parts
-        xbmc.executebuiltin('XBMC.Notification(%s, %s, 5000, %s)' % (self.addonName, msg, self.icon))
+        xbmc.executebuiltin('XBMC.Notification(%s, %s, 5000, %s)' % (title, msg, icon))
         partsMinus1 = self.totalParts - 1
         parts = [None] * partsMinus1
 
@@ -682,6 +682,13 @@ class TG4Provider(BrightCoveProvider):
                 if self.GetPlayer().isPlaying():
                     playList.add(url, listItem)
             
+            plural = " has"
+            if partsFound > 1:
+                plural = "s have"
+                
+            msg = self.language(33006) % (partsFound, plural) # %d more part%s have been added to the Playlist
+            xbmc.executebuiltin('XBMC.Notification(%s, %s, 5000, %s)' % (title, msg, icon))
+
 
         except (Exception) as exception:
             if not isinstance(exception, LoggingException):
