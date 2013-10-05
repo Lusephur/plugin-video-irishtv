@@ -48,7 +48,7 @@ TIME_FORMAT = u"%Y-%m-%dT%H:%M:%S"
 channelToStream = {
                 u'rte-one' : u'RTEONE_v500.stream',
                 u'rte-two' : u'RTETWO_v500.stream',
-                u'rte-two-hd' : u'RTETWOHD_v1500.stream',
+                #u'rte-two-hd' : u'RTETWOHD_v1500.stream',
                 u'tv3' : u'TV3_v500.stream',
                 u'tg4' : u'TG4_v500.stream',
                 u'3e' : u'3E_v500.stream',
@@ -139,8 +139,13 @@ class AerTVProvider(BrightCoveProvider):
         anchors=soup.findAll('a')
         for anchor in anchors:
             try:
-                playerIndex = anchor['href'].index('#') + 1
-                slug = anchor['href'][playerIndex:]
+	        self.log(u"", xbmc.LOGDEBUG)
+		
+                slugindex = playerIndex = anchor['href'].find('#')
+                if slugindex == -1:
+                    continue
+
+                slug = anchor['href'][playerIndex + 1:]
 
                 if slug in channelToStream.keys():
                     (label, description, logo) = self.GetListItemDataForSlug(channelDetails, slug)
