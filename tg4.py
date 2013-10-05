@@ -239,7 +239,7 @@ class TG4Provider(BrightCoveProvider):
             categories = soup.portfolio.findAll(u'category')
             
             for category in categories:
-                if category[u'id'] == u'live' or category[u'id'] == u'search': #or category[u'id'] == u'news':
+                if category[u'id'] == u'live' or category[u'id'] == u'search' or category[u'id'] == u'news':
                     continue
                 
                 listItems.append( self.CreateCategoryItem(category) )
