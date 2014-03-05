@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: XBMC-Addons\n"
 "Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
-"POT-Creation-Date: 2014-03-05 11:23+0000\n"
+"POT-Creation-Date: 2014-03-05 11:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE\n"
@@ -515,13 +515,7 @@ msgctxt "#32120"
 msgid "Error playing or downloading episode %s"
 msgstr ""
 
-#empty strings from id 32121 to 32159
-
-msgctxt "#32160"
-msgid "Unable to determine swfPlayer URL. Using default %s"
-msgstr ""
-
-#empty strings from id 32161 to 32169
+#empty strings from id 32121 to 32169
 
 msgctxt "#32170"
 msgid "Error performing query %s"

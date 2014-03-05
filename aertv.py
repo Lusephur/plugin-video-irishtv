@@ -526,7 +526,6 @@ class AerTVProvider(BrightCoveProvider):
 
         return detail
     
-    #TODO Reconsider EPG code in light of no EPG option, remove redundancies
     #TODO Consider breaking the epgJSON processing into a separate class
     def ParseEPGData(self, epgJSON):
         (startCutOff, endCutOff) = self.GetTimeCutOffs()
