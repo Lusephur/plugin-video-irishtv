@@ -483,7 +483,7 @@ class HttpManager:
                 else:
                     self.log (u"Get page from cache", xbmc.LOGDEBUG)
                     # Get it from cache
-                    data = self._Cache_GetData( url, values, expiryString)
+                    data = self._Cache_GetData( url, values, expiryString, logUrl)
                     
                     if (data <> 0):
                         return data
