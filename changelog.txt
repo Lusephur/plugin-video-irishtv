@@ -1,3 +1,8 @@
+Version 1.0.12 [05 Mar 2014]
+- RTE: Fix not working, change of swfurl
+- AerTV: Fix not working over SmartDNS
+- AerTV: Added "Show EPG" option. May speed up channel listing when turned off, On by default.
+
 Version 1.0.11 (05 Oct 2013)
 - RTE: Fix bug caused by website lying about the number of episodes available for a programme
 - RTE: Most Popular fails to load if a list show is no longer available
