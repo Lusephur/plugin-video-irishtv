@@ -86,7 +86,6 @@
   <string id="32090">Error listing submenu</string>
   <string id="32100">Error getting list of shows</string>
   <string id="32120">Error playing or downloading episode %s</string>
-  <string id="32160">Unable to determine swfPlayer URL. Using default %s</string>
   <string id="32170">Error performing query %s</string>
   <string id="32190">Error playing Live TV</string>
   <string id="32200">Error getting search url: Using default </string>
@@ -137,5 +136,4 @@
   <string id="33008">Error getting episode details</string>
   <string id="33100">AerTV login failed</string>
   <string id="33110">Status Message: %s</string>
-  
 </strings>
