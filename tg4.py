@@ -103,8 +103,8 @@ class TG4Provider(BrightCoveProvider):
 
             self.AddLiveMenuItem(listItems, u"Live", u"Beo", u'&live=1')
 
-            xbmcplugin.addDirectoryItems( handle=self.pluginhandle, items=listItems )
-            xbmcplugin.endOfDirectory( handle=self.pluginhandle, succeeded=True )
+            xbmcplugin.addDirectoryItems( handle=self.pluginHandle, items=listItems )
+            xbmcplugin.endOfDirectory( handle=self.pluginHandle, succeeded=True )
             
             return True
         
@@ -245,8 +245,8 @@ class TG4Provider(BrightCoveProvider):
                 listItems.append( self.CreateCategoryItem(category) )
                 # Replace "Results" with "Search"
 
-            xbmcplugin.addDirectoryItems( handle=self.pluginhandle, items=listItems )
-            xbmcplugin.endOfDirectory( handle=self.pluginhandle, succeeded=True )
+            xbmcplugin.addDirectoryItems( handle=self.pluginHandle, items=listItems )
+            xbmcplugin.endOfDirectory( handle=self.pluginHandle, succeeded=True )
             
             return True
         
@@ -296,6 +296,9 @@ class TG4Provider(BrightCoveProvider):
             newLabel = newLabel + "  [" + schedule + "]"
             newListItem = xbmcgui.ListItem( label=newLabel )
             newListItem.setThumbnailImage(thumbnailPath)
+            newListItem.setProperty("Video", "true")
+            newListItem.setProperty('IsPlayable', 'true')
+
             url = self.GetURLStart() + urlFragment
                 
             listItems.append( (url, newListItem, False) )
@@ -385,8 +388,8 @@ class TG4Provider(BrightCoveProvider):
     
                 currentDate = currentDate - timedelta(1) 
         
-            xbmcplugin.addDirectoryItems( handle=self.pluginhandle, items=listItems )
-            xbmcplugin.endOfDirectory( handle=self.pluginhandle, succeeded=True )
+            xbmcplugin.addDirectoryItems( handle=self.pluginHandle, items=listItems )
+            xbmcplugin.endOfDirectory( handle=self.pluginHandle, succeeded=True )
             
             return True
         except (Exception) as exception:
@@ -524,6 +527,8 @@ class TG4Provider(BrightCoveProvider):
                     newListItem.setThumbnailImage(thumbnail)
 
                     newListItem.setInfo(u'video', infoLabels)
+                    newListItem.setProperty("Video", "true")
+                    newListItem.setProperty('IsPlayable', 'true')
                     
                     url = self.GetURLStart() + u'&episodeId=' + mycgi.URLEscape(id) + u'&series=' + mycgi.URLEscape(item['customFields']['seriestitle'])
      
@@ -544,8 +549,8 @@ class TG4Provider(BrightCoveProvider):
                     exception.addLogMessage((self.language(32300) % programme))
                     exception.process(self.language(32300) % programme, "", xbmc.LOGWARNING)
 
-            xbmcplugin.addDirectoryItems( handle=self.pluginhandle, items=listItems )
-            xbmcplugin.endOfDirectory( handle=self.pluginhandle, succeeded=True )
+            xbmcplugin.addDirectoryItems( handle=self.pluginHandle, items=listItems )
+            xbmcplugin.endOfDirectory( handle=self.pluginHandle, succeeded=True )
             
             return True
         except (Exception) as exception:

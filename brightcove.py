@@ -179,7 +179,7 @@ class BrightCoveProvider(Provider):
        className = method[0:method.rfind('.')]
        hashValue = self.GetAmfClassHash(className)
 
-       self.log('hashValue:' + hashValue)
+       self.log('hashValue:' + str(hashValue))
  
        pyamf.register_class(ViewerExperienceRequest, 'com.brightcove.experience.ViewerExperienceRequest')
        pyamf.register_class(ContentOverride, 'com.brightcove.experience.ContentOverride')

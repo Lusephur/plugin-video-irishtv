@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: XBMC-Addons\n"
 "Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
-"POT-Creation-Date: 2013-10-05 16:31+0000\n"
+"POT-Creation-Date: 2014-03-05 11:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE\n"
@@ -69,7 +69,25 @@ msgctxt "#20363"
 msgid "Segment 2 (e.g. X.7.X.X)"
 msgstr ""
 
-#empty strings from id 20364 to 20379
+#empty string with id 20364
+
+msgctxt "#20365"
+msgid "Show EPG. Turn off to speed up channel listing."
+msgstr ""
+
+#empty strings from id 20366 to 20369
+
+msgctxt "#20370"
+msgid "Email"
+msgstr ""
+
+#empty strings from id 20371 to 20374
+
+msgctxt "#20375"
+msgid "Password"
+msgstr ""
+
+#empty strings from id 20376 to 20379
 
 msgctxt "#20380"
 msgid "[RTE] Get programme descriptions (slows down episode listings)"
@@ -146,7 +164,7 @@ msgstr ""
 #empty strings from id 20671 to 20679
 
 msgctxt "#20680"
-msgid "[AerTV] Hours to add/subtract from local time to get Irish time"
+msgid "Hours to add/subtract from local time to get Irish time"
 msgstr ""
 
 #empty strings from id 20681 to 20689
@@ -779,4 +797,16 @@ msgstr ""
 
 msgctxt "#33008"
 msgid "Error getting episode details"
+msgstr ""
+
+#empty strings from id 33009 to 33099
+
+msgctxt "#33100"
+msgid "AerTV login failed"
+msgstr ""
+
+#empty strings from id 33101 to 33109
+
+msgctxt "#33110"
+msgid "Status Message: %s"
 msgstr ""
