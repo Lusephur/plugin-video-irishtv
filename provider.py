@@ -308,11 +308,12 @@ class Provider(object):
         player = self.GetPlayer()
         player.play(playList)
 
-        xbmcplugin.setResolvedUrl(handle=self.pluginHandle, succeeded=True, listitem=listItem)
+        #xbmcplugin.setResolvedUrl(handle=self.pluginHandle, succeeded=True, listitem=listItem)
         self.dialog.close()
         
         if subtitles is not None:
             try:
+                self.log (u"Subtitle processing", xbmc.LOGDEBUG)
                 subtitleFile = subtitles.GetSubtitleFile()
                 player.setSubtitles(subtitleFile)
             except (Exception) as exception:
@@ -325,9 +326,12 @@ class Provider(object):
 
         # Keep script alive so that player can process the onPlayBackStart event
         if player.isPlaying():
+            self.log (u"player.isPlaying()", xbmc.LOGDEBUG)
             xbmc.sleep(5000)
 
+        self.log (u"AddSegments(playList)", xbmc.LOGDEBUG)
         self.AddSegments(playList)
+        self.log (u"Post AddSegments(playList)", xbmc.LOGDEBUG)
 
     def Download(self, rtmpVar, defaultFilename, subtitles = None):
         (rtmpdumpPath, downloadFolder, filename) = self.GetDownloadSettings(defaultFilename)
