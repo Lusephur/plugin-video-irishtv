@@ -374,7 +374,7 @@ class AerTVProvider(BrightCoveProvider):
         
                     newListItem.setInfo(u'video', infoLabels)
                     newListItem.setProperty(u"Video", u"true")
-                    newListItem.setProperty(u'IsPlayable', u'true')
+                    #newListItem.setProperty(u'IsPlayable', u'true')
 
                     listItems.append( (channelUrl, newListItem, False) )
             except (Exception) as exception:
@@ -430,7 +430,7 @@ class AerTVProvider(BrightCoveProvider):
         
                     newListItem.setInfo(u'video', infoLabels)
                     newListItem.setProperty(u"Video", u"true")
-                    newListItem.setProperty(u'IsPlayable', u'true')
+                    #newListItem.setProperty(u'IsPlayable', u'true')
 
                     listItems.append( (channelUrl, newListItem, False) )
             except (Exception) as exception:
