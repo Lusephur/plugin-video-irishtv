@@ -6,6 +6,7 @@ import random
 import socks
 import proxyconfig
 import unicodedata
+from cookielib import Cookie
 
 from loggingexception import LoggingException
 from urlparse import urlunparse
@@ -22,6 +23,12 @@ if hasattr(sys.modules["__main__"], "xbmcgui"):
     xbmcgui = sys.modules["__main__"].xbmcgui
 else:
     import xbmcgui
+
+if hasattr(sys.modules["__main__"], "xbmcplugin"):
+    xbmcplugin = sys.modules["__main__"].xbmcplugin
+else:
+    import xbmcplugin
+
 
 from subprocess import Popen, PIPE, STDOUT
 import mycgi
@@ -47,6 +54,9 @@ class Provider(object):
     def SetPlayer(self, player):
         self.player = player
 
+    def GetPlayer(self):
+        return xbmc.Player() 
+    
     def CreateForwardedForIP(self, currentForwardedForIP):
         currentSegments = currentForwardedForIP.split('.')
         
@@ -92,11 +102,12 @@ class Provider(object):
             self.log(u"Exception getting country code: " + repr(exception))
             
             
-    def initialise(self, httpManager, baseurl, pluginhandle):
+    def initialise(self, httpManager, baseurl, pluginHandle):
         self.baseurl = baseurl
-        self.pluginhandle = pluginhandle
+        self.pluginHandle = pluginHandle
         self.addon = sys.modules[u"__main__"].addon
         self.language = sys.modules[u"__main__"].language
+        self.log("INIT self.pluginHandle: " + str(self.pluginHandle), xbmc.LOGDEBUG)
         
         self.METHOD_IP_FORWARD = self.language(30370) 
         self.METHOD_PROXY = self.language(31010)
@@ -256,9 +267,6 @@ class Provider(object):
             exception.process(self.language(32120) % u'', u'', self.logLevel(xbmc.LOGERROR))
             return False
     
-    def GetPlayer(self):
-        return xbmc.Player(xbmc.PLAYER_CORE_AUTO) 
-    
     # If the programme is in multiple parts, then second, etc. parts to the playList
     def AddSegments(self, playList):
         return
@@ -278,28 +286,35 @@ class Provider(object):
         return listItem
 
     def Play(self, infoLabels, thumbnail, rtmpVar = None, url = None, subtitles = None):
-        listItem = self.CreateListItem(infoLabels, thumbnail)
-    
-        playList=xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
-        playList.clear()
-        
         if url is None:
             url = rtmpVar.getPlayUrl()
             
-        playList.add(url, listItem)
-    
+        if thumbnail is not None:
+            listItem = xbmcgui.ListItem(label=infoLabels[u'Title'], iconImage=thumbnail, thumbnailImage=thumbnail, path=url)
+            infoLabels['thumbnail'] = thumbnail
+        else:
+            listItem = xbmcgui.ListItem(label=infoLabels[u'Title'], path=url)
+        
+        infoLabels['video_url'] = url
+        listItem.setInfo(type='Video', infoLabels=infoLabels)
+
+        playList=xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+        playList.clear()
+        
         if self.dialog.iscanceled():
             return False
         
+        playList.add(url, listItem)
         player = self.GetPlayer()
         player.play(playList)
-        
+
+        xbmcplugin.setResolvedUrl(handle=self.pluginHandle, succeeded=True, listitem=listItem)
         self.dialog.close()
         
         if subtitles is not None:
             try:
                 subtitleFile = subtitles.GetSubtitleFile()
-                self.player().setSubtitles(subtitleFile)
+                player.setSubtitles(subtitleFile)
             except (Exception) as exception:
                 if not isinstance(exception, LoggingException):
                     exception = LoggingException.fromException(exception)
@@ -518,7 +533,26 @@ class Provider(object):
         finally:
             self.dialog.close()
 
-
+    def makeCookie(self, name, value, domain, expires = None):
+        return Cookie(
+                      version=0, 
+                      name=name, 
+                      value=value,
+                      port=None, 
+                      port_specified=False,
+                      domain=domain, 
+                      domain_specified=(domain is not None), 
+                      domain_initial_dot=domain.startswith(u'.'),
+                      path=u"/", 
+                      path_specified=True,
+                      secure=False,
+                      expires=expires,
+                      discard=False,
+                      comment=None,
+                      comment_url=None,
+                      rest={}
+                      )
+ 
 class Subtitle(object):
     
     def GetSubtitleFile(self, filename = None):

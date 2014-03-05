@@ -10,6 +10,9 @@
   <string id="20305">Proxy Per Service</string>
   <string id="20362">Segment 1 (e.g. 46.X.X.X)</string>
   <string id="20363">Segment 2 (e.g. X.7.X.X)</string>
+  <string id="20365">Show EPG. Turn off to speed up channel listing.</string>
+  <string id="20370">Email</string>
+  <string id="20375">Password</string>
   <string id="20380">[RTE] Get programme descriptions (slows down episode listings)</string>
   <string id="20390">[TG4] Language</string>
   <string id="20391">Gaeilge</string>
@@ -24,7 +27,7 @@
   <string id="20650">Error getting live schedule</string>
   <string id="20660">Now: Unknown, Next: </string>
   <string id="20670">[AerTV] Stream Type</string>
-  <string id="20680">[AerTV] Hours to add/subtract from local time to get Irish time</string>
+  <string id="20680">Hours to add/subtract from local time to get Irish time</string>
   <string id="20690">Error processing EPG entry</string>
   <string id="25000">Test failed</string>
   <string id="25010">Test passed</string>
@@ -132,4 +135,7 @@
   <string id="33005">Adding more parts of this programme</string>
   <string id="33006">%d more part%s been added to the Playlist</string>
   <string id="33008">Error getting episode details</string>
+  <string id="33100">AerTV login failed</string>
+  <string id="33110">Status Message: %s</string>
+  
 </strings>

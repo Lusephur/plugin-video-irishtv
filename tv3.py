@@ -92,8 +92,8 @@ class TV3Provider(Provider):
             url = self.GetURLStart() + u'&calendar=1'
             listItems.append( (url, newListItem, True) )
     
-            xbmcplugin.addDirectoryItems( handle=self.pluginhandle, items=listItems )
-            xbmcplugin.endOfDirectory( handle=self.pluginhandle, succeeded=True )
+            xbmcplugin.addDirectoryItems( handle=self.pluginHandle, items=listItems )
+            xbmcplugin.endOfDirectory( handle=self.pluginHandle, succeeded=True )
         except (Exception) as exception:
             if not isinstance(exception, LoggingException):
                 exception = LoggingException.fromException(exception)
@@ -285,6 +285,8 @@ class TV3Provider(Provider):
                 newListItem.setThumbnailImage(thumbnail)
                 
                 newListItem.setInfo(u'video', infoLabels)
+                newListItem.setProperty("Video", "true")
+                newListItem.setProperty('IsPlayable', 'true')
                 
                 url = self.GetURLStart() + u'&page=' + mycgi.URLEscape(page)
     
@@ -298,8 +300,8 @@ class TV3Provider(Provider):
                 exception.addLogMessage(self.language(32300) % programme + "\n" + repr(gridshow))
                 exception.process(self.language(32300) % programme, "", xbmc.LOGWARNING)
             
-        xbmcplugin.addDirectoryItems( handle=self.pluginhandle, items=listItems )
-        xbmcplugin.endOfDirectory( handle=self.pluginhandle, succeeded=True )
+        xbmcplugin.addDirectoryItems( handle=self.pluginHandle, items=listItems )
+        xbmcplugin.endOfDirectory( handle=self.pluginHandle, succeeded=True )
             
         return True
     
@@ -337,6 +339,8 @@ class TV3Provider(Provider):
         newListItem = xbmcgui.ListItem( label=title)
         newListItem.setThumbnailImage(thumbnail)
         newListItem.setInfo(u'video', infoLabels)
+        newListItem.setProperty("Video", "true")
+        newListItem.setProperty('IsPlayable', 'true')
         
         url = self.GetURLStart() + u'&page=' + mycgi.URLEscape(page)
 
@@ -437,8 +441,8 @@ class TV3Provider(Provider):
                         exception.process(self.language(32300) % title, "", xbmc.LOGWARNING)
                         
 
-            xbmcplugin.addDirectoryItems( handle=self.pluginhandle, items=listItems )
-            xbmcplugin.endOfDirectory( handle=self.pluginhandle, succeeded=True )
+            xbmcplugin.addDirectoryItems( handle=self.pluginHandle, items=listItems )
+            xbmcplugin.endOfDirectory( handle=self.pluginHandle, succeeded=True )
         except (Exception) as exception:
             if not isinstance(exception, LoggingException):
                 exception = LoggingException.fromException(exception)
@@ -469,6 +473,8 @@ class TV3Provider(Provider):
         newListItem = xbmcgui.ListItem( label=newLabel.replace('&#39;', "'" ) )
         newListItem.setThumbnailImage(video.img['src'])
         newListItem.setInfo('video', infoLabels)
+        newListItem.setProperty("Video", "true")
+        newListItem.setProperty('IsPlayable', 'true')
         
         url = self.GetURLStart() + '&page=' + mycgi.URLEscape(href)
 
@@ -495,8 +501,8 @@ class TV3Provider(Provider):
                 exception.process(self.language(32380), "", xbmc.LOGWARNING)
             
 
-        xbmcplugin.addDirectoryItems( handle=self.pluginhandle, items=listItems )
-        xbmcplugin.endOfDirectory( handle=self.pluginhandle, succeeded=True )
+        xbmcplugin.addDirectoryItems( handle=self.pluginHandle, items=listItems )
+        xbmcplugin.endOfDirectory( handle=self.pluginHandle, succeeded=True )
         
 
         return True
@@ -704,8 +710,8 @@ class TV3Provider(Provider):
     
                 currentDate = currentDate - timedelta(1) 
         
-            xbmcplugin.addDirectoryItems( handle=self.pluginhandle, items=listItems )
-            xbmcplugin.endOfDirectory( handle=self.pluginhandle, succeeded=True )
+            xbmcplugin.addDirectoryItems( handle=self.pluginHandle, items=listItems )
+            xbmcplugin.endOfDirectory( handle=self.pluginHandle, succeeded=True )
             
             return True
         except (Exception) as exception:
@@ -773,6 +779,8 @@ class TV3Provider(Provider):
                 newListItem = xbmcgui.ListItem( label=newLabel)
                 newListItem.setThumbnailImage(thumbnail)
                 newListItem.setInfo(u'video', infoLabels)
+                newListItem.setProperty("Video", "true")
+                newListItem.setProperty('IsPlayable', 'true')
                 
                 url = self.GetURLStart() + u'&page=' + mycgi.URLEscape(page)
     
@@ -791,8 +799,8 @@ class TV3Provider(Provider):
                 exception.process(self.language(32300) % programme % "video\n", "", xbmc.LOGWARNING)
                 continue
             
-        xbmcplugin.addDirectoryItems( handle=self.pluginhandle, items=listItems )
-        xbmcplugin.endOfDirectory( handle=self.pluginhandle, succeeded=True )
+        xbmcplugin.addDirectoryItems( handle=self.pluginHandle, items=listItems )
+        xbmcplugin.endOfDirectory( handle=self.pluginHandle, succeeded=True )
             
         return True
     
