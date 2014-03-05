@@ -297,7 +297,7 @@ class TG4Provider(BrightCoveProvider):
             newListItem = xbmcgui.ListItem( label=newLabel )
             newListItem.setThumbnailImage(thumbnailPath)
             newListItem.setProperty("Video", "true")
-            newListItem.setProperty('IsPlayable', 'true')
+            #newListItem.setProperty('IsPlayable', 'true')
 
             url = self.GetURLStart() + urlFragment
                 
@@ -528,7 +528,7 @@ class TG4Provider(BrightCoveProvider):
 
                     newListItem.setInfo(u'video', infoLabels)
                     newListItem.setProperty("Video", "true")
-                    newListItem.setProperty('IsPlayable', 'true')
+                    #newListItem.setProperty('IsPlayable', 'true')
                     
                     url = self.GetURLStart() + u'&episodeId=' + mycgi.URLEscape(id) + u'&series=' + mycgi.URLEscape(item['customFields']['seriestitle'])
      

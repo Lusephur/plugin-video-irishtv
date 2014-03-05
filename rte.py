@@ -268,7 +268,7 @@ class RTEProvider(Provider):
                 newListItem = xbmcgui.ListItem( label=programme )
                 newListItem.setThumbnailImage(thumbnailPath)
                 newListItem.setProperty("Video", "true")
-                newListItem.setProperty('IsPlayable', 'true')
+                #newListItem.setProperty('IsPlayable', 'true')
 
                 url = self.GetURLStart() + u'&live=1' + u'&page=' + mycgi.URLEscape(page)
                 listItems.append( (url, newListItem, False) )
@@ -518,7 +518,7 @@ class RTEProvider(Provider):
                 
             newListItem.setInfo(u'video', infoLabels)
             newListItem.setProperty("Video", "true")
-            newListItem.setProperty('IsPlayable', 'true')
+            #newListItem.setProperty('IsPlayable', 'true')
         
             self.log(u"label == " + newLabel, xbmc.LOGDEBUG)
         
@@ -527,7 +527,7 @@ class RTEProvider(Provider):
                 folder = True
             else:
                 newListItem.setProperty("Video", "true")
-                newListItem.setProperty('IsPlayable', 'true')
+                #newListItem.setProperty('IsPlayable', 'true')
 
                 folder = False
                 match = re.search( u"/player/[^/]+/show/([0-9]+)/", href )

@@ -286,7 +286,7 @@ class TV3Provider(Provider):
                 
                 newListItem.setInfo(u'video', infoLabels)
                 newListItem.setProperty("Video", "true")
-                newListItem.setProperty('IsPlayable', 'true')
+                #newListItem.setProperty('IsPlayable', 'true')
                 
                 url = self.GetURLStart() + u'&page=' + mycgi.URLEscape(page)
     
@@ -340,7 +340,7 @@ class TV3Provider(Provider):
         newListItem.setThumbnailImage(thumbnail)
         newListItem.setInfo(u'video', infoLabels)
         newListItem.setProperty("Video", "true")
-        newListItem.setProperty('IsPlayable', 'true')
+        #newListItem.setProperty('IsPlayable', 'true')
         
         url = self.GetURLStart() + u'&page=' + mycgi.URLEscape(page)
 
@@ -474,7 +474,7 @@ class TV3Provider(Provider):
         newListItem.setThumbnailImage(video.img['src'])
         newListItem.setInfo('video', infoLabels)
         newListItem.setProperty("Video", "true")
-        newListItem.setProperty('IsPlayable', 'true')
+        #newListItem.setProperty('IsPlayable', 'true')
         
         url = self.GetURLStart() + '&page=' + mycgi.URLEscape(href)
 
@@ -780,7 +780,7 @@ class TV3Provider(Provider):
                 newListItem.setThumbnailImage(thumbnail)
                 newListItem.setInfo(u'video', infoLabels)
                 newListItem.setProperty("Video", "true")
-                newListItem.setProperty('IsPlayable', 'true')
+                #newListItem.setProperty('IsPlayable', 'true')
                 
                 url = self.GetURLStart() + u'&page=' + mycgi.URLEscape(page)
     

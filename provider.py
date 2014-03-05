@@ -308,9 +308,8 @@ class Provider(object):
         player = self.GetPlayer()
         player.play(playList)
 
-        #xbmcplugin.setResolvedUrl(handle=self.pluginHandle, succeeded=True, listitem=listItem)
         self.dialog.close()
-        
+        #xbmcplugin.setResolvedUrl(handle=self.pluginHandle, succeeded=True, listitem=listItem)
         if subtitles is not None:
             try:
                 self.log (u"Subtitle processing", xbmc.LOGDEBUG)
@@ -332,7 +331,7 @@ class Provider(object):
         self.log (u"AddSegments(playList)", xbmc.LOGDEBUG)
         self.AddSegments(playList)
         self.log (u"Post AddSegments(playList)", xbmc.LOGDEBUG)
-
+    
     def Download(self, rtmpVar, defaultFilename, subtitles = None):
         (rtmpdumpPath, downloadFolder, filename) = self.GetDownloadSettings(defaultFilename)
     
