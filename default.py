@@ -162,12 +162,12 @@ def TestForwardedIP(forwardedIP):
 		
 		if xForwardedForString is None:
 			dialog = xbmcgui.Dialog()
-			dialog.ok(language(25000), language(25030))
+			dialog.ok(language(30028), language(30032))
 		else:
 			forwardedForIP = xForwardedForString.parent.findNextSibling('td').text
 			
 			dialog = xbmcgui.Dialog()
-			dialog.ok(language(25010), language(25040) + forwardedForIP)
+			dialog.ok(language(30029), language(30033) + forwardedForIP)
 			
 		return True
 		
@@ -176,7 +176,7 @@ def TestForwardedIP(forwardedIP):
 			exception = LoggingException.fromException(exception)
 
 		dialog = xbmcgui.Dialog()
-		dialog.ok(language(25020), language(25050))
+		dialog.ok(language(30031), language(30034))
 		
 		# Error getting web page
 		exception.addLogMessage(language(30050))
