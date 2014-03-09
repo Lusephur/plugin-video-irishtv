@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
+import sys
 import re
 from time import strftime,strptime,mktime
 
 import time, random
-import simplejson
-import httplib, urllib
-import pyamf
-from pyamf import remoting
-
+if sys.version_info >=  (2, 7):
+    import json as _json
+else:
+    import simplejson as _json 
+    
 from datetime import timedelta
 from datetime import date
 from datetime import datetime
-import sys
 from urlparse import urljoin
 
 if hasattr(sys.modules["__main__"], "xbmc"):
@@ -478,7 +478,7 @@ class TG4Provider(BrightCoveProvider):
             
             jsonData = self.httpManager.GetWebPage (url, 300, headers = headers)
             
-            jsonObject = simplejson.loads(jsonData)
+            jsonObject = _json.loads(jsonData)
             
             listItems = []
             
@@ -934,7 +934,7 @@ class TG4Provider(BrightCoveProvider):
             jsonData = self.httpManager.GetWebPage(apiUrl, 20000, values = values)
             
             jsonText = utils.extractJSON (jsonData)
-            bitlyJSON = simplejson.loads(jsonText)
+            bitlyJSON = _json.loads(jsonText)
             
             return bitlyJSON[u'data'][u'url'] 
         

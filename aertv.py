@@ -3,11 +3,13 @@ import re
 import sys
 from time import strftime, strptime
 import time, random
-import simplejson
+if sys.version_info >=  (2, 7):
+    import json as _json
+else:
+    import simplejson as _json 
+    
 from cookielib import Cookie
-
 from datetime import datetime, timedelta
-
 from urlparse import urljoin
 
 if hasattr(sys.modules[u"__main__"], u"xbmc"):
@@ -217,7 +219,7 @@ class AerTVProvider(BrightCoveProvider):
             url = self.GetAPIUrl(values)
 
             loginJSONText = self.httpManager.GetWebPage(url, 0, logUrl = logUrl)
-            loginJSON = simplejson.loads(loginJSONText)
+            loginJSON = _json.loads(loginJSONText)
             
             # Check for failed login
             if loginJSON[u'user'][u'login'] != True:
@@ -291,14 +293,14 @@ class AerTVProvider(BrightCoveProvider):
             url = self.GetAPIUrl(values)
 
             ddlJSONText = self.httpManager.GetWebPage(url, 0)
-            ddlJSON = simplejson.loads(ddlJSONText)
+            ddlJSON = _json.loads(ddlJSONText)
             
             if self.addon.getSetting( u'AerTV_show_epg' ) <> u'false':
                 values = [{u'api':u'epg'}, {u'type':u'basic'}]
                 url = self.GetAPIUrl(values)
                 
                 epgJSONText = self.httpManager.GetWebPage(url, 300)
-                epgJSON = simplejson.loads(epgJSONText)
+                epgJSON = _json.loads(epgJSONText)
                 
                 return self.ShowEPG(ddlJSON, epgJSON)
             else:
@@ -588,7 +590,7 @@ class AerTVProvider(BrightCoveProvider):
             self.dialog.update(10, self.language(32730))
 
             jsonData = self.httpManager.GetWebPage(url, 20000)
-            playerJSON=simplejson.loads(jsonData)
+            playerJSON=_json.loads(jsonData)
             self.log(u"json data:" + unicode(playerJSON))
             
             playerId = playerJSON[u'data'][u'playerId']
@@ -688,7 +690,7 @@ class AerTVProvider(BrightCoveProvider):
         
     def GetEpgJSON(self, url):
         epgJSONText = self.httpManager.GetWebPage(url, 0)
-        epgJSON = simplejson.loads(epgJSONText)
+        epgJSON = _json.loads(epgJSONText)
         
         return epgJSON 
             
