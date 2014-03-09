@@ -162,7 +162,7 @@ class AerTVProvider(BrightCoveProvider):
                 exception = LoggingException.fromException(exception)
 
             # 'AerTV login failed', 
-            exception.addLogMessage(self.language(33100))
+            exception.addLogMessage(self.language(30101))
             exception.process(severity = self.logLevel(xbmc.LOGWARNING))
         
                 
@@ -173,7 +173,7 @@ class AerTVProvider(BrightCoveProvider):
                 
                 if loginJSON is None:
                     # 'AerTV login failed', 
-                    exception = LoggingException(language(33100))
+                    exception = LoggingException(language(30101))
                     # "Status Message: %s
                     exception.process(severity = self.logLevel(xbmc.LOGERROR))
                     return
@@ -206,7 +206,7 @@ class AerTVProvider(BrightCoveProvider):
                     exception = LoggingException.fromException(exception)
             
                     # Error logging into AerTV
-                    exception.addLogMessage(self.language(33100))
+                    exception.addLogMessage(self.language(30101))
                     exception.process(severity = self.logLevel(xbmc.LOGERROR))
                     return False
         
@@ -231,9 +231,9 @@ class AerTVProvider(BrightCoveProvider):
                 
                     
                 # 'AerTV login failed', 
-                logException = LoggingException(language(33100))
+                logException = LoggingException(language(30101))
                 # "Status Message: %s
-                logException.process(language(33110) % statusMessage, u"", xbmc.LOGWARNING)
+                logException.process(language(30102) % statusMessage, u"", xbmc.LOGWARNING)
 
                 return None
             
@@ -385,7 +385,7 @@ class AerTVProvider(BrightCoveProvider):
                     exception = LoggingException.fromException(exception)
     
                 # Error processing channel 
-                message = self.language(32350)
+                message = self.language(30067)
             
                 try:
                     message = message + u" " + anchor.text
@@ -441,7 +441,7 @@ class AerTVProvider(BrightCoveProvider):
                     exception = LoggingException.fromException(exception)
     
                 # Error processing channel 
-                message = self.language(32350)
+                message = self.language(30067)
             
                 try:
                     message = message + u" " + anchor.text
@@ -523,7 +523,7 @@ class AerTVProvider(BrightCoveProvider):
                 self.log(u"video: %s" % repr(video))
                 
                 # Error processing EPG entry
-                exception.addLogMessage(self.language(20690))
+                exception.addLogMessage(self.language(30027))
                 exception.printLogMessages(severity = xbmc.LOGWARNING)
 
         return detail
@@ -587,7 +587,7 @@ class AerTVProvider(BrightCoveProvider):
             url = self.GetAPIUrl(values)
         
             # "Getting channel information"
-            self.dialog.update(10, self.language(32730))
+            self.dialog.update(10, self.language(30086))
 
             jsonData = self.httpManager.GetWebPage(url, 20000)
             playerJSON=_json.loads(jsonData)
@@ -606,7 +606,7 @@ class AerTVProvider(BrightCoveProvider):
                 if self.dialog.iscanceled():
                     return False
                 # "Getting stream url"
-                self.dialog.update(25, self.language(32740))
+                self.dialog.update(25, self.language(30087))
                 streamUrl = self.GetStreamUrl(playerKey, viewExperienceUrl, playerId, contentRefId = channel)
                 self.log(u"streamUrl: %s" % streamUrl)
             except (Exception) as exception:
@@ -618,24 +618,24 @@ class AerTVProvider(BrightCoveProvider):
                     streamUrl = defaultRTMPUrl + channelToStream[channel]
         
                     # Error getting rtmp url. Using default: %s
-                    exception.addLogMessage(self.language(32320) % streamUrl)
+                    exception.addLogMessage(self.language(30065) % streamUrl)
                     exception.printLogMessages(severity = xbmc.LOGWARNING)
                 else:
                     # Error getting rtmp url.
-                    exception.addLogMessage(self.language(32325))
+                    exception.addLogMessage(self.language(30066))
                     # Cannot play video stream
                     raise exception
                 
             if self.dialog.iscanceled():
                 return False
             # "Getting \"Now Playing\" data
-            self.dialog.update(35, self.language(32750))
+            self.dialog.update(35, self.language(30088))
 
             # Set up info for "Now Playing" screen
             infoLabels = self.GetInfoLabels(playerJSON)
 
             #RTMP
-            if streamUrl.upper().startswith(self.language(32671)):
+            if streamUrl.upper().startswith(self.language(30081)):
                 playPathIndex = streamUrl.index(u'&') + 1
                 playPath = streamUrl[playPathIndex:]
                 qsData = self.GetQSData(channel, playerId, publisherId, playerKey)
@@ -665,7 +665,7 @@ class AerTVProvider(BrightCoveProvider):
                 exception.addLogMessage(msg)
             
             # Error preparing or playing stream
-            exception.addLogMessage(self.language(32340))
+            exception.addLogMessage(self.language(30066))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
 
@@ -682,7 +682,7 @@ class AerTVProvider(BrightCoveProvider):
                 exception = LoggingException.fromException(exception)
 
             # Error getting title and logo info for %s
-            exception.addLogMessage(self.language(32370) % channel)
+            exception.addLogMessage(self.language(30068) % channel)
             exception.process(severity = xbmc.LOGWARNING)
 
         return infoLabels

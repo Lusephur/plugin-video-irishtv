@@ -67,9 +67,9 @@ class RTEProvider(Provider):
     
             if html is None or html == '':
                 # Error getting %s Player "Home" page
-                logException = LoggingException(self.language(20000) % self.GetProviderId())
+                logException = LoggingException(self.language(30001) % self.GetProviderId())
                 # 'Cannot show RTE root menu', Error getting RTE Player "Home" page
-                logException.process(self.language(20010) % self.GetProviderId(), self.language(20000) % self.GetProviderId(), self.logLevel(xbmc.LOGERROR))
+                logException.process(self.language(30002) % self.GetProviderId(), self.language(30001) % self.GetProviderId(), self.logLevel(xbmc.LOGERROR))
                 return False
     
             soup = BeautifulSoup(html, selfClosingTags=['img'])
@@ -77,9 +77,9 @@ class RTEProvider(Provider):
     
             if categories == None:
                 # "Can't find dropdown-programmes"
-                logException = LoggingException(self.language(20020))
+                logException = LoggingException(self.language(30003))
                 # 'Cannot show RTE root menu', Error parsing web page
-                logException.process(self.language(20010)  % self.GetProviderId(), self.language(30780), self.logLevel(xbmc.LOGERROR))
+                logException.process(self.language(30002)  % self.GetProviderId(), self.language(30780), self.logLevel(xbmc.LOGERROR))
                 #raise logException
                 return False
             
@@ -285,7 +285,7 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error getting Live TV information
-            exception.addLogMessage(self.language(32080))
+            exception.addLogMessage(self.language(30047))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
 
@@ -308,7 +308,7 @@ class RTEProvider(Provider):
                 exception = LoggingException.fromException(exception)
 
             # Error creating Search item
-            exception.addLogMessage(self.language(32220))
+            exception.addLogMessage(self.language(30056))
             raise exception
 
     #==============================================================================
@@ -343,7 +343,7 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error adding links
-            exception.addLogMessage(self.language(32080))
+            exception.addLogMessage(self.language(30047))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
 
@@ -404,7 +404,7 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error listing submenu
-            exception.addLogMessage(self.language(32090))
+            exception.addLogMessage(self.language(30048))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
 
@@ -547,7 +547,7 @@ class RTEProvider(Provider):
             exception.addLogMessage(msg)
 
             # Error getting episode details
-            exception.addLogMessage(self.language(33008))
+            exception.addLogMessage(self.language(30099))
             exception.process(self.logLevel(xbmc.LOGWARNING))
                    
     
@@ -578,7 +578,7 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error getting list of shows
-            exception.addLogMessage(self.language(32100))
+            exception.addLogMessage(self.language(30049))
             # Error getting list of shows
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
@@ -681,7 +681,7 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error getting list of shows
-            exception.addLogMessage(self.language(32100))
+            exception.addLogMessage(self.language(30049))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
 
@@ -713,8 +713,8 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error getting count of available episodes
-            exception.addLogMessage(self.language(32030))
-            exception.process(self.language(32040), self.language(32030), self.logLevel(xbmc.LOGERROR))
+            exception.addLogMessage(self.language(30045))
+            exception.process(self.language(30046), self.language(30045), self.logLevel(xbmc.LOGERROR))
             return False
     
     #==============================================================================
@@ -831,14 +831,14 @@ class RTEProvider(Provider):
         self.log(u"%s" % episodeId, xbmc.LOGDEBUG)
         
         # "Getting SWF url"
-        self.dialog.update(5, self.language(32760))
+        self.dialog.update(5, self.language(30089))
         swfPlayer = self.GetSWFPlayer()
     
         try:
             if self.dialog.iscanceled():
                 return False
             # "Getting episode web page"
-            self.dialog.update(15, self.language(32770))
+            self.dialog.update(15, self.language(30090))
             feedProcessStatus = 0
             html = None
             html = self.httpManager.GetWebPage(showUrl % episodeId, 20000)
@@ -849,7 +849,7 @@ class RTEProvider(Provider):
             if self.dialog.iscanceled():
                 return False
             # "Getting episode info"
-            self.dialog.update(25, self.language(32710))
+            self.dialog.update(25, self.language(30084))
             infoLabels = self.GetEpisodeInfo(episodeId, soup)
             thumbnail = self.GetThumbnailFromEpisode(episodeId, soup)
     
@@ -859,7 +859,7 @@ class RTEProvider(Provider):
             if self.dialog.iscanceled():
                 return False
             # "Getting playpath data"
-            self.dialog.update(35, self.language(32780))
+            self.dialog.update(35, self.language(30091))
             urlGroups = self.GetStringFromURL(feedsPrefix + episodeId, u"\"url\": \"(/[0-9][0-9][0-9][0-9]/[0-9][0-9][0-9][0-9]/)([a-zA-Z0-9]+/)?(.+).f4m\"", 20000)
             feedProcessStatus = 2
             if urlGroups is None:
@@ -910,9 +910,9 @@ class RTEProvider(Provider):
                 except:
                     exception.addLogMessage("Execption getting " + feedUrl)
             # Error playing or downloading episode %s
-            exception.addLogMessage(self.language(32120) % episodeId)
+            exception.addLogMessage(self.language(30051) % episodeId)
             # Error playing or downloading episode %s
-            exception.process(self.language(32120) % ' ' , '', self.logLevel(xbmc.LOGERROR))
+            exception.process(self.language(30051) % ' ' , '', self.logLevel(xbmc.LOGERROR))
             return False
     
 
@@ -957,7 +957,7 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error playing live TV
-            exception.addLogMessage(self.language(32190))
+            exception.addLogMessage(self.language(30053))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
     
@@ -997,7 +997,7 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error getting player.js url: Using default %s
-            exception.addLogMessage(self.language(32210) % playerJSDefault)
+            exception.addLogMessage(self.language(30055) % playerJSDefault)
             exception.process(severity = self.logLevel(xbmc.LOGWARNING))
             playerJS = playerJSDefault
 
@@ -1030,7 +1030,7 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error getting search url: Using default %s
-            exception.addLogMessage(self.language(32200) + searchUrlDefault)
+            exception.addLogMessage(self.language(30054) + searchUrlDefault)
             exception.process(severity = self.logLevel(xbmc.LOGWARNING))
             searchURL = searchUrlDefault
 
@@ -1064,7 +1064,7 @@ class RTEProvider(Provider):
                 exception.addLogMessage(msg)
                 
             # Error performing query %s
-            exception.addLogMessage(self.language(32170) % query)
+            exception.addLogMessage(self.language(30052) % query)
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
         

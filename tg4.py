@@ -80,8 +80,8 @@ class TG4Provider(BrightCoveProvider):
 
     def ExecuteCommand(self, mycgi):
         self.log(u"Language: " + self.addon.getSetting( u'TG4_language' ))
-        # 20391 = "Gaeilge"
-        if self.addon.getSetting( u'TG4_language' ) != self.language(20391):
+        # 30018 = "Gaeilge"
+        if self.addon.getSetting( u'TG4_language' ) != self.language(30018):
             self.languageCode = u"en"
         else:
             self.languageCode = u"ie"
@@ -144,7 +144,7 @@ class TG4Provider(BrightCoveProvider):
             
             # "Now: Unknown, Next: "
             # E.g. "Now: Unknown, Next: 19:00 Nuacht TG4"
-            return self.language(20660) + found.previousSibling.text + " " + found.contents[0]
+            return self.language(30024) + found.previousSibling.text + " " + found.contents[0]
         
         except (Exception) as exception:
             if not isinstance(exception, LoggingException):
@@ -155,7 +155,7 @@ class TG4Provider(BrightCoveProvider):
                 exception.addLogMessage(msg)
             
             # Error getting live schedule
-            exception.addLogMessage(self.language(20650))
+            exception.addLogMessage(self.language(30035))
             exception.process(severity = xbmc.LOGWARNING)
             return defaultSchedule
 
@@ -341,7 +341,7 @@ class TG4Provider(BrightCoveProvider):
                 exception.addLogMessage(msg)
                 
             # Unable to determine live video parameters. Using default values.
-            exception.addLogMessage(self.language(20640))
+            exception.addLogMessage(self.language(30022))
             exception.process(severity = xbmc.LOGWARNING)
 
             return (defaultLiveVideoId, defaultLiveProgTitle)
@@ -401,7 +401,7 @@ class TG4Provider(BrightCoveProvider):
                 exception.addLogMessage(msg)
                 
             # "Error creating calendar list"
-            message = self.language(32310)
+            message = self.language(30064)
             details = utils.valueIfDefined(minDateString, u'minDateString') + u", "
             details = details + utils.valueIfDefined(maxDateString, u'maxDateString') + u", "
             
@@ -429,7 +429,7 @@ class TG4Provider(BrightCoveProvider):
         
         if match == None or len(match.group(3)) == 3:
             # Error processing date string: 
-            self.log(self.language(32680) + dateString, xbmc.LOGWARNING)
+            self.log(self.language(30083) + dateString, xbmc.LOGWARNING)
             return None
         
         if len(match.group(3)) == 2:
@@ -546,8 +546,8 @@ class TG4Provider(BrightCoveProvider):
                     else:
                         programme = u"programme"
 
-                    exception.addLogMessage((self.language(32300) % programme))
-                    exception.process(self.language(32300) % programme, "", xbmc.LOGWARNING)
+                    exception.addLogMessage((self.language(30063) % programme))
+                    exception.process(self.language(30063) % programme, "", xbmc.LOGWARNING)
 
             xbmcplugin.addDirectoryItems( handle=self.pluginHandle, items=listItems )
             xbmcplugin.endOfDirectory( handle=self.pluginHandle, succeeded=True )
@@ -592,9 +592,9 @@ class TG4Provider(BrightCoveProvider):
                 exception.addLogMessage(msg)
 
             # Error playing or downloading episode %s
-            exception.addLogMessage(self.language(32120) % (videoId + ", " + progTitle))
+            exception.addLogMessage(self.language(30051) % (videoId + ", " + progTitle))
             # Error playing or downloading episode %s
-            exception.process(self.language(32120) % ' ' , '', self.logLevel(xbmc.LOGERROR))
+            exception.process(self.language(30051) % ' ' , '', self.logLevel(xbmc.LOGERROR))
             return False
         
     def AddSegments(self, playList):
@@ -605,7 +605,7 @@ class TG4Provider(BrightCoveProvider):
 
         title = self.addon.getAddonInfo('name')
         icon = self.addon.getAddonInfo('icon')
-        msg = self.language(33005) # Adding more parts
+        msg = self.language(30097) # Adding more parts
         xbmc.executebuiltin('XBMC.Notification(%s, %s, 5000, %s)' % (title, msg, icon))
         partsMinus1 = self.totalParts - 1
         parts = [None] * partsMinus1
@@ -656,7 +656,7 @@ class TG4Provider(BrightCoveProvider):
                     exception.addLogMessage(msg)
 
                 # Error processing FindRelatedVideos
-                exception.addLogMessage(self.language(33000))
+                exception.addLogMessage(self.language(30093))
 
                 # Error playing or downloading episode %s
                 exception.process('' , '', self.logLevel(xbmc.LOGDEBUG))
@@ -666,17 +666,17 @@ class TG4Provider(BrightCoveProvider):
         try:
             if len(parts) < partsMinus1:
                 if partsMinus1 == 1:
-                    msg = self.language(33001) # "Part 2 of 2 is missing"
+                    msg = self.language(30094) # "Part 2 of 2 is missing"
                 else: 
                     missing = partsMinus1 - parts
                     plural = ""
                     if missing > 2:
                         plural = "(s)"
                         
-                    msg = self.language(33002) % (missing, plural) # "%d part%s missing"
+                    msg = self.language(30095) % (missing, plural) # "%d part%s missing"
                     
                 exception = LoggingException(msg) 
-                exception.process(self.language(33003) , '', self.logLevel(xbmc.LOGWARNING))
+                exception.process(self.language(30096) , '', self.logLevel(xbmc.LOGWARNING))
                  
             for mediaDTO in parts:
                 (infoLabels, logo, rtmpVar, defaultFilename) = self.GetPlayListDetailsFromAMF(mediaDTO, appNormal, self.episodeId, live = False)
@@ -691,7 +691,7 @@ class TG4Provider(BrightCoveProvider):
             if partsFound > 1:
                 plural = "s have"
                 
-            msg = self.language(33006) % (partsFound, plural) # %d more part%s have been added to the Playlist
+            msg = self.language(30098) % (partsFound, plural) # %d more part%s have been added to the Playlist
             xbmc.executebuiltin('XBMC.Notification(%s, %s, 5000, %s)' % (title, msg, icon))
 
 
@@ -709,7 +709,7 @@ class TG4Provider(BrightCoveProvider):
         self.log(u"episodeId: %s, series: %s, live: %s" % (episodeId, series, live), xbmc.LOGDEBUG)
 
         # "Getting player functions"
-        self.dialog.update(5, self.language(32790))
+        self.dialog.update(5, self.language(30092))
         try:
             playerFunctionsJs = None
             playerFunctionsJs = self.httpManager.GetWebPage(playerFunctionsUrl, 20000)
@@ -723,7 +723,7 @@ class TG4Provider(BrightCoveProvider):
             if self.dialog.iscanceled():
                 return False
             # "Getting SWF url"
-            self.dialog.update(15, self.language(32760))
+            self.dialog.update(15, self.language(30089))
             self.swfUrl = self.GetSwfUrl(qsData)
 
             self.playerId = qsData[u'playerId']
@@ -732,7 +732,7 @@ class TG4Provider(BrightCoveProvider):
             if self.dialog.iscanceled():
                 return False
             # "Getting stream url"
-            self.dialog.update(30, self.language(32740))
+            self.dialog.update(30, self.language(30087))
             rtmpUrl = self.GetStreamUrl(self.playerKey, playerUrl, self.playerId, contentId = episodeId)
             
             self.publisherId = unicode(int(float(self.amfResponse[u'publisherId']))) 
@@ -757,9 +757,9 @@ class TG4Provider(BrightCoveProvider):
                 exception.addLogMessage(msg)
 
             # Error playing or downloading episode %s
-            exception.addLogMessage(self.language(32120) % (episodeId + ", " + series))
+            exception.addLogMessage(self.language(30051) % (episodeId + ", " + series))
             # Error playing or downloading episode %s
-            exception.process(self.language(32120) % ' ' , '', self.logLevel(xbmc.LOGERROR))
+            exception.process(self.language(30051) % ' ' , '', self.logLevel(xbmc.LOGERROR))
             return False
 
     def GetPlayListDetailsFromAMF(self, mediaDTO, appFormat, episodeId, live):
@@ -858,7 +858,7 @@ class TG4Provider(BrightCoveProvider):
                 exec(paramAppend)
             
             if bc_params < 10:
-                self.log(self.language(20600), xbmc.LOGWARNING)
+                self.log(self.language(30036), xbmc.LOGWARNING)
                 self.log(utils.drepr(bc_params), xbmc.LOGDEBUG)
                 return self.GetDefaultQSData(vidId, bitlyUrl)
         except (Exception) as exception:
@@ -906,7 +906,7 @@ class TG4Provider(BrightCoveProvider):
                 exception.addLogMessage(msg)
 
             # Error getting bit.ly API parameters. Using default values.
-            exception.addLogMessage(self.language(20610))
+            exception.addLogMessage(self.language(30037))
             exception.process(severity = xbmc.LOGWARNING)
 
             # Defaults
@@ -943,7 +943,7 @@ class TG4Provider(BrightCoveProvider):
                 exception = LoggingException.fromException(exception)
 
             # Error calling bit.ly API
-            exception.addLogMessage(self.language(20620))
+            exception.addLogMessage(self.language(30038))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
 
             raise exception
@@ -986,7 +986,7 @@ class TG4Provider(BrightCoveProvider):
                 exception = LoggingException.fromException(exception)
 
             # Error getting player url. Using default.
-            exception.addLogMessage(self.language(20630))
+            exception.addLogMessage(self.language(30039))
             exception.process(severity = xbmc.LOGWARNING)
             
             return self.GetDefaultFullLink(episodeId, series)
