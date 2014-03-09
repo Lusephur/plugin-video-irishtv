@@ -1,3 +1,6 @@
+Version 1.0.13 [09 Mar 2014]
+- Minor internal changes, use internal json instead of simplejson
+
 Version 1.0.12 [05 Mar 2014]
 - RTE: Fix not working, change of swfurl
 - AerTV: Fix not working over SmartDNS

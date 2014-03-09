@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 import re
+import sys
 from time import strftime,strptime
 import time, random
-import simplejson
-import httplib, urllib
+import urllib
 import pyamf
 from pyamf import remoting
 
 from datetime import timedelta
 from datetime import date
 from datetime import datetime
-import sys
 from urlparse import urljoin
 
 if hasattr(sys.modules["__main__"], "xbmc"):

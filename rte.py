@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import re
+import sys
 from time import mktime,strptime
 from datetime import timedelta
 from datetime import date
 from datetime import datetime
-import sys
 from urlparse import urljoin
 
 if hasattr(sys.modules["__main__"], "xbmc"):
@@ -37,7 +37,6 @@ from BeautifulSoup import BeautifulStoneSoup
 urlRoot = u"http://www.rte.ie"
 rootMenuUrl = u"http://www.rte.ie/player/ie/"
 showUrl = u"http://www.rte.ie/player/ie/show/%s/"
-feedUrl = u"http://feeds.rasset.ie/rteavgen/player/playlist/?type=iptv&format=json&showId="
 
 flashJS = u"http://static.rasset.ie/static/player/js/flash-player.js"
 configUrl = u"http://www.rte.ie/playerxl/config/config.xml"

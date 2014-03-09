@@ -68,7 +68,10 @@ DATA_FOLDER	  = xbmc.translatePath( os.path.join( u"special://masterprofile", u"
 CACHE_FOLDER	 = os.path.join( DATA_FOLDER, u'cache' )
 RESOURCE_PATH = os.path.join( sys.modules[u"__main__"].addon.getAddonInfo( u"path" ), u"resources" )
 MEDIA_PATH = os.path.join( RESOURCE_PATH, u"media" )
-COOKIE_PATH = xbmc.translatePath( os.path.join( u"special://profile", u"addon_data", pluginName, u"cookiejar.txt" ) )
+ADDON_DATA_FOLDER = xbmc.translatePath( os.path.join( u"special://profile", u"addon_data", pluginName) )
+COOKIE_PATH = os.path.join( ADDON_DATA_FOLDER, u"cookiejar.txt" )
+#player.Player.RESUME_FILE    = os.path.join( ADDON_DATA_FOLDER, u'player_resume.txt')
+#player.Player.RESUME_LOCK_FILE = os.path.join(ADDON_DATA_FOLDER, u'player_resume_lock.txt')
 
 log("Loading cookies from :" + repr(COOKIE_PATH))
 cookiejar = cookielib.LWPCookieJar(COOKIE_PATH)
