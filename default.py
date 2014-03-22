@@ -47,7 +47,7 @@ import mycgi
 
 from httpmanager import HttpManager
 
-dbg = addon.getSetting("debug") == "true"
+dbg = addon.getSetting(u"debug") == u"true"
 dbglevel = 3
 
 from utils import log
@@ -59,6 +59,8 @@ import rtmp
 
 import providerfactory
 from provider import Provider
+from irishtvplayer import IrishTVPlayer 
+
 #import SimpleDownloader
 #__downloader__ = SimpleDownloader.SimpleDownloader()
 xhausUrl = "http://www.xhaus.com/headers"
@@ -70,8 +72,6 @@ RESOURCE_PATH = os.path.join( sys.modules[u"__main__"].addon.getAddonInfo( u"pat
 MEDIA_PATH = os.path.join( RESOURCE_PATH, u"media" )
 ADDON_DATA_FOLDER = xbmc.translatePath( os.path.join( u"special://profile", u"addon_data", pluginName) )
 COOKIE_PATH = os.path.join( ADDON_DATA_FOLDER, u"cookiejar.txt" )
-#player.Player.RESUME_FILE    = os.path.join( ADDON_DATA_FOLDER, u'player_resume.txt')
-#player.Player.RESUME_LOCK_FILE = os.path.join(ADDON_DATA_FOLDER, u'player_resume_lock.txt')
 
 log("Loading cookies from :" + repr(COOKIE_PATH))
 cookiejar = cookielib.LWPCookieJar(COOKIE_PATH)
@@ -193,7 +193,7 @@ def executeCommand():
 	if ( mycgi.EmptyQS() ):
 		success = ShowProviders()
 	else:
-		(providerName, clearCache, testForwardedIP) = mycgi.Params( u'provider', u'clearcache', u'testforwardedip')
+		(providerName, clearCache, testForwardedIP, deleteresume, force_resume_unlock) = mycgi.Params( u'provider', u'clearcache', u'testforwardedip', u'deleteresume', u'force_resume_unlock' )
 
 		if clearCache != u'':
 			httpManager.ClearCache()
@@ -246,10 +246,10 @@ def executeCommand():
 #	
 
 
-if __name__ == "__main__":
+if __name__ == u"__main__":
 
 		try:
-			if addon.getSetting('http_cache_disable') == 'false':
+			if addon.getSetting(u'http_cache_disable') == u'false':
 				httpManager.SetCacheDir( CACHE_FOLDER )
 	
 			InitTimeout()

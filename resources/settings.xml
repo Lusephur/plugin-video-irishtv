@@ -53,5 +53,8 @@
 	
 	 <setting id="socket_timeout" type="number" label="30420" default="0"/>
 	 <setting id="http_cache_disable" label="30170" type="bool" default="false" />
+     <setting id="resume_enabled" label="30490" type="bool" default="true" />
+     <setting id="resume_days_to_keep" label="30450" type="number" default="40" enable="eq(-1,true)" />
+     <setting id="playaction" label="30470" type="enum" values="Resume|Play from start" default="0"  enable="eq(-2,true)" />
 	</category>
 </settings>

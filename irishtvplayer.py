@@ -1,6 +1,10 @@
 import os
 import sys
 import re
+import time
+
+if os.environ.get( "OS" ) != "xbox":
+    import threading
 
 import xbmc
 import xbmcgui
@@ -12,12 +16,12 @@ import utils
 
 class PlayerLockException(LoggingException):
     """
-    Exception raised when IPlayer fails to obtain a resume lock
+    Exception raised when IrishTVPlayer fails to obtain a resume lock
     """
     pass
 
 class BasePlayer(xbmc.Player):
-    def __init__( self, pid, live ):
+    def __init__( self ):
         pass
     
     def load_resume_file():
@@ -28,11 +32,17 @@ class BasePlayer(xbmc.Player):
         pass
 
     def resume_and_play( self, url, listitem, is_tv, playresume=False ):
-        play = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
-        play.clear()
-        play.add(url, listitem)
+        self.playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+        self.playlist.clear()
+        self.playlist.add(url, listitem)
+        self.play(self.playlist)
 
-        self.play(play)
+    def get_playlist(self):
+        return self.playlist
+    
+    def set_cancelled( self ):
+        pass 
+    
 
 """
 class IrishTVPlayer(BasePlayer):
@@ -52,18 +62,11 @@ class IrishTVPlayer(BasePlayer):
     dates_added = None
 
     #def __init__( self, pid, live )
-    def __init__( self, pid ):
+    #def __init__( self, x, live ):
+    
 #        pid = 0
-        live = False
-        if hasattr(sys.modules[u"__main__"], u"log"):
-            self.log = sys.modules[u"__main__"].log
-        else:
-            from utils import log
-            self.log = log
-
-            self.log(u"")
-
-        self.log(u"%s: IrishTVPlayer initialised (core_player: %d, pid: %s, live: %s)" % (self, pid, live), xbmc.LOGINFO)
+    def init( self, pid, live ):
+        xbmc.log(u"%s: IrishTVPlayer initialised (pid: %s, live: %s)" % (self, pid, live), xbmc.LOGINFO)
         self.paused = False
         self.live = live
         self.pid = pid
@@ -78,13 +81,16 @@ class IrishTVPlayer(BasePlayer):
                 # Acquire the resume lock, store the pid and load the resume file
                 self._acquire_lock()
 
+    def set_cancelled( self ):
+        self.cancelled.set()
+
     def __del__( self ):
-        self.log(u"%s: De-initialising..." % self, xbmc.LOGINFO)
+        xbmc.log(u"%s: De-initialising..." % self, xbmc.LOGINFO)
         # If resume is enabled, try to release the resume lock
         if os.environ.get( u"OS" ) != u"xbox":
             if not self.live:
                 try: self.heartbeat.cancel()
-                except: self.log(u'%s: No heartbeat on destruction' % self, xbmc.LOGWARNING)
+                except: xbmc.log(u'%s: No heartbeat on destruction' % self, xbmc.LOGWARNING)
                 self._release_lock()
             # Refresh container to ensure '(resumeable)' is added if necessary
             xbmc.executebuiltin(u'Container.Refresh')
@@ -110,12 +116,15 @@ class IrishTVPlayer(BasePlayer):
 
         xbmc.log(u"Lock owner test: %s" % self_has_lock, level=xbmc.LOGDEBUG)
         if self_has_lock:
-            self.log(u"%s: Removing lock file." % self, xbmc.LOGINFO)
+            xbmc.log(u"%s: Removing lock file." % self, xbmc.LOGINFO)
             try:
                 os.remove(IrishTVPlayer.RESUME_LOCK_FILE)
             except Exception, e:
-                self.log(u"Error removing IrishTVPlayer resume lock file! (%s)" % e, xbmc.LOGWARNING)
+                xbmc.log(u"Error removing IrishTVPlayer resume lock file! (%s)" % e, xbmc.LOGWARNING)
 
+    def set_cancelled( self ):
+        self.cancelled.set() 
+    
     @staticmethod
     def force_release_lock():
         """
@@ -147,7 +156,7 @@ class IrishTVPlayer(BasePlayer):
 
     def onPlayBackStarted( self ):
         # Will be called when xbmc starts playing the stream
-        self.log( u"%s: Begin playback of pid %s" % (self, self.pid), xbmc.LOGINFO )
+        xbmc.log( u"%s: Begin playback of pid %s" % (self, self.pid), xbmc.LOGINFO )
         self.paused = False
         if os.environ.get( u"OS" ) != u"xbox":
             self.run_heartbeat()
@@ -155,30 +164,32 @@ class IrishTVPlayer(BasePlayer):
     def onPlayBackEnded( self ):
         # Will be called when xbmc stops playing the stream
         if self.heartbeat: self.heartbeat.cancel()
-        self.log( u"%s: Playback ended." % self, xbmc.LOGINFO)
+        xbmc.log( u"%s: Playback ended." % self, xbmc.LOGINFO)
         if os.environ.get( u"OS" ) != u"xbox":
             if not self.live:
-                self.log( u"%s: Saving resume point for pid %s at %fs." % (self, self.pid, self.current_seek_time), xbmc.LOGINFO )
-                self.save_resume_point( self.current_seek_time )
+                ##xbmc.log( u"%s: Saving resume point for pid %s at %fs." % (self, self.pid, self.current_seek_time), xbmc.LOGINFO )
+                x = self
+                y = x.current_seek_time
+                x.save_resume_point( y )
         self.__del__()
 
     def onPlayBackStopped( self ):
         if self.heartbeat: self.heartbeat.cancel()
         # Will be called when user stops xbmc playing the stream
         # The player needs to be unloaded to release the resume lock
-        self.log( u"%s: Playback stopped." % self, xbmc.LOGINFO)
+        xbmc.log( u"%s: Playback stopped." % self, xbmc.LOGINFO)
         if os.environ.get( u"OS" ) != u"xbox":
             if not self.live:
-                self.log(u"%s: Saving resume point for pid %s at %fs." % (self, self.pid, self.current_seek_time), xbmc.LOGINFO )
+                xbmc.log(u"%s: Saving resume point for pid %s at %fs." % (self, self.pid, self.current_seek_time), xbmc.LOGINFO )
                 self.save_resume_point( self.current_seek_time )
         self.__del__()
 
     def onPlayBackPaused( self ):
         # Will be called when user pauses playback on a stream
-        self.log( u"%s: Playback paused." % self, xbmc.LOGINFO)
+        xbmc.log( u"%s: Playback paused." % self, xbmc.LOGINFO)
         if os.environ.get( u"OS" ) != u"xbox":
             if not self.live:
-                self.log(u"%s: Saving resume point for pid %s at %fs." % (self, self.pid, self.getTime()), xbmc.LOGINFO )
+                xbmc.log(u"%s: Saving resume point for pid %s at %fs." % (self, self.pid, self.getTime()), xbmc.LOGINFO )
                 self.save_resume_point( self.current_seek_time )
         self.paused = True
 
@@ -189,7 +200,7 @@ class IrishTVPlayer(BasePlayer):
         resume, dates_added = IrishTVPlayer.load_resume_file()
         resume[self.pid] = resume_point
         dates_added[self.pid] = time.time()
-        self.log(u"%s: Saving resume point (pid %s, seekTime %fs, dateAdded %d) to resume file" % (self, self.pid, resume[self.pid], dates_added[self.pid]), xbmc.LOGINFO)
+        xbmc.log(u"%s: Saving resume point (pid %s, seekTime %fs, dateAdded %d) to resume file" % (self, self.pid, resume[self.pid], dates_added[self.pid]), xbmc.LOGINFO)
         IrishTVPlayer.save_resume_file(resume, dates_added)
 
     @staticmethod
@@ -207,7 +218,7 @@ class IrishTVPlayer(BasePlayer):
             IrishTVPlayer.resume = {}
             IrishTVPlayer.dates_added = {}
             if os.path.isfile(IrishTVPlayer.RESUME_FILE):
-                self.log(u"IrishTVPlayer: Loading resume file: %s" % (IrishTVPlayer.RESUME_FILE), xbmc.LOGINFO)
+                xbmc.log(u"IrishTVPlayer: Loading resume file: %s" % (IrishTVPlayer.RESUME_FILE), xbmc.LOGINFO)
                 with open(IrishTVPlayer.RESUME_FILE, 'rU') as resume_fh:
                     resume_str = resume_fh.read()
                 tokens = resume_str.split()
@@ -227,13 +238,13 @@ class IrishTVPlayer(BasePlayer):
                         pid_to_date_added_map.append( (pids[i], datesAdded[i]) )
                 IrishTVPlayer.resume = dict(pid_to_resume_point_map)
                 IrishTVPlayer.dates_added = dict(pid_to_date_added_map)
-                self.log(u"IrishTVPlayer: Found %d resume entries" % (len(IrishTVPlayer.resume.keys())), xbmc.LOGINFO)
+                xbmc.log(u"IrishTVPlayer: Found %d resume entries" % (len(IrishTVPlayer.resume.keys())), xbmc.LOGINFO)
                 
         return IrishTVPlayer.resume, IrishTVPlayer.dates_added
 
     @staticmethod
     def delete_resume_point(pid_to_delete):
-        self.log(u"IrishTVPlayer: Deleting resume point for pid %s" % pid_to_delete, xbmc.LOGINFO)
+        xbmc.log(u"IrishTVPlayer: Deleting resume point for pid %s" % pid_to_delete, xbmc.LOGINFO)
         resume, dates_added = IrishTVPlayer.load_resume_file()
         del resume[pid_to_delete]
         del dates_added[pid_to_delete]
@@ -249,7 +260,7 @@ class IrishTVPlayer(BasePlayer):
         IrishTVPlayer.dates_added = dates_added
         
         str = u""
-        self.log(u"IrishTVPlayer: Saving %d entries to %s" % (len(resume.keys()), IrishTVPlayer.RESUME_FILE), xbmc.LOGINFO)
+        xbmc.log(u"IrishTVPlayer: Saving %d entries to %s" % (len(resume.keys()), IrishTVPlayer.RESUME_FILE), xbmc.LOGINFO)
         resume_fh = open(IrishTVPlayer.RESUME_FILE, u'w')
         try:
             for pid, seekTime in resume.items():
@@ -267,15 +278,16 @@ class IrishTVPlayer(BasePlayer):
         if os.environ.get( u"OS" ) != u"xbox" and not self.live and playresume:
             resume, dates_added = IrishTVPlayer.load_resume_file()
             if self.pid in resume.keys():
-                self.log(u"%s: Resume point found for pid %s at %f, seeking..." % (self, self.pid, resume[self.pid]), xbmc.LOGINFO)
+                xbmc.log(u"%s: Resume point found for pid %s at %f, seeking..." % (self, self.pid, resume[self.pid]), xbmc.LOGINFO)
                 listitem.setProperty(u'StartOffset', u'%d' % resume[self.pid])
 
         if is_tv:
-            play = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+            self.playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
         else:
-            play = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
-        play.clear()
-        play.add(url, listitem)
+            self.playlist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
+        self.playlist.clear()
+        self.playlist.add(url, listitem)
 
-        self.play(play)
+        self.play(self.playlist)
+
 

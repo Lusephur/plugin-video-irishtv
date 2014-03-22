@@ -12,20 +12,9 @@ from cookielib import Cookie
 from datetime import datetime, timedelta
 from urlparse import urljoin
 
-if hasattr(sys.modules[u"__main__"], u"xbmc"):
-    xbmc = sys.modules[u"__main__"].xbmc
-else:
-    import xbmc
-    
-if hasattr(sys.modules[u"__main__"], u"xbmcgui"):
-    xbmcgui = sys.modules[u"__main__"].xbmcgui
-else:
-    import xbmcgui
-
-if hasattr(sys.modules[u"__main__"], u"xbmcplugin"):
-    xbmcplugin = sys.modules[u"__main__"].xbmcplugin
-else:
-    import xbmcplugin
+import xbmc
+import xbmcgui
+import xbmcplugin
 
 import mycgi
 import utils
@@ -37,6 +26,7 @@ from BeautifulSoup import BeautifulSoup
 
 from provider import Provider
 from brightcove import BrightCoveProvider
+from player import BasePlayer
 
 urlRoot     = u"http://www.aertv.ie"
 apiRoot     = u"http://api.aertv.ie"
@@ -149,8 +139,8 @@ class AerTVProvider(BrightCoveProvider):
         """
         loginJSON = None
         
-        email = self.addon.getSetting( u'AerTV_email' )
-        password = self.addon.getSetting( u'AerTV_password' )
+        email = self.addon.getSetting( u'AerTV_email' ).decode(u'utf8')
+        password = self.addon.getSetting( u'AerTV_password' ).decode(u'utf8')
         
         if len(email) == 0 or len(password) == 0:
             return
@@ -599,7 +589,7 @@ class AerTVProvider(BrightCoveProvider):
     
             viewExperienceUrl = urlRoot + u'/#' + channel
             
-            #streamType = self.addon.getSetting( u'AerTV_stream_type' )
+            #streamType = unicode(self.addon.getSetting( u'AerTV_stream_type' ))
             #self.log(u"Stream type setting: " + streamType)
             
             try:
@@ -743,4 +733,22 @@ class AerTVProvider(BrightCoveProvider):
         qsdata[u'isUI'] = u'true'
         
         return qsdata    
+    
+    def GetPlayer(self, pid, live):
+        return AerTVPlayer()
+
+
+class AerTVPlayer(BasePlayer):
+    def onPlayBackSeek(self,time,seekOffset):        
+        # Seeking is not supported for live streams
+        pass
+    
+    def onPlayBackSeekChapter(self, chapter):
+        # Seeking is not supported for live streams
+        pass
+    
+    def onPlayBackSpeedChanged(self, speed): 
+        # Speed changes are not supported for live streams
+        pass
+    
 

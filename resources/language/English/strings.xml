@@ -63,6 +63,10 @@
   <string id="30370">Forwarded IP</string>
   <string id="30400">Advanced</string>
   <string id="30420">Socket Timeout</string>
+  <string id="30450">Number of days to keep resume points</string>
+  <string id="30460">Force release resume lock</string>
+  <string id="30470">Default play action</string>
+  <string id="30480">Enable resume</string>
   <string id="30500">Search</string>
   <string id="30520">Unable to determine swfPlayer URL. Using default: %s</string>
   <string id="30530">Do you want to play or download?</string>
