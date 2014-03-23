@@ -625,13 +625,16 @@ class TG4Provider(BrightCoveProvider):
                     self.log("Check candidate refence Id %s" % candidateId, xbmc.LOGDEBUG)
                     if match is not None:
                         partNumber = int(match.group(1))
-                        partsFound = partsFound + 1
                         
-                        parts[partNumber - 2] = mediaDTO
+                        index = partNumber - 2
                         
-                        self.log("Matching refence id, part %d" % partNumber, xbmc.LOGDEBUG)
-                        if partsFound > (partsMinus1 - 1):
-                            break
+                        if parts[index] is None:                        
+                            partsFound = partsFound + 1
+                            parts[index] = mediaDTO
+                        
+                            self.log("Matching refence id, part %d" % partNumber, xbmc.LOGDEBUG)
+                            if partsFound > (partsMinus1 - 1):
+                                break
                         
             except (Exception) as exception:
                 if not isinstance(exception, LoggingException):
@@ -654,11 +657,11 @@ class TG4Provider(BrightCoveProvider):
             pageNumber = pageNumber + 1
             
         try:
-            if len(parts) < partsMinus1:
+            if partsFound < partsMinus1:
                 if partsMinus1 == 1:
                     msg = self.language(30094) # "Part 2 of 2 is missing"
                 else: 
-                    missing = partsMinus1 - parts
+                    missing = partsMinus1 - partsFound
                     plural = ""
                     if missing > 2:
                         plural = "(s)"
@@ -669,13 +672,14 @@ class TG4Provider(BrightCoveProvider):
                 exception.process(self.language(30096) , '', self.logLevel(xbmc.LOGWARNING))
                  
             for mediaDTO in parts:
-                (infoLabels, logo, rtmpVar, defaultFilename) = self.GetPlayListDetailsFromAMF(mediaDTO, appNormal, self.episodeId, live = False)
-                        
-                listItem = self.CreateListItem(infoLabels, logo) 
-                url = rtmpVar.getPlayUrl()
-                
-                if self.GetPlayer(None, None).isPlaying():
-                    playList.add(url, listItem)
+                if mediaDTO:
+                    (infoLabels, logo, rtmpVar, defaultFilename) = self.GetPlayListDetailsFromAMF(mediaDTO, appNormal, self.episodeId, live = False)
+                            
+                    listItem = self.CreateListItem(infoLabels, logo) 
+                    url = rtmpVar.getPlayUrl()
+                    
+                    if self.GetPlayer(None, None).isPlaying():
+                        playList.add(url, listItem)
             
             plural = " has"
             if partsFound > 1:
