@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: XBMC-Addons\n"
 "Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
-"POT-Creation-Date: 2014-03-22 21:48+0000\n"
+"POT-Creation-Date: 2014-03-23 19:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE\n"
@@ -273,9 +273,7 @@ msgctxt "#30064"
 msgid "Error creating calendar list"
 msgstr ""
 
-msgctxt "#30065"
-msgid "Error getting rtmp url. Using default: %s"
-msgstr ""
+#empty string with id 30065
 
 msgctxt "#30066"
 msgid "Error getting rtmp url"
@@ -551,25 +549,13 @@ msgctxt "#30450"
 msgid "Number of days to keep resume points"
 msgstr ""
 
-#empty strings from id 30451 to 30459
-
-msgctxt "#30460"
-msgid "Force release resume lock"
-msgstr ""
-
-#empty strings from id 30461 to 30469
+#empty strings from id 30451 to 30469
 
 msgctxt "#30470"
 msgid "Default play action"
 msgstr ""
 
-#empty strings from id 30471 to 30479
-
-msgctxt "#30480"
-msgid "Enable resume"
-msgstr ""
-
-#empty strings from id 30481 to 30499
+#empty strings from id 30471 to 30499
 
 msgctxt "#30500"
 msgid "Search"

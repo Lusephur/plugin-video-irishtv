@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <strings>
   <string id="30001">Error getting %s Player Home page</string>
   <string id="30002">Cannot show RTE root menu</string>
@@ -64,9 +63,7 @@
   <string id="30400">Advanced</string>
   <string id="30420">Socket Timeout</string>
   <string id="30450">Number of days to keep resume points</string>
-  <string id="30460">Force release resume lock</string>
   <string id="30470">Default play action</string>
-  <string id="30480">Enable resume</string>
   <string id="30500">Search</string>
   <string id="30520">Unable to determine swfPlayer URL. Using default: %s</string>
   <string id="30530">Do you want to play or download?</string>
@@ -103,7 +100,6 @@
   <string id="30062">All Shows - By Date</string>
   <string id="30063">Error processing %s</string>
   <string id="30064">Error creating calendar list</string>
-  <string id="30065">Error getting rtmp url. Using default: %s</string>
   <string id="30066">Error getting rtmp url</string>
   <string id="30066">Error preparing or playing stream</string>
   <string id="30067">Error processing channel</string>
