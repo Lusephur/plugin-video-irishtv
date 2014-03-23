@@ -59,10 +59,7 @@ import rtmp
 
 import providerfactory
 from provider import Provider
-from irishtvplayer import IrishTVPlayer 
 
-#import SimpleDownloader
-#__downloader__ = SimpleDownloader.SimpleDownloader()
 xhausUrl = "http://www.xhaus.com/headers"
 
 # Use masterprofile rather profile, because we are caching data that may be used by more than one user on the machine
@@ -120,6 +117,11 @@ def ShowProviders():
 
 	for provider in providers:
 		providerName = provider.GetProviderId()
+		
+		if providerName == "AerTV":
+			if len(addon.getSetting( u'AerTV_email' )) == 0 or len(addon.getSetting( u'AerTV_password' )) == 0:
+				continue
+			
 		log(u"Adding " + providerName + u" provider", xbmc.LOGDEBUG)
 		newListItem = xbmcgui.ListItem( providerName )
 		url = baseURL + u'?provider=' + providerName
@@ -220,9 +222,9 @@ def executeCommand():
 					logException.process(language(30755), language(30020), xbmc.LOGERROR)
 					return False
 				
-				provider.initialise(httpManager, sys.argv[0], pluginHandle)
-				success = provider.ExecuteCommand(mycgi)
-				log (u"executeCommand done", xbmc.LOGDEBUG)
+				if provider.initialise(httpManager, sys.argv[0], pluginHandle):
+					success = provider.ExecuteCommand(mycgi)
+					log (u"executeCommand done", xbmc.LOGDEBUG)
 
 				"""
 				print cookiejar

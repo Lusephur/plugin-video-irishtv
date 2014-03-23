@@ -26,7 +26,7 @@ from BeautifulSoup import BeautifulSoup
 
 from provider import Provider
 from brightcove import BrightCoveProvider
-from player import BasePlayer
+from irishtvplayer import BasePlayer
 
 urlRoot     = u"http://www.aertv.ie"
 apiRoot     = u"http://api.aertv.ie"
@@ -39,17 +39,16 @@ defaultRTMPUrl = u"rtmpe://d-deg-mcdn.magnet.ie/rtplive&"
 
 TIME_FORMAT = u"%Y-%m-%dT%H:%M:%S"
 
-# RTMP stub 
-channelToStream = {
-                u'rte-one' : u'RTEONE_v500.stream',
-                u'rte-two' : u'RTETWO_v500.stream',
-                u'tv3' : u'TV3_v500.stream',
-                u'tg4' : u'TG4_v500.stream',
-                u'3e' : u'3E_v500.stream',
-                u'rte-one1' : u'RTEPLUSONE_v500.stream',
-                u'rte-news-now' : u'RTENEWSNOW_v500.stream',
-                u'rtejr' : u'RTEJUNIOR_v500.stream'
-                }
+# Exclude channels
+excludeChannels = [
+                    u'/#aertv-live',
+                    u'/#aertv-movies',
+                    u'/#aertv-music',
+                    u'/#aertv-sports',
+                    u'/#unravel-travel',
+                    u'/#dail-eireann',
+                    u'/#dctv'
+                    ]
 
 # Hard code paths to logos for users who don't want to use EPG
 channelToLogo = {
@@ -92,6 +91,7 @@ channelToLogo = {
                  
                  }
 
+
 class AerTVProvider(BrightCoveProvider):
 
     def __init__(self):
@@ -108,7 +108,7 @@ class AerTVProvider(BrightCoveProvider):
         if hasattr(sys.modules[u"__main__"], u"cookiejar"):
             self.cookiejar = sys.modules[u"__main__"].cookiejar
 
-        self.Login()
+        return self.Login()
     
     def Login(self):
         """
@@ -120,7 +120,7 @@ class AerTVProvider(BrightCoveProvider):
                 'fname': 'fname',
                 'id': '87354',
                 'ipicid': 'aertv530916c892b25',
-                'is_paid_subscriber': 0,
+                'is_paid_subscriber': 0/1,
                 'lname': 'lname',
                 'login': True,
                 'mailchimp': None,
@@ -129,7 +129,12 @@ class AerTVProvider(BrightCoveProvider):
                         'code': 'WEB_STD',
                         'desc': 'Free Channel Pack',
                         'package_id': '1'
-                    }
+                    },
+                    {
+                        "code":"AERTV_PLUS",
+                        "desc":"Aertv Plus",
+                        "package_id":"6"
+                    }                    
                 ],
                 'session': 'YWVydHY1MzA5MTZjODkyYjI0_1393452432',
                 'status': '1',
@@ -137,13 +142,14 @@ class AerTVProvider(BrightCoveProvider):
             }
         }
         """
+        
         loginJSON = None
         
         email = self.addon.getSetting( u'AerTV_email' ).decode(u'utf8')
         password = self.addon.getSetting( u'AerTV_password' ).decode(u'utf8')
         
         if len(email) == 0 or len(password) == 0:
-            return
+            return False
 
         try:
             loginJSON = self.LoginViaCookie()
@@ -163,10 +169,10 @@ class AerTVProvider(BrightCoveProvider):
                 
                 if loginJSON is None:
                     # 'AerTV login failed', 
-                    exception = LoggingException(language(30101))
+                    exception = LoggingException(self.language(30101))
                     # "Status Message: %s
                     exception.process(severity = self.logLevel(xbmc.LOGERROR))
-                    return
+                    return False
                 
                 sessionId = loginJSON[u'user'][u'session']
                 
@@ -187,10 +193,12 @@ class AerTVProvider(BrightCoveProvider):
                     expiry = expiry + 3600
                 """
                 
-                sessionCookie = self.makeCookie(u'Aertv_login', sessionId, domain, expiry )
+                sessionCookie = self.MakeCookie(u'Aertv_login', sessionId, domain, expiry )
                 self.cookiejar.set_cookie(sessionCookie)
                 self.cookiejar.save()
 
+                loginJSON = self.LoginViaCookie()
+                
             except (Exception) as exception:
                 if not isinstance(exception, LoggingException):
                     exception = LoggingException.fromException(exception)
@@ -199,8 +207,27 @@ class AerTVProvider(BrightCoveProvider):
                     exception.addLogMessage(self.language(30101))
                     exception.process(severity = self.logLevel(xbmc.LOGERROR))
                     return False
-        
             
+        self.LogLoginInfo(loginJSON)
+        
+        if len(utils.getDictionaryValue(loginJSON[u'user'], u'packages')) < 2:
+            # Error logging into AerTV
+            exception = LoggingException(self.language(30101)) 
+            exception.process(severity = self.logLevel(xbmc.LOGERROR))
+            return False
+        
+        return True
+        
+    def LogLoginInfo(self, loginJSON):
+        self.log(u'is_paid_subscriber: %s' % utils.getDictionaryValue(loginJSON[u'user'], u'is_paid_subscriber'))
+        self.log(u'login: %s' % utils.getDictionaryValue(loginJSON[u'user'], u'login'))
+        self.log(u'status: %s' % utils.getDictionaryValue(loginJSON[u'user'], u'status'))
+        
+        packages = utils.getDictionaryValue(loginJSON[u'user'], u'packages')
+        
+        if packages:
+            self.log(u'status: %s' % utils.drepr(packages))
+    
     def AttemptLogin(self, values, logUrl = True):
         try:
             loginJSONText = None
@@ -221,9 +248,9 @@ class AerTVProvider(BrightCoveProvider):
                 
                     
                 # 'AerTV login failed', 
-                logException = LoggingException(language(30101))
+                logException = LoggingException(self.language(30101))
                 # "Status Message: %s
-                logException.process(language(30102) % statusMessage, u"", xbmc.LOGWARNING)
+                logException.process(self.language(30102) % statusMessage, u"", xbmc.LOGWARNING)
 
                 return None
             
@@ -243,9 +270,6 @@ class AerTVProvider(BrightCoveProvider):
             raise exception
 
 
-    def StoreLoginData(self, loginJSON):
-        self.isPaidSubscriber = loginJSON[u'user'][u'is_paid_subscriber']
-        
     def LoginViaCookie(self):
         loginJSON = None
         
@@ -277,13 +301,10 @@ class AerTVProvider(BrightCoveProvider):
         self.log(u"", xbmc.LOGDEBUG)
         
         try:
-            ddlJSONText = None
+            channels = None
             epgJSON = None 
-            values = [{u'api':u'ddl'}, {u'type':u'basic'}]
-            url = self.GetAPIUrl(values)
-
-            ddlJSONText = self.httpManager.GetWebPage(url, 0)
-            ddlJSON = _json.loads(ddlJSONText)
+            
+            channels = self.GetAvailableChannels()
             
             if self.addon.getSetting( u'AerTV_show_epg' ) <> u'false':
                 values = [{u'api':u'epg'}, {u'type':u'basic'}]
@@ -292,20 +313,20 @@ class AerTVProvider(BrightCoveProvider):
                 epgJSONText = self.httpManager.GetWebPage(url, 300)
                 epgJSON = _json.loads(epgJSONText)
                 
-                return self.ShowEPG(ddlJSON, epgJSON)
+                return self.ShowEPG(channels, epgJSON)
             else:
-                return self.ShowChannelList(ddlJSON)
+                return self.ShowChannelList(channels)
         
         except (Exception) as exception:
             if not isinstance(exception, LoggingException):
                 exception = LoggingException.fromException(exception)
 
-            if ddlJSONText is not None:
-                msg=u"ddlJSONText:\n\n%s\n\n" % ddlJSONText
-                exception.addLogMessage(msg)
-            
             if epgJSON is not None:
                 msg=u"epgJSON:\n\n%s\n\n" % utils.drepr(epgJSON)
+                exception.addLogMessage(msg)
+
+            if channels is not None:
+                msg=u"channels:\n\n%s\n\n" % utils.drepr(channels)
                 exception.addLogMessage(msg)
 
             # Cannot show root menu
@@ -313,6 +334,19 @@ class AerTVProvider(BrightCoveProvider):
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
 
+    def GetAvailableChannels(self):
+        html = self.httpManager.GetWebPage(urlRoot, 300)    
+            
+        soup = BeautifulSoup(html)
+        
+        channels = []
+        for channel in soup.findAll('a', 'live-channel'):
+             if len(channel('span')) > 0 or channel[u'href'] in excludeChannels:
+                     continue
+             channels.append(channel)
+        
+        return channels
+    
     def GetAPIUrl(self, parameters):
         # {'api':'ddl', 'type':'basic'} => www.apiRoot.com/api/ddl/type/basic
         url = apiRoot
@@ -337,15 +371,12 @@ class AerTVProvider(BrightCoveProvider):
             return self.PlayVideoWithDialog(self.PlayChannel, (channel, logo))
 
 
-    def ShowChannelList(self, ddlJSON):
+    def ShowChannelList(self, channels):
         self.log(u"", xbmc.LOGDEBUG)
         
-        soup = BeautifulSoup(ddlJSON[u'data'])
-
         listItems = []
 
-        anchors=soup.findAll(u'a')
-        for anchor in anchors:
+        for anchor in channels:
             try:
                 playerIndex = anchor[u'href'].find(u'#')
                 if playerIndex == -1:
@@ -353,22 +384,20 @@ class AerTVProvider(BrightCoveProvider):
 
                 slug = anchor[u'href'][playerIndex + 1:]
 
-                if slug in channelToStream.keys():
-                    newLabel = anchor.text
-                    description = newLabel
-                    logo = channelToLogo[slug]
-                    
-                    newListItem = xbmcgui.ListItem( label=newLabel )
-                    newListItem.setThumbnailImage(logo)
-                    channelUrl = self.GetURLStart() + u'&channel=' + slug + u'&logo=' + mycgi.URLEscape(logo)
-                    
-                    infoLabels = {u'Title': newLabel, u'Plot': description, u'PlotOutline': description}
-        
-                    newListItem.setInfo(u'video', infoLabels)
-                    newListItem.setProperty(u"Video", u"true")
-                    #newListItem.setProperty(u'IsPlayable', u'true')
+                newLabel = anchor.text
+                description = newLabel
+                logo = channelToLogo[slug]
+                
+                newListItem = xbmcgui.ListItem( label=newLabel )
+                newListItem.setThumbnailImage(logo)
+                channelUrl = self.GetURLStart() + u'&channel=' + slug + u'&logo=' + mycgi.URLEscape(logo)
+                
+                infoLabels = {u'Title': newLabel, u'Plot': description, u'PlotOutline': description}
+    
+                newListItem.setInfo(u'video', infoLabels)
+                newListItem.setProperty(u"Video", u"true")
 
-                    listItems.append( (channelUrl, newListItem, False) )
+                listItems.append( (channelUrl, newListItem, False) )
             except (Exception) as exception:
                 # Problem getting details for a particular channel, show a warning and keep going 
                 if not isinstance(exception, LoggingException):
@@ -392,17 +421,14 @@ class AerTVProvider(BrightCoveProvider):
         
         return True
 
-    def ShowEPG(self, ddlJSON, epgJSON):
+    def ShowEPG(self, channels, epgJSON):
         self.log(u"", xbmc.LOGDEBUG)
     
         channelDetails = self.ParseEPGData(epgJSON)
         
-        soup = BeautifulSoup(ddlJSON[u'data'])
-
         listItems = []
 
-        anchors=soup.findAll(u'a')
-        for anchor in anchors:
+        for anchor in channels:
             try:
                 playerIndex = anchor[u'href'].find(u'#')
                 if playerIndex == -1:
@@ -410,21 +436,19 @@ class AerTVProvider(BrightCoveProvider):
 
                 slug = anchor[u'href'][playerIndex + 1:]
 
-                if slug in channelToStream.keys():
-                    (label, description, logo) = self.GetListItemDataForSlug(channelDetails, slug)
-                    newLabel = anchor.text + " " + label
-                    
-                    newListItem = xbmcgui.ListItem( label=newLabel )
-                    newListItem.setThumbnailImage(logo)
-                    channelUrl = self.GetURLStart() + u'&channel=' + slug + u'&logo=' + mycgi.URLEscape(logo) 
-                    
-                    infoLabels = {u'Title': newLabel, u'Plot': description, u'PlotOutline': description}
-        
-                    newListItem.setInfo(u'video', infoLabels)
-                    newListItem.setProperty(u"Video", u"true")
-                    #newListItem.setProperty(u'IsPlayable', u'true')
+                (label, description, logo) = self.GetListItemDataForSlug(channelDetails, slug)
+                newLabel = anchor.text + " " + label
+                
+                newListItem = xbmcgui.ListItem( label=newLabel )
+                newListItem.setThumbnailImage(logo)
+                channelUrl = self.GetURLStart() + u'&channel=' + slug + u'&logo=' + mycgi.URLEscape(logo) 
+                
+                infoLabels = {u'Title': newLabel, u'Plot': description, u'PlotOutline': description}
+    
+                newListItem.setInfo(u'video', infoLabels)
+                newListItem.setProperty(u"Video", u"true")
 
-                    listItems.append( (channelUrl, newListItem, False) )
+                listItems.append( (channelUrl, newListItem, False) )
             except (Exception) as exception:
                 # Problem getting details for a particular channel, show a warning and keep going 
                 if not isinstance(exception, LoggingException):
@@ -570,7 +594,29 @@ class AerTVProvider(BrightCoveProvider):
     
 
     def PlayChannel(self, channel, logo):
-        
+        """
+        RTE 1 jQuery110109518442715161376_1395526161546(
+        {
+         "player":"Get player here from post ",
+         "data":{
+             "post_id":"17",
+             "freebie":true,
+             "auth":true,
+             "magonly":false,
+             "channel":"RT\u00c9 One",
+             "internal":"off",
+             "streamname":"",
+             "free":true,
+             "videoId":"rte-one",
+             "publisherId":"1242843906001",
+             "playerId":"1454761980001",
+             "playerKey":"AQ~~,AAABIV9E_9E~,lGDQr89oSbKT02RqV22r-E007AitVINH",
+             "appStreamUrl":"",
+             "show":"The Saturday Night Show"
+            },
+        "flag":"new"
+        })
+        """
         try:
             jsonData = None
             values = [{u'api':u'player'}, {u'type':u'name'}, {u'val':channel}]
@@ -604,17 +650,11 @@ class AerTVProvider(BrightCoveProvider):
                     exception = LoggingException.fromException(exception)
     
                 self.log(u" channel: %s" % channel)
-                if channel in channelToStream:
-                    streamUrl = defaultRTMPUrl + channelToStream[channel]
-        
-                    # Error getting rtmp url. Using default: %s
-                    exception.addLogMessage(self.language(30065) % streamUrl)
-                    exception.printLogMessages(severity = xbmc.LOGWARNING)
-                else:
-                    # Error getting rtmp url.
-                    exception.addLogMessage(self.language(30066))
-                    # Cannot play video stream
-                    raise exception
+
+                # Error getting rtmp url.
+                exception.addLogMessage(self.language(30066))
+                # Cannot play video stream
+                raise exception
                 
             if self.dialog.iscanceled():
                 return False
@@ -734,21 +774,3 @@ class AerTVProvider(BrightCoveProvider):
         
         return qsdata    
     
-    def GetPlayer(self, pid, live):
-        return AerTVPlayer()
-
-
-class AerTVPlayer(BasePlayer):
-    def onPlayBackSeek(self,time,seekOffset):        
-        # Seeking is not supported for live streams
-        pass
-    
-    def onPlayBackSeekChapter(self, chapter):
-        # Seeking is not supported for live streams
-        pass
-    
-    def onPlayBackSpeedChanged(self, speed): 
-        # Speed changes are not supported for live streams
-        pass
-    
-

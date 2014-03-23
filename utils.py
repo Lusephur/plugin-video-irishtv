@@ -151,19 +151,9 @@ def normalize(text):
             
     return unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore')
 
-#TODO This isn't efficient, but it's simplicity makes it less prone to bugs
-#     Rewrite to copy safe ascii sections of the string in whole chunks, not one char at a time.
-def pyamfStr2Unicode(strText):
-    unicodeText = u""
-    count = len(strText)
-
-    for index in range(0,count):
-        char = strText[index]
-        byteValue = ord(char)
-        if byteValue < 128:
-            unicodeText = unicodeText + char
-        else:
-            unicodeText = unicodeText + unichr(byteValue)
-
-    return unicodeText
-
+def getDictionaryValue(dictionary, key):
+    try:
+        return dictionary[key]
+    except:
+        return None
+        

@@ -134,6 +134,8 @@ class Provider(object):
         
         self.InitialiseHTTP(httpManager)
         
+        return True
+        
     def GetProxyConfig(self):
 
         proxy_server = None
