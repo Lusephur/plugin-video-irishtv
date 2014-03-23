@@ -14,20 +14,10 @@ from datetime import date
 from datetime import datetime
 from urlparse import urljoin
 
-if hasattr(sys.modules["__main__"], "xbmc"):
-    xbmc = sys.modules["__main__"].xbmc
-else:
-    import xbmc
-    
-if hasattr(sys.modules["__main__"], "xbmcgui"):
-    xbmcgui = sys.modules["__main__"].xbmcgui
-else:
-    import xbmcgui
 
-if hasattr(sys.modules["__main__"], "xbmcplugin"):
-    xbmcplugin = sys.modules["__main__"].xbmcplugin
-else:
-    import xbmcplugin
+import xbmc
+import xbmcgui
+import xbmcplugin
 
 import mycgi
 import utils
@@ -684,7 +674,7 @@ class TG4Provider(BrightCoveProvider):
                 listItem = self.CreateListItem(infoLabels, logo) 
                 url = rtmpVar.getPlayUrl()
                 
-                if self.GetPlayer().isPlaying():
+                if self.GetPlayer(None, None).isPlaying():
                     playList.add(url, listItem)
             
             plural = " has"
@@ -763,9 +753,11 @@ class TG4Provider(BrightCoveProvider):
             return False
 
     def GetPlayListDetailsFromAMF(self, mediaDTO, appFormat, episodeId, live):
+
             # ondemand?videoId=2160442511001&lineUpId=&pubId=1290862567001&playerId=1364138050001&affiliateId=
             app = appFormat % (episodeId, self.publisherId, self.playerId)
             
+            # rtmp://cp156323.edgefcs.net/ondemand/&mp4:videos/1290862567001/1290862567001_2666234305001_WCL026718-2-4.mp4
             rtmpUrl = mediaDTO['FLVFullLengthURL']
             playPathIndex = rtmpUrl.index(u'&') + 1
             playPath = rtmpUrl[playPathIndex:]
@@ -854,6 +846,8 @@ class TG4Provider(BrightCoveProvider):
             
             for paramAppend in paramAppends:
                 paramAppend = paramAppend.replace(u'true', u'True')
+                paramAppend = paramAppend.replace(u'["', u'[u"')
+                paramAppend = paramAppend.replace(u'= "', u'= u"')
                 self.log(u"paramAppend: %s" % paramAppend, xbmc.LOGDEBUG)
                 exec(paramAppend)
             

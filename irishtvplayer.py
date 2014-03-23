@@ -21,8 +21,8 @@ class PlayerLockException(LoggingException):
     pass
 
 class BasePlayer(xbmc.Player):
-    def __init__( self ):
-        pass
+    #def __init__( self ):
+    #    pass
     
     def load_resume_file():
         pass
@@ -61,10 +61,7 @@ class IrishTVPlayer(BasePlayer):
     resume = None
     dates_added = None
 
-    #def __init__( self, pid, live )
-    #def __init__( self, x, live ):
-    
-#        pid = 0
+    #def __init__( self, pid, live ):
     def init( self, pid, live ):
         xbmc.log(u"%s: IrishTVPlayer initialised (pid: %s, live: %s)" % (self, pid, live), xbmc.LOGINFO)
         self.paused = False
