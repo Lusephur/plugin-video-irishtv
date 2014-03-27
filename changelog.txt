@@ -1,3 +1,6 @@
+Version 2.0.16 [27 Mar 2014]
+- Fix AerTV login issue
+
 Version 2.0.15 [27 Mar 2014]
 - Fix RTE 1 and 2 live TV (in RTE section)
 - Add more logging around AerTV login, and bypass cache for login http requests
