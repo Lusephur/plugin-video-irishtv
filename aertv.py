@@ -149,6 +149,7 @@ class AerTVProvider(BrightCoveProvider):
         password = self.addon.getSetting( u'AerTV_password' ).decode(u'utf8')
         
         if len(email) == 0 or len(password) == 0:
+            self.log(u"No AerTV login details", xbmc.LOGDEBUG)
             return False
 
         try:
@@ -193,6 +194,8 @@ class AerTVProvider(BrightCoveProvider):
                     expiry = expiry + 3600
                 """
                 
+                self.log(u"Aertv_login expiry: " + expiry, xbmc.LOGDEBUG)
+                
                 sessionCookie = self.MakeCookie(u'Aertv_login', sessionId, domain, expiry )
                 self.cookiejar.set_cookie(sessionCookie)
                 self.cookiejar.save()
@@ -235,7 +238,7 @@ class AerTVProvider(BrightCoveProvider):
             
             url = self.GetAPIUrl(values)
 
-            loginJSONText = self.httpManager.GetWebPage(url, 0, logUrl = logUrl)
+            loginJSONText = self.httpManager.GetWebPageDirect(url, 0, logUrl = logUrl)
             loginJSON = _json.loads(loginJSONText)
             
             # Check for failed login
@@ -254,6 +257,7 @@ class AerTVProvider(BrightCoveProvider):
 
                 return None
             
+            self.log(u"AerTV successful login", xbmc.LOGDEBUG)
             return loginJSON 
         except (Exception) as exception:
             if not isinstance(exception, LoggingException):
@@ -277,12 +281,14 @@ class AerTVProvider(BrightCoveProvider):
         loginCookieList = [cookie for cookie in self.cookiejar if cookie.name == loginCookieName]
         
         if len(loginCookieList) == 0:
+            self.log(u"No AerTV_login cookie", xbmc.LOGDEBUG)
             return None
         
         loginCookie = loginCookieList[0]
         
         now = time.time()
         if loginCookie.is_expired(now):
+            self.log(u"AerTV_login cookie expired", xbmc.LOGDEBUG)
             return None
         
         values = [{u'api':u'cookie'}, {u'login':u'web'}]
