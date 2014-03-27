@@ -36,10 +36,10 @@ playerJSDefault = u"http://static.rasset.ie/static/player/js/player.js?v=5"
 searchUrlDefault = u"http://www.rte.ie/player/ie/search/?q="
 swfDefault = u"http://www.rte.ie/player/assets/player_468.swf"
 """
-swfLiveDefault = u"http://www.rte.ie/static/player/swf/osmf2_2013_06_25b.swf"
 swfLiveDefault = u"http://www.rte.ie/static/player/swf/osmf2_541_2012_11_14.swf"
+swfLiveDefault = u"http://www.rte.ie/player/assets/player_468.swf"
 """
-swfLiveDefault = u"http://www.rte.ie/player/assets/player_454.swf"
+swfLiveDefault = u"http://www.rte.ie/static/player/swf/osmf2_2013_06_25b.swf"
 defaultLiveTVPage = u"/player/ie/live/8/"
 
 class RTEProvider(Provider):
