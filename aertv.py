@@ -111,6 +111,7 @@ class AerTVProvider(BrightCoveProvider):
         return self.Login()
     
     def Login(self):
+        self.log(u"", xbmc.LOGDEBUG)
         """
         {
             'epg': 'WEB_STD',
@@ -167,6 +168,8 @@ class AerTVProvider(BrightCoveProvider):
             try:
                 values = [{u'api':u'login'},{u'user':email},{u'pass':password}]
                 loginJSON = self.AttemptLogin(values, logUrl = False)
+
+                self.log(u"After weblogin loginJSON is None: " + unicode(loginJSON is None), xbmc.LOGDEBUG)
                 
                 if loginJSON is None:
                     # 'AerTV login failed', 
@@ -175,26 +178,14 @@ class AerTVProvider(BrightCoveProvider):
                     exception.process(severity = self.logLevel(xbmc.LOGERROR))
                     return False
                 
+                self.log(u"Login successful", xbmc.LOGDEBUG)
+                
                 sessionId = loginJSON[u'user'][u'session']
                 
-                days30 = 30*24*60*60
                 days02 = 2*24*60*60
-                expiry_30_DaysFromStart = int(sessionId[sessionId.find(u'_')+1:]) + days30
-                expiry_02_DaysFromNow = int(time.time()) + days02
-                
-                if expiry_02_DaysFromNow > expiry_30_DaysFromStart:
-                    expiry = expiry_30_DaysFromStart
-                else:
-                    expiry = expiry_02_DaysFromNow
+                expiry = int(time.time()) + days02
                     
-                """
-                now = time.time()
-                if expiry > now:
-                    # Hack to be used until we see what happens after the expiry
-                    expiry = expiry + 3600
-                """
-                
-                self.log(u"Aertv_login expiry: " + expiry, xbmc.LOGDEBUG)
+                self.log(u"Aertv_login expiry: " + unicode(expiry), xbmc.LOGDEBUG)
                 
                 sessionCookie = self.MakeCookie(u'Aertv_login', sessionId, domain, expiry )
                 self.cookiejar.set_cookie(sessionCookie)
@@ -206,11 +197,12 @@ class AerTVProvider(BrightCoveProvider):
                 if not isinstance(exception, LoggingException):
                     exception = LoggingException.fromException(exception)
             
-                    # Error logging into AerTV
-                    exception.addLogMessage(self.language(30101))
-                    exception.process(severity = self.logLevel(xbmc.LOGERROR))
-                    return False
+                # Error logging into AerTV
+                exception.addLogMessage(self.language(30101))
+                exception.process(severity = self.logLevel(xbmc.LOGERROR))
+                return False
             
+        
         self.LogLoginInfo(loginJSON)
         
         if len(utils.getDictionaryValue(loginJSON[u'user'], u'packages')) < 2:
@@ -231,16 +223,30 @@ class AerTVProvider(BrightCoveProvider):
         if packages:
             self.log(u'status: %s' % utils.drepr(packages))
     
-    def AttemptLogin(self, values, logUrl = True):
+    def AttemptLogin(self, values, logUrl = False):
+        self.log(u"", xbmc.LOGDEBUG)
         try:
             loginJSONText = None
             loginJSON = None
             
             url = self.GetAPIUrl(values)
 
-            loginJSONText = self.httpManager.GetWebPageDirect(url, 0, logUrl = logUrl)
+            loginJSONText = self.httpManager.GetWebPageDirect(url, logUrl = logUrl)
             loginJSON = _json.loads(loginJSONText)
             
+            for key in loginJSON:
+                self.log(u"loginJSON['%s'] exists" % key, xbmc.LOGDEBUG)
+                
+            if u'user' in loginJSON:
+                self.log(u"loginJSON['user']", xbmc.LOGDEBUG)
+
+                for key in loginJSON[u'user']:
+                    if key == u'fname' or key == u'lname' or key == 'email':
+                        self.log(u"loginJSON['user']['%s'] exists" % key, xbmc.LOGDEBUG)
+                    else:
+                        self.log(u"loginJSON['user']['%s'] = %s" % (key, utils.drepr(loginJSON[u'user'][key])), xbmc.LOGDEBUG)
+                        
+                         
             # Check for failed login
             if loginJSON[u'user'][u'login'] != True:
                 # Show error message
@@ -253,12 +259,12 @@ class AerTVProvider(BrightCoveProvider):
                 # 'AerTV login failed', 
                 logException = LoggingException(self.language(30101))
                 # "Status Message: %s
-                logException.process(self.language(30102) % statusMessage, u"", xbmc.LOGWARNING)
+                logException.process(self.language(30102) % statusMessage, u"", xbmc.LOGDEBUG)
 
                 return None
             
             self.log(u"AerTV successful login", xbmc.LOGDEBUG)
-            return loginJSON 
+            return loginJSON
         except (Exception) as exception:
             if not isinstance(exception, LoggingException):
                 exception = LoggingException.fromException(exception)
@@ -275,6 +281,7 @@ class AerTVProvider(BrightCoveProvider):
 
 
     def LoginViaCookie(self):
+        self.log(u"", xbmc.LOGDEBUG)
         loginJSON = None
         
         # List all the cookies with the matching name. Result is either an empty list, or a list with a single item
