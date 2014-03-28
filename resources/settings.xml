@@ -13,6 +13,7 @@
 
 	<!-- AerTV -->
 	<category label="30006">
+	 <setting label="30104" type="lsep"/>
 	 <setting id="AerTV_email" type="text" label="30014" default=""/>
 	 <setting id="AerTV_password" type="text" option="hidden" enable="!eq(-1,)" label="30015" default=""/>
 	 <setting id="AerTV_show_epg" type="bool" label="30013" default="true"/>
