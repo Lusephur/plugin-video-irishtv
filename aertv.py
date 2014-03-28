@@ -3,6 +3,7 @@ import re
 import sys
 from time import strftime, strptime
 import time, random
+
 if sys.version_info >=  (2, 7):
     import json as _json
 else:
@@ -15,6 +16,7 @@ from urlparse import urljoin
 import xbmc
 import xbmcgui
 import xbmcplugin
+import xbmcvfs
 
 import mycgi
 import utils
@@ -150,8 +152,25 @@ class AerTVProvider(BrightCoveProvider):
         password = self.addon.getSetting( u'AerTV_password' ).decode(u'utf8')
         
         if len(email) == 0 or len(password) == 0:
-            self.log(u"No AerTV login details", xbmc.LOGDEBUG)
-            return False
+            aertvNoticeFilePath = sys.modules[u"__main__"].AERTV_NOTICE 
+            if not xbmcvfs.exists(aertvNoticeFilePath):
+                file = open(aertvNoticeFilePath, u'w')
+                try:
+                    file.write(" ")
+                finally:
+                    file.close()
+                    
+                dialog = xbmcgui.Dialog()
+                dialog.ok(self.language(30105), self.language(30106))
+                
+                self.addon.openSettings(sys.argv[ 0 ])
+                
+                email = self.addon.getSetting( u'AerTV_email' ).decode(u'utf8')
+                password = self.addon.getSetting( u'AerTV_password' ).decode(u'utf8')
+                
+            if len(email) == 0 or len(password) == 0:
+                self.log(u"No AerTV login details", xbmc.LOGDEBUG)
+                return False
 
         try:
             loginJSON = self.LoginViaCookie()

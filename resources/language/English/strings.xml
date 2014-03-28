@@ -63,6 +63,8 @@
   <string id="30370">Forwarded IP</string>
   <string id="30400">Advanced</string>
   <string id="30420">Socket Timeout</string>
+  <string id="30450">Number of days to keep resume points</string>
+  <string id="30470">Default play action</string>
   <string id="30500">Search</string>
   <string id="30520">Unable to determine swfPlayer URL. Using default: %s</string>
   <string id="30530">Do you want to play or download?</string>
@@ -136,4 +138,7 @@
   <string id="30099">Error getting episode details</string>
   <string id="30101">AerTV login failed</string>
   <string id="30102">Status Message: %s</string>
+  <string id="30104">AerTV Plus or Platinum subscription account details:</string>
+  <string id="30105">AerTV is now a pay-only service</string>
+  <string id="30106">You can only use this plugin to view AerTV if you a have Plus or Platinum susbscription. From now on the AerTV section will only appear if you have configured your AerTV subscription login details in the plugin settings.</string>
 </strings>

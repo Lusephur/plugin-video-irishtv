@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: XBMC-Addons\n"
 "Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
-"POT-Creation-Date: 2014-03-23 19:47+0000\n"
+"POT-Creation-Date: 2014-03-28 14:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE\n"
@@ -423,7 +423,21 @@ msgctxt "#30102"
 msgid "Status Message: %s"
 msgstr ""
 
-#empty strings from id 30103 to 30109
+#empty string with id 30103
+
+msgctxt "#30104"
+msgid "AerTV Plus or Platinum subscription account details:"
+msgstr ""
+
+msgctxt "#30105"
+msgid "AerTV is now a pay-only service"
+msgstr ""
+
+msgctxt "#30106"
+msgid "You can only use this plugin to view AerTV if you a have Plus or Platinum susbscription. From now on the AerTV section will only appear if you have configured your AerTV subscription login details in the plugin settings."
+msgstr ""
+
+#empty strings from id 30107 to 30109
 
 msgctxt "#30110"
 msgid "Default action on select"
@@ -543,7 +557,19 @@ msgctxt "#30420"
 msgid "Socket Timeout"
 msgstr ""
 
-#empty strings from id 30421 to 30499
+#empty strings from id 30421 to 30449
+
+msgctxt "#30450"
+msgid "Number of days to keep resume points"
+msgstr ""
+
+#empty strings from id 30451 to 30469
+
+msgctxt "#30470"
+msgid "Default play action"
+msgstr ""
+
+#empty strings from id 30471 to 30499
 
 msgctxt "#30500"
 msgid "Search"

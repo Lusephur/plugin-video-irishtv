@@ -69,6 +69,8 @@ RESOURCE_PATH = os.path.join( sys.modules[u"__main__"].addon.getAddonInfo( u"pat
 MEDIA_PATH = os.path.join( RESOURCE_PATH, u"media" )
 ADDON_DATA_FOLDER = xbmc.translatePath( os.path.join( u"special://profile", u"addon_data", pluginName) )
 COOKIE_PATH = os.path.join( ADDON_DATA_FOLDER, u"cookiejar.txt" )
+AERTV_NOTICE = os.path.join( ADDON_DATA_FOLDER, u"aertv_notice" )
+
 
 log("Loading cookies from :" + repr(COOKIE_PATH))
 cookiejar = cookielib.LWPCookieJar(COOKIE_PATH)
@@ -119,7 +121,7 @@ def ShowProviders():
 		providerName = provider.GetProviderId()
 		
 		if providerName == "AerTV":
-			if len(addon.getSetting( u'AerTV_email' )) == 0 or len(addon.getSetting( u'AerTV_password' )) == 0:
+			if (len(addon.getSetting( u'AerTV_email' )) == 0 or len(addon.getSetting( u'AerTV_password' )) == 0) and xbmcvfs.exists(AERTV_NOTICE):
 				continue
 			
 		log(u"Adding " + providerName + u" provider", xbmc.LOGDEBUG)
