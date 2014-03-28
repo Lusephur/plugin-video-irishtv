@@ -1,3 +1,6 @@
+Version 1.0.17 [28 Mar 2014]
+- Add an "AerTV is now pay only" message for people who don't read change logs
+
 Version 1.0.16 [27 Mar 2014]
 - Fix AerTV login issue
 
