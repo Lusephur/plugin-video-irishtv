@@ -48,6 +48,10 @@ class Provider(object):
         
         #self.player = xbmc.Player
 
+    def ShowMe(self):
+        return True
+   
+
     def SetPlayer(self, player):
         self.player = player
 

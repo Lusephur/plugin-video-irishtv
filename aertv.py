@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+import os
 import sys
 from time import strftime, strptime
 import time, random
@@ -101,8 +102,17 @@ class AerTVProvider(BrightCoveProvider):
         self.loggedIn = False
         self.plus = False
 
+    def ShowMe(self):
+        if (len(sys.modules[u"__main__"].addon.getSetting( u'AerTV_email' )) == 0 or len(sys.modules[u"__main__"].addon.getSetting( u'AerTV_password' )) == 0) and xbmcvfs.exists(AERTV_NOTICE):
+            return False
+        
+        return True
+            
+
     def initialise(self, httpManager, baseurl, pluginHandle):
         super(AerTVProvider, self).initialise(httpManager, baseurl, pluginHandle)
+        
+        AERTV_NOTICE = os.path.join( sys.modules[u"__main__"].ADDON_DATA_FOLDER, u"aertv_notice" )
         
         if hasattr(sys.modules[u"__main__"], u"opener"):
             httpManager.SetOpener(sys.modules[u"__main__"].opener)
