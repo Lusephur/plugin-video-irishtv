@@ -12,12 +12,11 @@ from datetime import date
 from datetime import datetime
 from urlparse import urljoin
 
+import pickle
+import base64
 
 import xbmc
-import xbmcgui
-import xbmcplugin
 
-import mycgi
 import utils
 from loggingexception import LoggingException
 
@@ -132,6 +131,10 @@ class BrightCoveProvider(Provider):
 
        #self.log("hub_data: %s" % utils.drepr(remoting.decode(amfData).bodies[0][1].body), xbmc.LOGDEBUG)    
        #self.log("hub_data: %s" % repr(remoting.decode(hub_data).bodies[0][1].body), xbmc.LOGDEBUG)
+       pickled_hub_data = pickle.dumps(hub_data)
+       
+       self.log("pickled_hub_data:\n\n%s\n\n" % base64.b64encode(pickled_hub_data), xbmc.LOGDEBUG)
+       
        amfData = self.httpManager.PostBinary(c_brightcove.encode("utf8"), "/services/messagebroker/amf?playerKey=" + key.encode("ascii"), hub_data, {'content-type': 'application/x-amf'})
        response = remoting.decode(amfData).bodies[0][1].body
 

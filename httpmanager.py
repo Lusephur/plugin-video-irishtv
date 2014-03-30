@@ -150,7 +150,8 @@ class HttpManager:
             if self.proxyConfig is not None: 
                 self.proxyConfig.Disable()
     
-        self.log (u"response.status: " + unicode(response.status), xbmc.LOGDEBUG)
+        self.log (u"response.status, response.reason: " + unicode(response.status) + ', ' + response.reason, xbmc.LOGDEBUG)
+        self.log (u"response.getheaders(): " + utils.drepr(response.getheaders()), xbmc.LOGDEBUG)
         
         if response.getheader(u'content-encoding', u'') == u'gzip':
             self.log (u"gzipped page", xbmc.LOGDEBUG)
@@ -208,7 +209,8 @@ class HttpManager:
             if self.proxyConfig is not None: 
                 self.proxyConfig.Disable()
 
-        self.log (u"response.status: " + unicode(response.status), xbmc.LOGDEBUG)
+        self.log (u"response.status, response.reason: " + unicode(response.status) + ', ' + response.reason, xbmc.LOGDEBUG)
+        self.log (u"response.getheaders(): " + utils.drepr(response.getheaders()), xbmc.LOGDEBUG)
         
         return response
 
@@ -412,6 +414,7 @@ class HttpManager:
             if self.proxyConfig is not None: 
                 self.proxyConfig.Disable()
     
+        self.log (u"response.info(): " + utils.drepr(response.info().items()), xbmc.LOGDEBUG)
         lastCode = response.getcode()
         self.log (u"lastCode: " + unicode(lastCode), xbmc.LOGDEBUG)
 
