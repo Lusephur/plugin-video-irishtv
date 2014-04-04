@@ -4,7 +4,7 @@
 
 # http://wiki.xbmc.org/index.php?title=How-to:Debug_Python_Scripts_with_Eclipse
 
-REMOTE_DBG = False	
+REMOTE_DBG = False
 
 # append pydev remote debugger
 if REMOTE_DBG:
@@ -67,8 +67,8 @@ DATA_FOLDER	  = xbmc.translatePath( os.path.join( u"special://masterprofile", u"
 CACHE_FOLDER	 = os.path.join( DATA_FOLDER, u'cache' )
 RESOURCE_PATH = os.path.join( sys.modules[u"__main__"].addon.getAddonInfo( u"path" ), u"resources" )
 MEDIA_PATH = os.path.join( RESOURCE_PATH, u"media" )
-ADDON_DATA_FOLDER = xbmc.translatePath( os.path.join( u"special://profile", u"addon_data", pluginName) )
-COOKIE_PATH = os.path.join( ADDON_DATA_FOLDER, u"cookiejar.txt" )
+PROFILE_DATA_FOLDER = xbmc.translatePath( os.path.join( u"special://profile", u"addon_data", pluginName) )
+COOKIE_PATH = os.path.join( PROFILE_DATA_FOLDER, u"cookiejar.txt" )
 
 
 log("Loading cookies from :" + repr(COOKIE_PATH))
@@ -120,6 +120,7 @@ def ShowProviders():
 		if not provider.ShowMe():
 			continue
 		
+		provider.SetResourceFolder(RESOURCE_PATH)
 		providerName = provider.GetProviderId()
 		log(u"Adding " + providerName + u" provider", xbmc.LOGDEBUG)
 		newListItem = xbmcgui.ListItem( providerName )
@@ -194,7 +195,7 @@ def executeCommand():
 	if ( mycgi.EmptyQS() ):
 		success = ShowProviders()
 	else:
-		(providerName, clearCache, testForwardedIP, deleteresume, force_resume_unlock) = mycgi.Params( u'provider', u'clearcache', u'testforwardedip', u'deleteresume', u'force_resume_unlock' )
+		(providerName, clearCache, testForwardedIP) = mycgi.Params( u'provider', u'clearcache', u'testforwardedip' )
 
 		if clearCache != u'':
 			httpManager.ClearCache()
@@ -202,7 +203,7 @@ def executeCommand():
 		
 		elif testForwardedIP != u'':
 			provider = Provider()
-			provider.addon = sys.modules[u"__main__"].addon
+			provider.addon = addon
 
 			httpManager.SetDefaultHeaders( provider.GetHeaders() )
 			forwardedIP = provider.CreateForwardedForIP('0.0.0.0')
@@ -221,7 +222,7 @@ def executeCommand():
 					logException.process(language(30755), language(30020), xbmc.LOGERROR)
 					return False
 				
-				if provider.initialise(httpManager, sys.argv[0], pluginHandle):
+				if provider.initialise(httpManager, sys.argv[0], pluginHandle, addon, language, PROFILE_DATA_FOLDER, RESOURCE_PATH):
 					success = provider.ExecuteCommand(mycgi)
 					log (u"executeCommand done", xbmc.LOGDEBUG)
 

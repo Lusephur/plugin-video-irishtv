@@ -103,16 +103,17 @@ class AerTVProvider(BrightCoveProvider):
         self.plus = False
 
     def ShowMe(self):
+        AERTV_NOTICE = os.path.join( sys.modules[u"__main__"].PROFILE_DATA_FOLDER, u"aertv_notice" )
         if (len(sys.modules[u"__main__"].addon.getSetting( u'AerTV_email' )) == 0 or len(sys.modules[u"__main__"].addon.getSetting( u'AerTV_password' )) == 0) and xbmcvfs.exists(AERTV_NOTICE):
             return False
         
         return True
             
 
-    def initialise(self, httpManager, baseurl, pluginHandle):
-        super(AerTVProvider, self).initialise(httpManager, baseurl, pluginHandle)
+    def initialise(self, httpManager, baseurl, pluginHandle, addon, language, PROFILE_DATA_FOLDER, RESOURCE_PATH):
+        super(AerTVProvider, self).initialise(httpManager, baseurl, pluginHandle, addon, language, PROFILE_DATA_FOLDER, RESOURCE_PATH)
         
-        AERTV_NOTICE = os.path.join( sys.modules[u"__main__"].ADDON_DATA_FOLDER, u"aertv_notice" )
+        self.aertvNoticeFilePath = os.path.join( sys.modules[u"__main__"].PROFILE_DATA_FOLDER, u"aertv_notice" )
         
         if hasattr(sys.modules[u"__main__"], u"opener"):
             httpManager.SetOpener(sys.modules[u"__main__"].opener)
@@ -162,8 +163,7 @@ class AerTVProvider(BrightCoveProvider):
         password = self.addon.getSetting( u'AerTV_password' ).decode(u'utf8')
         
         if len(email) == 0 or len(password) == 0:
-            aertvNoticeFilePath = sys.modules[u"__main__"].AERTV_NOTICE 
-            if not xbmcvfs.exists(aertvNoticeFilePath):
+            if not xbmcvfs.exists(self.aertvNoticeFilePath):
                 file = open(aertvNoticeFilePath, u'w')
                 try:
                     file.write(" ")
@@ -407,11 +407,13 @@ class AerTVProvider(BrightCoveProvider):
             self.loggedIn = True
             
         if channel <> u'':
-            if logo == u'':
-                logo = channelToLogo['channel']
+            if logo == u'' and channel in channelToLogo:
+                logo = channelToLogo[channel]
+                    
+                return self.PlayVideoWithDialog(self.PlayChannel, (channel, logo))
 
-            return self.PlayVideoWithDialog(self.PlayChannel, (channel, logo))
-
+        return False
+    
 
     def ShowChannelList(self, channels):
         self.log(u"", xbmc.LOGDEBUG)
@@ -665,7 +667,7 @@ class AerTVProvider(BrightCoveProvider):
             url = self.GetAPIUrl(values)
         
             # "Getting channel information"
-            self.dialog.update(10, self.language(30086))
+            self.dialog.update(10, self.language(30107))
 
             jsonData = self.httpManager.GetWebPage(url, 20000)
             playerJSON=_json.loads(jsonData)

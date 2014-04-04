@@ -16,7 +16,8 @@ import rtmp
 import zlib
 
 from provider import Provider
-from irishtvplayer import IrishTVPlayer
+from resumeplayer import ResumePlayer
+from watched import WatchedPlayer
 
 
 from BeautifulSoup import BeautifulSoup, NavigableString
@@ -38,13 +39,17 @@ class TV3Provider(Provider):
     def GetProviderId(self):
         return u"TV3"
 
-    def GetPlayer(self, pid, live):
-        if self.resumeEnabled:
-            player = IrishTVPlayer()
-            player.init(pid,live)
+    def GetPlayer(self, pid, live, playerName):
+        if self.watchedEnabled:
+            player = WatchedPlayer()
+            player.initialise(live, playerName, self.GetWatchedPercent(), pid, self.resumeEnabled, self.log)
+            return player
+        elif self.resumeEnabled:
+            player = ResumePlayer()
+            player.init(pid, live, playerName)
             return player
         
-        return super(TV3Provider, self).GetPlayer(pid, live)
+        return super(TV3Provider, self).GetPlayer(pid, live, playerName)
 
     def ExecuteCommand(self, mycgi):
         return super(TV3Provider, self).ExecuteCommand(mycgi)
@@ -294,24 +299,18 @@ class TV3Provider(Provider):
 #==============================================================================
     def AddEpisodeItem(self, label, thumbnail, infoLabels, page, listItems):
         label = label.replace(u'&#39;', u"'" )
-        newListItem = xbmcgui.ListItem(label= label)            
-        newListItem.setThumbnailImage(thumbnail)
-        
-        newListItem.setInfo(u'video', infoLabels)
-        
-        newListItem.setProperty(u"Video", u"true")
-        #newListItem.setProperty('IsPlayable', 'true')
         
         url = self.GetURLStart() + u'&episodeId=' + mycgi.URLEscape(page)
 
-        if self.resumeEnabled:
-            page = mycgi.URLUnescape(page)
-            if u' ' in page:
-                page = page.replace(u' ', u'%20')
-    
-            resumeKey = unicode(zlib.crc32(page))
+        page = mycgi.URLUnescape(page)
+        if u' ' in page:
+            page = page.replace(u' ', u'%20')
+
+        resumeKey = unicode(zlib.crc32(page))
+        
+        contextMenuItems = []
+        newListItem = self.ResumeWatchListItem(url, resumeKey, contextMenuItems, infoLabels, thumbnail)
             
-            self.ResumeListItem(url, label, newListItem, resumeKey)
         listItems.append( (url, newListItem, False) )
 
 
