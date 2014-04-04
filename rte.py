@@ -18,7 +18,8 @@ import utils
 from loggingexception import LoggingException
 import rtmp
 
-from irishtvplayer import IrishTVPlayer
+from resumeplayer import ResumePlayer
+from watched import WatchedPlayer
 from provider import Provider
 import HTMLParser
 
@@ -511,25 +512,23 @@ class RTEProvider(Provider):
         
             newLabel = title + u", " + date
                                             
-            newListItem = xbmcgui.ListItem( label=newLabel )
-            newListItem.setThumbnailImage(thumbnail)
-            
             if self.addon.getSetting( u'RTE_descriptions' ) == u'true':
                 infoLabels = self.GetEpisodeInfo(self.GetEpisodeIdFromURL(href))
             else:
-                infoLabels = {u'Title': title, u'Plot': title}
-                
-            newListItem.setInfo(u'video', infoLabels)
-            newListItem.setProperty(u"Video", u"true")
-            #newListItem.setProperty('IsPlayable', 'true')
-        
+                infoLabels = {u'Title': newLabel, u'Plot': title}
+            
+            
             self.log(u"label == " + newLabel, xbmc.LOGDEBUG)
         
             if u"episodes available" in date:
                 url = self.GetURLStart()  + u'&listavailable=1' + u'&page=' + mycgi.URLEscape(href)
+ 
+                newListItem = xbmcgui.ListItem( label=newLabel )
+                newListItem.setThumbnailImage(thumbnail)
+                newListItem.setInfo(u'video', infoLabels)
+
                 folder = True
             else:
-                newListItem.setProperty("Video", "true")
                 #newListItem.setProperty('IsPlayable', 'true')
 
                 folder = False
@@ -542,9 +541,8 @@ class RTEProvider(Provider):
         
                 url = self.GetURLStart() + u'&episodeId=' +  mycgi.URLEscape(episodeId)
         
-                if self.resumeEnabled:
-                    resumeKey = episodeId
-                    self.ResumeListItem(url, newLabel, newListItem, resumeKey)
+                contextMenuItems = []
+                newListItem = self.ResumeWatchListItem(url, episodeId, contextMenuItems, infoLabels, thumbnail)
                     
             listItems.append( (url, newListItem, folder) )
         except (Exception) as exception:
@@ -628,12 +626,7 @@ class RTEProvider(Provider):
         
         title = title + u' [' + dateShown + u']'
     
-        newLabel = title
-                                        
-        newListItem = xbmcgui.ListItem( label=newLabel)
         infoLabels = {u'Title': title, u'Plot': description, u'PlotOutline': description}
-        newListItem.setInfo(u'video', infoLabels)
-        newListItem.setThumbnailImage(thumbnail)
 
         match = re.search( u"/player/[^/]+/show/([0-9]+)/", href )
         if match is None:
@@ -643,10 +636,9 @@ class RTEProvider(Provider):
         episodeId = match.group(1)
     
         url = self.GetURLStart() + u'&episodeId=' +  mycgi.URLEscape(episodeId)
-    
-        if self.resumeEnabled:
-            resumeKey = episodeId
-            self.ResumeListItem(url, newLabel, newListItem, resumeKey)
+
+        contextMenuItems = []
+        newListItem = self.ResumeWatchListItem(url, episodeId, contextMenuItems, infoLabels, thumbnail)    
             
         listItems.append( (url, newListItem, True) )
         
@@ -1030,13 +1022,17 @@ class RTEProvider(Provider):
         return playerJS
         
         
-    def GetPlayer(self, pid, live):
-        if self.resumeEnabled:
-            player = IrishTVPlayer()
-            player.init(pid,live)
+    def GetPlayer(self, pid, live, playerName):
+        if self.watchedEnabled:
+            player = WatchedPlayer()
+            player.initialise(live, playerName, self.GetWatchedPercent(), pid, self.resumeEnabled, self.log)
+            return player
+        elif self.resumeEnabled:
+            player = ResumePlayer()
+            player.init(pid, live, self.GetProviderId())
             return player
         
-        return super(RTEProvider, self).GetPlayer(pid, live)
+        return super(RTEProvider, self).GetPlayer(pid, live, self.GetProviderId(), addon)
 
     def GetSearchURL(self):
         try:

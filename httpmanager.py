@@ -101,6 +101,84 @@ class HttpManager:
     def getGotFromCache(self):
         return self._Cache_GetFromFlag()
 
+    def PostBinaryRequestsModule(self, site, path, data, headers = None):
+        try:
+            import requests
+        except:
+            self.log(u"Can't import requests module", xbmc.LOGDEBUG)
+            return None
+        
+        self.log(u"(%s)" % (site + path), xbmc.LOGDEBUG)
+        
+        try:
+            if self.proxyConfig is not None: 
+                self.proxyConfig.Enable()
+                
+            repeat = True
+            firstTime = True
+            addon = sys.modules[u"__main__"].addon
+    
+            while repeat:
+                repeat = False
+                try:
+                    url = "http://" + site + path
+                    headers = self.PrepareHeaders(addon, headers)
+    
+                    self.log(u"headers: " + repr(headers))
+                    response = requests.post(url, data = data, headers = headers)
+                    
+                except ( requests.exceptions.RequestException ) as exception:
+                    self.log ( u'RequestException: ' + unicode(exception), xbmc.LOGERROR)
+                    raise exception
+                except ( requests.exceptions.ConnectionError ) as exception:
+                    self.log ( u'ConnectionError: ' + unicode(exception), xbmc.LOGERROR)
+                    raise exception
+                except ( requests.exceptions.HTTPError ) as exception:
+                    self.log ( u'HTTPError: ' + unicode(exception), xbmc.LOGERROR)
+                    raise exception
+                except ( requests.exceptions.URLRequired ) as exception:
+                    self.log ( u'URLRequired: ' + unicode(exception), xbmc.LOGERROR)
+                    raise exception
+                except ( requests.exceptions.TooManyRedirects ) as exception:
+                    self.log ( u'TooManyRedirects: ' + unicode(exception), xbmc.LOGERROR)
+                    raise exception
+                except ( requests.exceptions.Timeout ) as exception:
+                    self.log ( u'Timeout exception: ' + unicode(exception), xbmc.LOGERROR )
+                    if firstTime:
+                        self.log ( u'Timeout exception: ' + unicode(exception), xbmc.LOGERROR )
+                        xbmc.executebuiltin(u'XBMC.Notification(%s, %s)' % (u'Socket timed out', 'Trying again'))
+                        repeat = True
+                    else:
+                        """
+                        The while loop is normally only processed once.
+                        When a socket timeout happens it executes twice.
+                        The following code executes after the second timeout.
+                        """
+                        self.log ( u'Timeout exception: ' + unicode(exception) + ", if you see this msg often consider changing your Socket Timeout settings", xbmc.LOGERROR )
+                        raise exception
+        
+                    firstTime = False
+        except ( Exception ) as exception:
+            raise exception
+        finally:
+            if self.proxyConfig is not None: 
+                self.proxyConfig.Disable()
+    
+        self.log (u"response.status, response.reason: " + unicode(response.status_code) + ', ' + response.reason, xbmc.LOGDEBUG)
+        self.log (u"response.getheaders(): " + utils.drepr(response.headers), xbmc.LOGDEBUG)
+        
+        response.raise_for_status()
+    
+        """
+        if response.getheader(u'content-encoding', u'') == u'gzip':
+            self.log (u"gzipped page", xbmc.LOGDEBUG)
+            gzipper = gzip.GzipFile(fileobj=StringIO.StringIO(response.read()))
+            return gzipper.read()
+        """
+        
+        return response.content
+
+
     def PostBinary(self, site, path, data, headers = None):
         self.log(u"(%s)" % (site + path), xbmc.LOGDEBUG)
         
@@ -152,6 +230,9 @@ class HttpManager:
     
         self.log (u"response.status, response.reason: " + unicode(response.status) + ', ' + response.reason, xbmc.LOGDEBUG)
         self.log (u"response.getheaders(): " + utils.drepr(response.getheaders()), xbmc.LOGDEBUG)
+        
+        if response.status <> 200:
+            return self.PostBinaryRequestsModule(site, path, data, headers)
         
         if response.getheader(u'content-encoding', u'') == u'gzip':
             self.log (u"gzipped page", xbmc.LOGDEBUG)

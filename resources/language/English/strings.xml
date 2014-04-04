@@ -65,7 +65,10 @@
   <string id="30420">Socket Timeout</string>
   <string id="30450">Number of days to keep resume points</string>
   <string id="30470">Default play action</string>
+  <string id="30490">Enable resume</string>
   <string id="30500">Search</string>
+  <string id="30501">Showed Watched</string>
+  <string id="30502">Auto-Watch Percentage</string>
   <string id="30520">Unable to determine swfPlayer URL. Using default: %s</string>
   <string id="30530">Do you want to play or download?</string>
   <string id="30560">Download Error</string>
@@ -122,7 +125,8 @@
   <string id="30083">Error processing date string</string>
   <string id="30084">Getting episode information</string>
   <string id="30085">Preparing to play video</string>
-  <string id="30086">Getting channel information</string>
+  <string id="30086">Preparing to download video</string>
+  <string id="30107">Getting channel information</string>
   <string id="30087">Getting stream url</string>
   <string id="30088">Getting "Now Playing" data</string>
   <string id="30089">Getting SWF url</string>

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: XBMC-Addons\n"
 "Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
-"POT-Creation-Date: 2014-03-28 14:16+0000\n"
+"POT-Creation-Date: 2014-04-04 15:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE\n"
@@ -356,7 +356,7 @@ msgid "Preparing to play video"
 msgstr ""
 
 msgctxt "#30086"
-msgid "Getting channel information"
+msgid "Preparing to download video"
 msgstr ""
 
 msgctxt "#30087"
@@ -437,7 +437,11 @@ msgctxt "#30106"
 msgid "You can only use this plugin to view AerTV if you a have Plus or Platinum susbscription. From now on the AerTV section will only appear if you have configured your AerTV subscription login details in the plugin settings."
 msgstr ""
 
-#empty strings from id 30107 to 30109
+msgctxt "#30107"
+msgid "Getting channel information"
+msgstr ""
+
+#empty strings from id 30108 to 30109
 
 msgctxt "#30110"
 msgid "Default action on select"
@@ -569,13 +573,27 @@ msgctxt "#30470"
 msgid "Default play action"
 msgstr ""
 
-#empty strings from id 30471 to 30499
+#empty strings from id 30471 to 30489
+
+msgctxt "#30490"
+msgid "Enable resume"
+msgstr ""
+
+#empty strings from id 30491 to 30499
 
 msgctxt "#30500"
 msgid "Search"
 msgstr ""
 
-#empty strings from id 30501 to 30519
+msgctxt "#30501"
+msgid "Showed Watched"
+msgstr ""
+
+msgctxt "#30502"
+msgid "Auto-Watch Percentage"
+msgstr ""
+
+#empty strings from id 30503 to 30519
 
 msgctxt "#30520"
 msgid "Unable to determine swfPlayer URL. Using default: %s"
