@@ -132,7 +132,7 @@ class TV3Provider(Provider):
     # episodeId: url, relative to www.tv3.ie, to be processed
 
     def ParseCommand(self, mycgi):
-        (category, search, allShows, calendar, date, page, thumbnail, resume) = mycgi.Params( u'category', u'search', u'allShows', u'calendar', u'date', u'episodeId', u'thumbnail', u'resume' )
+        (category, search, allShows, calendar, date, page, thumbnail, resume) = mycgi.Params( u'category', u'search', u'allShows', u'calendar', u'date', u'page', u'thumbnail', u'resume' )
         self.log(u"category: %s, search: %s, allShows: %s, calendar: %s, date: %s, page: %s, thumbnail: %s, resume: %s" % (category, str(search), str(allShows), calendar, date, page, thumbnail, str(resume)), xbmc.LOGDEBUG)
 
         if search <> u'':
@@ -300,14 +300,14 @@ class TV3Provider(Provider):
     def AddEpisodeItem(self, label, thumbnail, infoLabels, page, listItems):
         label = label.replace(u'&#39;', u"'" )
         
-        url = self.GetURLStart() + u'&episodeId=' + mycgi.URLEscape(page)
-
         page = mycgi.URLUnescape(page)
         if u' ' in page:
             page = page.replace(u' ', u'%20')
 
         resumeKey = unicode(zlib.crc32(page))
         
+        url = self.GetURLStart() + u'&episodeId=' + resumeKey + u'&page=' + mycgi.URLEscape(page)
+
         contextMenuItems = []
         newListItem = self.ResumeWatchListItem(url, resumeKey, contextMenuItems, infoLabels, thumbnail)
             
