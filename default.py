@@ -30,6 +30,7 @@ import re
 import cookielib
 import urllib2
 import xbmcvfs
+import logging
 
 from xbmcaddon import Addon
 from loggingexception import LoggingException
