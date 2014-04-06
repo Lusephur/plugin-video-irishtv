@@ -164,7 +164,7 @@ class AerTVProvider(BrightCoveProvider):
         
         if len(email) == 0 or len(password) == 0:
             if not xbmcvfs.exists(self.aertvNoticeFilePath):
-                file = open(aertvNoticeFilePath, u'w')
+                file = open(self.aertvNoticeFilePath, u'w')
                 try:
                     file.write(" ")
                 finally:
@@ -410,7 +410,7 @@ class AerTVProvider(BrightCoveProvider):
             if logo == u'' and channel in channelToLogo:
                 logo = channelToLogo[channel]
                     
-                return self.PlayVideoWithDialog(self.PlayChannel, (channel, logo))
+            return self.PlayVideoWithDialog(self.PlayChannel, (channel, logo))
 
         return False
     

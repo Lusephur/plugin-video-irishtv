@@ -145,4 +145,5 @@
   <string id="30104">AerTV Plus or Platinum subscription account details:</string>
   <string id="30105">AerTV is now a pay-only service</string>
   <string id="30106">You can only use this plugin to view AerTV if you a have Plus or Platinum susbscription. From now on the AerTV section will only appear if you have configured your AerTV subscription login details in the plugin settings.</string>
+  <string id="30107">Error processing FindMediaByReferenceId</string>
 </strings>

@@ -5,7 +5,9 @@ from time import strftime,strptime
 import time, random
 import urllib
 import pyamf
+from pyamf.remoting.client import RemotingService
 from pyamf import remoting
+import logging 
 
 from datetime import timedelta
 from datetime import date
@@ -25,7 +27,7 @@ from BeautifulSoup import BeautifulSoup
 
 from provider import Provider
 
-c_brightcove = u"http://c.brightcove.com"
+c_brightcove = "http://c.brightcove.com"
 
 class BrightCoveProvider(Provider):
 
@@ -75,7 +77,6 @@ class BrightCoveProvider(Provider):
            
             preferredRate = self.GetBitRateSetting()
            
-            self.log(u"bitrate setting: %s" % preferredRate)
            
             defaultStreamUrl = self.amfResponse[u'programmedContent'][u'videoPlayer'][u'mediaDTO'][u'FLVFullLengthURL']
 
@@ -121,44 +122,93 @@ class BrightCoveProvider(Provider):
             raise exception
                 
     def GetEpisodeInfo(self, key, url, playerId, contentRefId = None, contentId = None):
-       self.log(u"", xbmc.LOGDEBUG)
-       envelope = self.BuildAmfRequest(key, url, playerId, contentRefId = contentRefId, contentId = contentId)
+        self.log(u"RemotingService", xbmc.LOGDEBUG)
+        
+        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)-5.5s [%(name)s] %(message)s')
+
+        # Connect to the Brightcove AMF service
+        client = RemotingService(c_brightcove + "/services/messagebroker/amf?playerKey=" + key.encode("ascii"), amf_version=3,logger=logging)
+        service = client.getService('com.brightcove.experience.ExperienceRuntimeFacade')
+  
+        method = "com.brightcove.experience.ExperienceRuntimeFacade.getDataForExperience"
+        className = method[0:method.rfind('.')]
+        hashValue = self.GetAmfClassHash(className)
     
-       self.log(u"POST c.brightcove.com/services/messagebroker/amf?playerKey=%s" % key, xbmc.LOGDEBUG)
-       self.log(u"Log key: %s" % repr(key), xbmc.LOGDEBUG)    
+        self.log(u'hashValue:' + str(hashValue))
+     
+        pyamf.register_class(ViewerExperienceRequest, 'com.brightcove.experience.ViewerExperienceRequest')
+        pyamf.register_class(ContentOverride, 'com.brightcove.experience.ContentOverride')
+        content_override = ContentOverride(contentRefId = contentRefId, contentId = contentId)
+        viewer_exp_req = ViewerExperienceRequest(url, [content_override], int(playerId), key)
+        
+        # Make the request
+        response = service.getDataForExperience(str(hashValue),viewer_exp_req)
+        
+        self.log(u"response: " + utils.drepr(response), xbmc.LOGDEBUG)
 
-       hub_data = remoting.encode(envelope).read()
+        return response
 
-       #self.log("hub_data: %s" % utils.drepr(remoting.decode(amfData).bodies[0][1].body), xbmc.LOGDEBUG)    
-       #self.log("hub_data: %s" % repr(remoting.decode(hub_data).bodies[0][1].body), xbmc.LOGDEBUG)
-       pickled_hub_data = pickle.dumps(hub_data)
-       
-       self.log("pickled_hub_data:\n\n%s\n\n" % base64.b64encode(pickled_hub_data), xbmc.LOGDEBUG)
-       
-       amfData = self.httpManager.PostBinary(c_brightcove.encode("utf8"), "/services/messagebroker/amf?playerKey=" + key.encode("ascii"), hub_data, {'content-type': 'application/x-amf'})
-       response = remoting.decode(amfData).bodies[0][1].body
+    def FindMediaByReferenceId(self, key, playerId, referenceId, pubId):
+        self.log("", xbmc.LOGDEBUG)
+        
 
-       self.log(u"response: " + utils.drepr(response), xbmc.LOGDEBUG)
+        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)-5.5s [%(name)s] %(message)s')
 
-       return response
+        # Connect to the Brightcove AMF service
+        client = RemotingService(c_brightcove + "/services/messagebroker/amf?playerKey=" + key.encode("ascii"), amf_version=3,logger=logging)
+        service = client.getService('com.brightcove.player.runtime.PlayerMediaFacade')
+  
+        method = "com.brightcove.player.runtime.PlayerMediaFacade.findMediaByReferenceId"
+        className = method[0:method.rfind('.')]
+        hashValue = self.GetAmfClassHash(className)
+
+        self.log(u'hashValue:' + str(hashValue))
+ 
+        response = service.findMediaByReferenceId(hashValue, int(playerId), referenceId, pubId)
+        
+        self.log(u"response: " + utils.drepr(response), xbmc.LOGDEBUG)
+
+        return response
 
     def FindRelatedVideos(self, key, playerId, pubId, episodeId, pageSize, pageNumber, getItemCount):
-       self.log("", xbmc.LOGDEBUG)
-       envelope = self.BuildAmfRequest_FindRelated(key, playerId, pubId, episodeId, pageSize, pageNumber, getItemCount)
+        self.log("", xbmc.LOGDEBUG)
+        """
+        envelope = self.BuildAmfRequest_FindRelated(key, playerId, pubId, episodeId, pageSize, pageNumber, getItemCount)
     
-       self.log(u"POST c.brightcove.com/services/messagebroker/amf?playerKey=%s pubId=%s" % (key, pubId), xbmc.LOGDEBUG)
-       self.log(u"Log key: %s" % repr(key), xbmc.LOGDEBUG)    
+        self.log(u"POST c.brightcove.com/services/messagebroker/amf?playerKey=%s pubId=%s" % (key, pubId), xbmc.LOGDEBUG)
+        self.log(u"Log key: %s" % repr(key), xbmc.LOGDEBUG)    
 
-       hub_data = remoting.encode(envelope).read()
+        hub_data = remoting.encode(envelope).read()
 
-       #self.log("hub_data: %s" % utils.drepr(remoting.decode(amfData).bodies[0][1].body), xbmc.LOGDEBUG)    
-       #self.log("hub_data: %s" % repr(remoting.decode(hub_data).bodies[0][1].body), xbmc.LOGDEBUG)
-       amfData = self.httpManager.PostBinary(c_brightcove.encode("utf8"), "/services/messagebroker/amf?playerKey=" + key.encode('ascii'), hub_data, {'content-type': 'application/x-amf'})
-       response = remoting.decode(amfData).bodies[0][1].body
+        #self.log("hub_data: %s" % utils.drepr(remoting.decode(amfData).bodies[0][1].body), xbmc.LOGDEBUG)    
+        #self.log("hub_data: %s" % repr(remoting.decode(hub_data).bodies[0][1].body), xbmc.LOGDEBUG)
+        amfData = self.httpManager.PostBinary(c_brightcove.encode("utf8"), "/services/messagebroker/amf?playerKey=" + key.encode('ascii'), hub_data, {'content-type': 'application/x-amf'})
+        response = remoting.decode(amfData).bodies[0][1].body
+        """
 
-       self.log(u"response: " + utils.drepr(response), xbmc.LOGDEBUG)
+        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)-5.5s [%(name)s] %(message)s')
 
-       return response
+        # Connect to the Brightcove AMF service
+        client = RemotingService(c_brightcove + "/services/messagebroker/amf?playerKey=" + key.encode("ascii"), amf_version=3,logger=logging)
+        service = client.getService('com.brightcove.experience.ExperienceRuntimeFacade')
+  
+        method = "com.brightcove.player.runtime.ExperienceRuntimeFacade.findRelatedVideos"
+        className = method[0:method.rfind('.')]
+        hashValue = self.GetAmfClassHash(className)
+
+        self.log(u'hashValue:' + str(hashValue))
+ 
+        pageSize = 12
+        pageNumber = 0
+        getItemCount = False
+
+#        response1 = service.findRelatedVideos(hashValue, int(playerId), pubId, episodeId, pageSize, pageNumber, getItemCount)
+        
+#        self.log(u"response1: " + utils.drepr(response1), xbmc.LOGDEBUG)
+
+        response2 = service.getProgrammingForExperience(hashValue, playerId)
+        self.log(u"response2: " + utils.drepr(response2), xbmc.LOGDEBUG)
+        return response2
 
 
     def GetAmfClassHash(self, className):
@@ -173,8 +223,8 @@ class BrightCoveProvider(Provider):
 
        self.log(u'hashValue:' + str(hashValue))
  
-       pyamf.register_class(ViewerExperienceRequest, u'com.brightcove.experience.ViewerExperienceRequest')
-       pyamf.register_class(ContentOverride, u'com.brightcove.experience.ContentOverride')
+       pyamf.register_class(ViewerExperienceRequest, 'com.brightcove.experience.ViewerExperienceRequest')
+       pyamf.register_class(ContentOverride, 'com.brightcove.experience.ContentOverride')
        content_override = ContentOverride(contentRefId = contentRefId, contentId = contentId)
        viewer_exp_req = ViewerExperienceRequest(url, [content_override], int(exp_id), key)
     

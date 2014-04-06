@@ -483,7 +483,7 @@ class TG4Provider(BrightCoveProvider):
                     self.log(u"Title: " + title)
                     
                     if self.languageCode == u'ie':
-                        description = item[u'shortDescription']
+                        description = item[u'longDescription']
                     else:
                         description = item[u'customFields'][u'longdescgaeilge']
                     
@@ -597,45 +597,23 @@ class TG4Provider(BrightCoveProvider):
         icon = self.addon.getAddonInfo('icon')
         msg = self.language(30097) # Adding more parts
         xbmc.executebuiltin('XBMC.Notification(%s, %s, 5000, %s)' % (title, msg, icon))
-        partsMinus1 = self.totalParts - 1
-        parts = [None] * partsMinus1
 
-        partsFound = 0
-        getTotalCount = False
-        pageSize = 12
-        pageNumber = 0
-        maxPages = 10
-
-        
-        self.log("Find related videos for refence Id %s" % self.referenceId, xbmc.LOGDEBUG)
-        while pageNumber < maxPages and partsFound < partsMinus1: 
-        
+        self.log("Find videos parts for refence Id %s" % self.referenceId, xbmc.LOGDEBUG)
+        for partNumber in range(2, self.totalParts + 1):
             try:
-                self.log("Getting page %d of related videos" % pageNumber, xbmc.LOGDEBUG)
                 self.amfResponse = None
-                candidateId = None 
-                self.amfResponse = self.FindRelatedVideos(self.playerKey, self.playerId, self.publisherId, self.episodeId, pageSize, pageNumber, getTotalCount)
+                self.log("Getting part %d" % partNumber, xbmc.LOGDEBUG)
+                partReference = self.referenceId[:-1] + unicode(partNumber)
+                mediaDTO = self.FindMediaByReferenceId(self.playerKey, self.playerId, partReference, self.publisherId)
 
-                for mediaDTO in self.amfResponse[u'items']:
-                    candidateId = mediaDTO[u'referenceId']
-                    
-                    pattern = u"%s[-_](\d+)" % self.referenceId 
-                    match = re.search(pattern, candidateId, re.DOTALL)
-    
-                    self.log("Check candidate refence Id %s" % candidateId, xbmc.LOGDEBUG)
-                    if match is not None:
-                        partNumber = int(match.group(1))
-                        
-                        index = partNumber - 2
-                        
-                        if parts[index] is None:                        
-                            partsFound = partsFound + 1
-                            parts[index] = mediaDTO
-                        
-                            self.log("Matching refence id, part %d" % partNumber, xbmc.LOGDEBUG)
-                            if partsFound > (partsMinus1 - 1):
-                                break
-                        
+                (infoLabels, logo, rtmpVar, defaultFilename) = self.GetPlayListDetailsFromAMF(mediaDTO, appNormal, self.episodeId, live = False)
+
+                listItem = self.CreateListItem(infoLabels, logo) 
+                url = rtmpVar.getPlayUrl()
+
+                if self.GetPlayer(None, None, None).isPlaying():
+                    playList.add(url, listItem)
+        
             except (Exception) as exception:
                 if not isinstance(exception, LoggingException):
                     exception = LoggingException.fromException(exception)
@@ -644,60 +622,12 @@ class TG4Provider(BrightCoveProvider):
                     msg = "self.amfResponse:\n\n%s\n\n" % utils.drepr(self.amfResponse)
                     exception.addLogMessage(msg)
 
-                if candidateId is not None:
-                    msg = "pageNumber: %d, candidateId: %s" % (pageNumber, candidateId)
-                    exception.addLogMessage(msg)
-
-                # Error processing FindRelatedVideos
-                exception.addLogMessage(self.language(30093))
+                # Error processing 
+                exception.addLogMessage(self.language(30197))
 
                 # Error playing or downloading episode %s
                 exception.process('' , '', self.logLevel(xbmc.LOGDEBUG))
-                
-            pageNumber = pageNumber + 1
-            
-        try:
-            if partsFound < partsMinus1:
-                if partsMinus1 == 1:
-                    msg = self.language(30094) # "Part 2 of 2 is missing"
-                else: 
-                    missing = partsMinus1 - partsFound
-                    plural = ""
-                    if missing > 2:
-                        plural = "(s)"
-                        
-                    msg = self.language(30095) % (missing, plural) # "%d part%s missing"
-                    
-                exception = LoggingException(msg) 
-                exception.process(self.language(30096) , '', self.logLevel(xbmc.LOGWARNING))
-                 
-            for mediaDTO in parts:
-                if mediaDTO:
-                    (infoLabels, logo, rtmpVar, defaultFilename) = self.GetPlayListDetailsFromAMF(mediaDTO, appNormal, self.episodeId, live = False)
-                            
-                    listItem = self.CreateListItem(infoLabels, logo) 
-                    url = rtmpVar.getPlayUrl()
-                    
-                    if self.GetPlayer(None, None).isPlaying():
-                        playList.add(url, listItem)
-            
-            plural = " has"
-            if partsFound > 1:
-                plural = "s have"
-                
-            msg = self.language(30098) % (partsFound, plural) # %d more part%s have been added to the Playlist
-            xbmc.executebuiltin('XBMC.Notification(%s, %s, 5000, %s)' % (title, msg, icon))
 
-
-        except (Exception) as exception:
-            if not isinstance(exception, LoggingException):
-                exception = LoggingException.fromException(exception)
-
-            if self.amfResponse is not None:
-                msg = "self.amfResponse:\n\n%s\n\n" % utils.drepr(self.amfResponse)
-                exception.addLogMessage(msg)
-
-            exception.process('' , '', self.logLevel(xbmc.LOGERROR))
 
     def ShowEpisode(self, episodeId, series, appFormat, live = False):
         self.log(u"episodeId: %s, series: %s, live: %s" % (episodeId, series, live), xbmc.LOGDEBUG)
@@ -779,19 +709,33 @@ class TG4Provider(BrightCoveProvider):
                 partNumber = int(mediaDTO[u'customFields'][u'part'])
                 
                 if partNumber == 1:
-                    fullReferenceId = mediaDTO[u'referenceId']
-                    pattern = "(.+)[-_]1"
-                    match = re.search(pattern, fullReferenceId, re.DOTALL)
-                    self.referenceId = match.group(1)
+                    self.referenceId = mediaDTO[u'referenceId']
 
                 #partNumberTitle = " (%d/%d)" % (partNumber, self.totalParts)
 
-
+            if self.languageCode == u'ie':
+                longDescription = mediaDTO[u'customFields'][u'longdescgaeilge']
+            else:
+                longDescription = mediaDTO[u'longDescription']
+                
+            if longDescription is None:
+                longDescription = mediaDTO[u'shortDescription']
+                    
+            pattern="\d+"
+            match=re.search(pattern,mediaDTO[u'customFields'][u'episode'])
+            episodeNumber = int(match.group(0))
+                
             # Set up info for "Now Playing" screen
             infoLabels = {
                           u'Title': mediaDTO[u'displayName'],
                           u'Plot': mediaDTO[u'shortDescription'],
-                          u'PlotOutline': mediaDTO[u'shortDescription']
+                          u'PlotOutline': longDescription,
+                          u'tvshowtitle': mediaDTO[u'customFields'][u'seriestitle'],
+                          u'genre': mediaDTO[u'customFields'][u'category_c'],
+                         # u'mpaa': mediaDTO[u'customFields'][u'rating'],
+                          u'episode': episodeNumber,
+                          u'season': int(mediaDTO[u'customFields'][u'series']),
+                          u'aired': mediaDTO[u'customFields'][u'date']
                           }
             
             logo = mediaDTO[u'videoStillURL']
@@ -807,11 +751,15 @@ class TG4Provider(BrightCoveProvider):
     def GetAmfClassHash(self, className):
         self.log("className: " + className, xbmc.LOGDEBUG)
 
-	if className == "com.brightcove.experience.ExperienceRuntimeFacade":
+        if className == "com.brightcove.experience.ExperienceRuntimeFacade":
 	        return u'2f5c3d72a1593b22fcedbca64cb6ff15cd6e97fe'
 
-	if className == "com.brightcove.player.runtime.PlayerSearchFacade":
+        if className == "com.brightcove.player.runtime.PlayerSearchFacade":
 	        return u'c575e7f0658dcbf1ea459b097c80d052bdc7c375'
+        
+        if className == u"com.brightcove.player.runtime.PlayerMediaFacade":
+            return u'c575e7f0658dcbf1ea459b097c80d052bdc7c375'
+        
 
     
     def GetDefaultQSData(self, vidId, bitlyUrl):
@@ -845,7 +793,7 @@ class TG4Provider(BrightCoveProvider):
             createPlayerHtml = match.group(1)
             
             bc_params = {}
-            pattern = u"(bc_params\s*\[.+?\]\s*=.+?);"
+            pattern = u"[^/][^/]\s+(bc_params\s*\[.+?\]\s*=.+?);"
             paramAppends = re.findall(pattern, createPlayerHtml)
             
             for paramAppend in paramAppends:
