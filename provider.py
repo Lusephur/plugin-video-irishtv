@@ -31,7 +31,6 @@ RESUME = u"resume"
 DELETERESUME = u"deleteresume"
 FORCERESUMEUNLOCK = u"force_resume_unlock"
 
-
 class Provider(object):
 
     def __init__(self):
@@ -157,9 +156,9 @@ class Provider(object):
         self.dataFolder = dataFolder
         self.resourcePath = resourcePath
         
-        self.METHOD_IP_FORWARD = self.language(30370) 
-        self.METHOD_PROXY = self.language(30040)
-        self.METHOD_PROXY_STREAMS = self.language(30041)
+        self.METHOD_IP_FORWARD = 1 
+        self.METHOD_PROXY = 2
+        self.METHOD_PROXY_STREAMS = 3
         
         self.InitialiseHTTP(httpManager)
         
@@ -214,12 +213,13 @@ class Provider(object):
         self.httpManager = httpManager
         self.httpManager.SetDefaultHeaders( self.GetHeaders() )
 
-        proxy_method = self.addon.getSetting(self.GetProviderId() + u'_proxy_method') 
+        proxy_method = int(self.addon.getSetting(self.GetProviderId() + u'_proxy_method')) 
         self.log(u"proxy_method: %s" % proxy_method)
         
+        self.proxyConfig = None
         if proxy_method == self.METHOD_PROXY or proxy_method == self.METHOD_PROXY_STREAMS:
-            proxyConfig = self.GetProxyConfig()
-            self.httpManager.SetProxyConfig( proxyConfig )
+            self.proxyConfig = self.GetProxyConfig()
+            self.httpManager.SetProxyConfig( self.proxyConfig )
         elif proxy_method == self.METHOD_IP_FORWARD:
             self.httpManager.EnableForwardedForIP()
 
