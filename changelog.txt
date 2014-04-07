@@ -1,3 +1,6 @@
+Version 2.1.1 [07 Apr 2014]
+- Fix: RTE not working when both Resume and Watched are disabled
+
 Version 2.1.0 [06 Apr 2014]
 - [TG4 + AerTV] Make better use of pyamf to get video info from brightcove.
 - Added 'Watched' status support, RTE/TV3. Turn on in plugin settings, Advanced. 
