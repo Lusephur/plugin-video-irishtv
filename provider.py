@@ -208,13 +208,22 @@ class Provider(object):
         
         return proxyConfig
     
-        
+
+    def GetProxyMethod(self):
+        try:
+            proxy_method = int(self.addon.getSetting(self.GetProviderId() + u'_proxy_method'))
+        except (Exception) as exception:
+            self.log("Exception getting proxy_method: " + unicode(exception), xbmc.LOGERROR)
+            proxy_method = 0
+            
+        return proxy_method
+    
     def InitialiseHTTP(self, httpManager):
         self.httpManager = httpManager
         self.httpManager.SetDefaultHeaders( self.GetHeaders() )
 
-        proxy_method = int(self.addon.getSetting(self.GetProviderId() + u'_proxy_method')) 
-        self.log(u"proxy_method: %s" % proxy_method)
+        proxy_method = self.GetProxyMethod()
+        self.log(u"proxy_method: %d" % proxy_method)
         
         self.proxyConfig = None
         if proxy_method == self.METHOD_PROXY or proxy_method == self.METHOD_PROXY_STREAMS:
@@ -295,7 +304,7 @@ class Provider(object):
     
     #==============================================================================
     def AddSocksToRTMP(self, rtmpVar):
-        stream_method = self.addon.getSetting(self.GetProviderId() + u'_proxy_method').decode(u'utf8')
+        stream_method = self.GetProxyMethod()
         if stream_method == self.METHOD_PROXY_STREAMS:
             proxyConfig = self.GetProxyConfig()
             rtmpVar.setProxyString(proxyConfig.toString())
