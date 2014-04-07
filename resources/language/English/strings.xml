@@ -81,8 +81,6 @@
   <string id="30755">Cannot proceed</string>
   <string id="30780">Error processing web page</string>
   <string id="30970">Error getting subtitles</string>
-  <string id="30040">Proxy for HTTP</string>
-  <string id="30041">Proxy for HTTP and RTMP</string>
   <string id="30042">rtmpdump path is not set</string>
   <string id="30043">Download Folder is not set</string>
   <string id="30044">rtmp url is not set</string>
@@ -119,7 +117,6 @@
   <string id="30077">Max 1000kps</string>
   <string id="30078">Max 1500kps</string>
   <string id="30079">Max 2000kps</string>
-  <string id="30080">Preparing to play video</string>
   <string id="30081">RTMP</string>
   <string id="30082">HTTP</string>
   <string id="30083">Error processing date string</string>
@@ -133,12 +130,7 @@
   <string id="30090">Getting episode web page</string>
   <string id="30091">Getting playpath data</string>
   <string id="30092">Getting player functions</string>
-  <string id="30093">Error processing FindRelatedVideos</string>
-  <string id="30094">Part 2 of 2 is missing</string>
-  <string id="30095">%d part%s missing</string>
-  <string id="30096">Incomplete episode</string>
   <string id="30097">Adding more parts of this programme</string>
-  <string id="30098">%d more part%s been added to the Playlist</string>
   <string id="30099">Error getting episode details</string>
   <string id="30101">AerTV login failed</string>
   <string id="30102">Status Message: %s</string>
