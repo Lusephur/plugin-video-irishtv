@@ -1032,7 +1032,7 @@ class RTEProvider(Provider):
             player.init(pid, live, self.GetProviderId())
             return player
         
-        return super(RTEProvider, self).GetPlayer(pid, live, self.GetProviderId(), addon)
+        return super(RTEProvider, self).GetPlayer(pid, live, self.GetProviderId())
 
     def GetSearchURL(self):
         try:
