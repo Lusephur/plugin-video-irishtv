@@ -7,7 +7,7 @@ import urllib
 import pyamf
 from pyamf.remoting.client import RemotingService
 from pyamf import remoting
-import logging 
+import logging
 
 from datetime import timedelta
 from datetime import date
@@ -124,96 +124,73 @@ class BrightCoveProvider(Provider):
     def GetEpisodeInfo(self, key, url, playerId, contentRefId = None, contentId = None):
         self.log(u"RemotingService", xbmc.LOGDEBUG)
         
-        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)-5.5s [%(name)s] %(message)s')
+        try:            
+            if self.proxyConfig is not None: 
+                self.proxyConfig.Enable()
+            
+            serviceName = 'com.brightcove.experience.ExperienceRuntimeFacade'
+            service = self.GetRemotingService(key, serviceName)
 
-        # Connect to the Brightcove AMF service
-        client = RemotingService(c_brightcove + "/services/messagebroker/amf?playerKey=" + key.encode("ascii"), amf_version=3,logger=logging)
-        service = client.getService('com.brightcove.experience.ExperienceRuntimeFacade')
-  
-        method = "com.brightcove.experience.ExperienceRuntimeFacade.getDataForExperience"
-        className = method[0:method.rfind('.')]
-        hashValue = self.GetAmfClassHash(className)
+            hashValue = self.GetAmfClassHash(serviceName)
+            self.log(u'hashValue:' + str(hashValue))
+         
+            pyamf.register_class(ViewerExperienceRequest, 'com.brightcove.experience.ViewerExperienceRequest')
+            pyamf.register_class(ContentOverride, 'com.brightcove.experience.ContentOverride')
+            content_override = ContentOverride(contentRefId = contentRefId, contentId = contentId)
+            viewer_exp_req = ViewerExperienceRequest(url, [content_override], int(playerId), key)
+            
+            # Make the request
+            response = service.getDataForExperience(hashValue, viewer_exp_req)
+            
+            self.log(u"response: " + utils.drepr(response), xbmc.LOGDEBUG)
+        finally:
+            if self.proxyConfig is not None: 
+                self.proxyConfig.Disable()
     
-        self.log(u'hashValue:' + str(hashValue))
-     
-        pyamf.register_class(ViewerExperienceRequest, 'com.brightcove.experience.ViewerExperienceRequest')
-        pyamf.register_class(ContentOverride, 'com.brightcove.experience.ContentOverride')
-        content_override = ContentOverride(contentRefId = contentRefId, contentId = contentId)
-        viewer_exp_req = ViewerExperienceRequest(url, [content_override], int(playerId), key)
-        
-        # Make the request
-        response = service.getDataForExperience(str(hashValue),viewer_exp_req)
-        
-        self.log(u"response: " + utils.drepr(response), xbmc.LOGDEBUG)
-
         return response
 
     def FindMediaByReferenceId(self, key, playerId, referenceId, pubId):
         self.log("", xbmc.LOGDEBUG)
         
+        try:            
+            if self.proxyConfig is not None: 
+                self.proxyConfig.Enable()
 
-        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)-5.5s [%(name)s] %(message)s')
+            serviceName = 'com.brightcove.player.runtime.PlayerMediaFacade'
+            service = self.GetRemotingService(key, serviceName)
 
-        # Connect to the Brightcove AMF service
-        client = RemotingService(c_brightcove + "/services/messagebroker/amf?playerKey=" + key.encode("ascii"), amf_version=3,logger=logging)
-        service = client.getService('com.brightcove.player.runtime.PlayerMediaFacade')
-  
-        method = "com.brightcove.player.runtime.PlayerMediaFacade.findMediaByReferenceId"
-        className = method[0:method.rfind('.')]
-        hashValue = self.GetAmfClassHash(className)
+            hashValue = self.GetAmfClassHash(serviceName)
+    
+            self.log(u'hashValue:' + str(hashValue))
+     
+            response = service.findMediaByReferenceId(hashValue, int(playerId), referenceId, pubId)
+            
+            self.log(u"response: " + utils.drepr(response), xbmc.LOGDEBUG)
 
-        self.log(u'hashValue:' + str(hashValue))
- 
-        response = service.findMediaByReferenceId(hashValue, int(playerId), referenceId, pubId)
-        
-        self.log(u"response: " + utils.drepr(response), xbmc.LOGDEBUG)
-
+        finally:
+            if self.proxyConfig is not None: 
+                self.proxyConfig.Disable()
+    
         return response
 
-    def FindRelatedVideos(self, key, playerId, pubId, episodeId, pageSize, pageNumber, getItemCount):
-        self.log("", xbmc.LOGDEBUG)
-        """
-        envelope = self.BuildAmfRequest_FindRelated(key, playerId, pubId, episodeId, pageSize, pageNumber, getItemCount)
-    
-        self.log(u"POST c.brightcove.com/services/messagebroker/amf?playerKey=%s pubId=%s" % (key, pubId), xbmc.LOGDEBUG)
-        self.log(u"Log key: %s" % repr(key), xbmc.LOGDEBUG)    
-
-        hub_data = remoting.encode(envelope).read()
-
-        #self.log("hub_data: %s" % utils.drepr(remoting.decode(amfData).bodies[0][1].body), xbmc.LOGDEBUG)    
-        #self.log("hub_data: %s" % repr(remoting.decode(hub_data).bodies[0][1].body), xbmc.LOGDEBUG)
-        amfData = self.httpManager.PostBinary(c_brightcove.encode("utf8"), "/services/messagebroker/amf?playerKey=" + key.encode('ascii'), hub_data, {'content-type': 'application/x-amf'})
-        response = remoting.decode(amfData).bodies[0][1].body
-        """
-
+    def GetRemotingService(self, key, serviceName):
         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)-5.5s [%(name)s] %(message)s')
 
+        headers = self.GetHeaders()
+        client = RemotingService(c_brightcove + "/services/messagebroker/amf?playerKey=" + key.encode("ascii"), amf_version=3,logger=logging, user_agent=headers['User-Agent'])
+
+        if self.httpManager.GetIsForwardedForIP():
+             forwardedIP = self.httpManager.GetForwardedForIP()
+             client.addHeader(u'X-Forwarded-For', forwardedIP)
+
         # Connect to the Brightcove AMF service
-        client = RemotingService(c_brightcove + "/services/messagebroker/amf?playerKey=" + key.encode("ascii"), amf_version=3,logger=logging)
-        service = client.getService('com.brightcove.experience.ExperienceRuntimeFacade')
+        service = client.getService(serviceName)
   
-        method = "com.brightcove.player.runtime.ExperienceRuntimeFacade.findRelatedVideos"
-        className = method[0:method.rfind('.')]
-        hashValue = self.GetAmfClassHash(className)
-
-        self.log(u'hashValue:' + str(hashValue))
- 
-        pageSize = 12
-        pageNumber = 0
-        getItemCount = False
-
-#        response1 = service.findRelatedVideos(hashValue, int(playerId), pubId, episodeId, pageSize, pageNumber, getItemCount)
-        
-#        self.log(u"response1: " + utils.drepr(response1), xbmc.LOGDEBUG)
-
-        response2 = service.getProgrammingForExperience(hashValue, playerId)
-        self.log(u"response2: " + utils.drepr(response2), xbmc.LOGDEBUG)
-        return response2
-
+        return service
 
     def GetAmfClassHash(self, className):
         return None
-    
+
     def BuildAmfRequest(self, key, url, exp_id, contentRefId = None, contentId = None):
        self.log(u'ContentRefId:' + str(contentRefId) + u', ExperienceId:' + str(exp_id) + u', URL:' + url)  
 
