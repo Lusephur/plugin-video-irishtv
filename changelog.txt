@@ -1,6 +1,7 @@
 Version 2.1.0 [06 Apr 2014]
 - [TG4 + AerTV] Make better use of pyamf to get video info from brightcove.
 - Added 'Watched' status support, RTE/TV3. Turn on in plugin settings, Advanced. 
+- Fix proxy settings
 
 Version 2.0.18 [30 Mar 2014]
 - Add extra debug logging around http requests
