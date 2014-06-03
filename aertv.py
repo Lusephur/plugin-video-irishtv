@@ -50,7 +50,9 @@ excludeChannels = [
                     u'/#aertv-sports',
                     u'/#unravel-travel',
                     u'/#dail-eireann',
-                    u'/#dctv'
+                    u'/#dctv',
+                    u'/#ashbourne',
+                    u'/#ashbourne-live'
                     ]
 
 # Hard code paths to logos for users who don't want to use EPG
@@ -353,6 +355,9 @@ class AerTVProvider(BrightCoveProvider):
                 url = self.GetAPIUrl(values)
                 
                 epgJSONText = self.httpManager.GetWebPage(url, 300)
+                
+                self.log(u"epgJSONText: \n\n%s\n\n" % epgJSONText, xbmc.LOGDEBUG)
+                
                 epgJSON = _json.loads(epgJSONText)
                 
                 return self.ShowEPG(channels, epgJSON)
@@ -378,7 +383,9 @@ class AerTVProvider(BrightCoveProvider):
 
     def GetAvailableChannels(self):
         html = self.httpManager.GetWebPage(urlRoot, 300)    
-            
+        
+        self.log(u"Root url: \n\n%s\n\n" % html, xbmc.LOGDEBUG)
+
         soup = BeautifulSoup(html)
         
         channels = []
