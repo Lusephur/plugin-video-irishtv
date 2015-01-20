@@ -3,6 +3,8 @@ import os
 import threading
 import time
 
+from pprint import pformat
+
 from resumeplayer import ResumePlayer 
 import xbmc
 
@@ -21,6 +23,7 @@ class Watched():
     @staticmethod
     def isWatched(episodeId):
         watchedEpisodes = Watched.load_watched_file()
+        xbmc.log(u"isWatched: (%s):  %s" % (episodeId, pformat(watchedEpisodes)), xbmc.LOGERROR)
         if episodeId in watchedEpisodes:
             return True
         
@@ -32,8 +35,11 @@ class Watched():
         Updates the current date added for the currently playing episodeId, and commits the result to the watched db file
         """
         watchedEpisodes = Watched.load_watched_file()
+        xbmc.log(u"setWatched(%s):  %s" % (episodeId, pformat(watchedEpisodes)), xbmc.LOGERROR)
         watchedEpisodes[episodeId] = time.time()
-        xbmc.log(u"Saving watched entry (episodeId %s, dateAdded %d) to watched file" % (episodeId, watchedEpisodes[episodeId]), xbmc.LOGINFO)
+        xbmc.log(u"setWatched:  %s" % (pformat(watchedEpisodes)), xbmc.LOGERROR)
+        #xbmc.log(u"Saving watched entry (episodeId %s, dateAdded %d) to watched file" % (episodeId, watchedEpisodes[episodeId]), xbmc.LOGINFO)
+        xbmc.log(u"Saving watched entry (episodeId %s, dateAdded %d) to watched file" % (episodeId, watchedEpisodes[episodeId]), xbmc.LOGERROR)
         Watched.save_watched_file(watchedEpisodes)
         
     @staticmethod
@@ -60,6 +66,7 @@ class Watched():
                 xbmc.log(u"Watched: Loading watched file: %s" % (Watched.WATCHED_FILE), xbmc.LOGINFO)
                 with open(Watched.WATCHED_FILE, 'rU') as watched_fh:
                     watched_str = watched_fh.read()
+                xbmc.log("watched_str: %s" % pformat(watched_str), xbmc.LOGERROR)
                 tokens = watched_str.split()
                 # Three columns, episodeId, seekTime (which is a float) and date added (which is an integer, datetime in seconds), per line
                 episodeIds = tokens[0::2]
@@ -69,12 +76,15 @@ class Watched():
                 try: days_to_keep = int(Watched.ADDON.getSetting(u'watched_days_to_keep'))
                 except: days_to_keep = 40
                 limit_time = time.time() - 60*60*24*days_to_keep
+                xbmc.log("episodeIds: %s" % pformat(episodeIds), xbmc.LOGERROR)
+                print "episodeIds: %s" % pformat(episodeIds)
                 for i in range(len(episodeIds)):
+                    xbmc.log("i: %s" % unicode(i), xbmc.LOGERROR)
                     if datesAdded[i] > limit_time:
                         episodeId_to_date_added_map.append( (episodeIds[i], datesAdded[i]) )
 
                 Watched.watchedEpisodes = dict(episodeId_to_date_added_map)
-                xbmc.log(u"Watched: Found %d watched entries" % (len(Watched.watchedEpisodes.keys())), xbmc.LOGINFO)
+                xbmc.log(u"Watched: Found %d watched entries" % (len(Watched.watchedEpisodes.keys())), xbmc.LOGERROR)
                 
         return Watched.watchedEpisodes
 
@@ -88,6 +98,8 @@ class Watched():
         
         string = u""
         xbmc.log(u"Watched: Saving %d entries to %s" % (len(watchedEpisodes.keys()), Watched.WATCHED_FILE), xbmc.LOGINFO)
+        xbmc.log(u"Watched: Saving %d entries to %s" % (len(watchedEpisodes.keys()), Watched.WATCHED_FILE), xbmc.LOGERROR)
+        xbmc.log(u"Watched:  %s" % pformat(watchedEpisodes), xbmc.LOGERROR)
         watched_fh = open(Watched.WATCHED_FILE, u'w')
         try:
             for episodeId in watchedEpisodes:

@@ -273,7 +273,9 @@ msgctxt "#30064"
 msgid "Error creating calendar list"
 msgstr ""
 
-#empty string with id 30065
+msgctxt "#30065"
+msgid "UTV Ireland"
+msgstr ""
 
 msgctxt "#30066"
 msgid "Error getting rtmp url"
@@ -423,7 +425,9 @@ msgctxt "#30102"
 msgid "Status Message: %s"
 msgstr ""
 
-#empty string with id 30103
+msgctxt "#30103"
+msgid "UTV Ireland Stream Type"
+msgstr ""
 
 msgctxt "#30104"
 msgid "AerTV Plus or Platinum subscription account details:"

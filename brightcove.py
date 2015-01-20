@@ -17,6 +17,8 @@ from urlparse import urljoin
 import pickle
 import base64
 
+from pprint import pformat
+
 import xbmc
 
 import utils
@@ -86,13 +88,14 @@ class BrightCoveProvider(Provider):
                 return defaultStreamUrl 
 
             originalRenditions = self.amfResponse[u'programmedContent'][u'videoPlayer'][u'mediaDTO'][u'renditions']
-            self.log(u"renditions: %s" % utils.drepr(originalRenditions))
+            self.log(u"renditions:\n\n%s\n\n" % pformat(originalRenditions))
 
             renditions = []
             renditionsOther = []
             for rendition in originalRenditions:
-                if rendition[u'encodingRate'] == 0:
-                    continue
+                ### TODO Check if this upsets aertv/tg4...
+                ###if rendition[u'encodingRate'] == 0:
+                ###    continue
                 
                 if rendition['defaultURL'].upper().startswith(streamType):
                     renditions.append(rendition)
@@ -120,8 +123,35 @@ class BrightCoveProvider(Provider):
                 exception.addLogMessage(msg)
 
             raise exception
-                
+    """
     def GetEpisodeInfo(self, key, url, playerId, contentRefId = None, contentId = None):
+        self.log(u"RemotingService", xbmc.LOGDEBUG)
+        envelope = self.BuildAmfRequest(key, url, playerId, contentRefId = contentRefId, contentId = contentId)
+    
+        self.log(u"POST c.brightcove.com/services/messagebroker/amf?playerKey=%s" % key, xbmc.LOGDEBUG)
+        self.log(u"Log key: %s" % repr(key), xbmc.LOGDEBUG)    
+
+        hub_data = remoting.encode(envelope).read()
+
+        #self.log("hub_data: %s" % utils.drepr(remoting.decode(amfData).bodies[0][1].body), xbmc.LOGDEBUG)    
+        #self.log("hub_data: %s" % repr(remoting.decode(hub_data).bodies[0][1].body), xbmc.LOGDEBUG)
+        ##pickled_hub_data = pickle.dumps(hub_data)
+       
+        ##self.log("pickled_hub_data:\n\n%s\n\n" % base64.b64encode(pickled_hub_data), xbmc.LOGDEBUG)
+       
+        ###pickledHubDataB64 = "UydceDAwXHgwM1x4MDBceDAwXHgwMFx4MDFceDAwRmNvbS5icmlnaHRjb3ZlLmV4cGVyaWVuY2UuRXhwZXJpZW5jZVJ1bnRpbWVGYWNhZGUuZ2V0RGF0YUZvckV4cGVyaWVuY2VceDAwXHgwMi8xXHgwMFx4MDBceDAwXHgwMFxuXHgwMFx4MDBceDAwXHgwMlx4MTFceDA2UWE3ZWY2ZmZiZmJhOTM4YjE3NGY1MDQ0YWYzMzQzMTYzYTA4NzdjNDhceDExXG5ceDBiY2NvbS5icmlnaHRjb3ZlLmV4cGVyaWVuY2UuVmlld2VyRXhwZXJpZW5jZVJlcXVlc3RceDE5ZXhwZXJpZW5jZUlkXHgwNUJ1K2kjXHgwNlx4MTBceDAwXHgwN1VSTFx4MDY5aHR0cDovL3d3dy5hZXJ0di5pZS8jcnRlLXR3b1x4MTFUVExUb2tlblx4MDZceDAxXHgxOWRlbGl2ZXJ5VHlwZVx4MDVceDAwXHgwMFx4MDBceDAwXHgwMFx4MDBceDAwXHgwMFx4MTNwbGF5ZXJLZXlceDA2ZUFRfn4sQUFBQklWOUVfOUV+LGxHRFFyODlvU2JLVDAyUnFWMjJyLUUwMDdBaXRWSU5IIWNvbnRlbnRPdmVycmlkZXNcdFx4MDNceDAxXG5ceDBiU2NvbS5icmlnaHRjb3ZlLmV4cGVyaWVuY2UuQ29udGVudE92ZXJyaWRlXHgxYmNvbnRlbnRSZWZJZHNceDAxXHgxN2NvbnRlbnRUeXBlXHgwNFx4MDBccnRhcmdldFx4MDZceDE3dmlkZW9QbGF5ZXJceDEzZmVhdHVyZUlkXHgwNVx4MDBceDAwXHgwMFx4MDBceDAwXHgwMFx4MDBceDAwXHgxM2NvbnRlbnRJZFx4MDFceDFiZmVhdHVyZWRSZWZJZFx4MDFceDE5Y29udGVudFJlZklkXHgwNlx4MGZydGUtdHdvXHgxNWNvbnRlbnRJZHNceDAxXHgwMVx4MDEnCnAwCi4="
+        ###pickledHubData = base64.b64decode(pickledHubDataB64)
+        ###hub_data = pickle.loads(pickledHubData)
+        
+        amfData = self.httpManager.PostBinary(c_brightcove.encode("utf8"), "/services/messagebroker/amf?playerKey=" + key.encode("ascii"), hub_data, {'content-type': 'application/x-amf'})
+        response = remoting.decode(amfData).bodies[0][1].body
+
+        self.log(u"response: " + utils.drepr(response), xbmc.LOGDEBUG)
+        return response
+
+    """         
+    def GetEpisodeInfo(self, key, url, playerId, contentRefId = None, contentId = None):
+        self.log(u'ContentRefId:' + str(contentRefId) + u'contentId:' + str(contentId) + u', URL:' + url + u', playerId: ' + unicode(playerId) + u', key: ' + unicode(key) )  
         self.log(u"RemotingService", xbmc.LOGDEBUG)
         
         try:            
@@ -139,6 +169,9 @@ class BrightCoveProvider(Provider):
             content_override = ContentOverride(contentRefId = contentRefId, contentId = contentId)
             viewer_exp_req = ViewerExperienceRequest(url, [content_override], int(playerId), key)
             
+            self.log( content_override.tostring() )
+            self.log( viewer_exp_req.tostring() )
+    
             # Make the request
             response = service.getDataForExperience(hashValue, viewer_exp_req)
             
@@ -148,7 +181,8 @@ class BrightCoveProvider(Provider):
                 self.proxyConfig.Disable()
     
         return response
-
+    
+    
     def FindMediaByReferenceId(self, key, playerId, referenceId, pubId):
         self.log("", xbmc.LOGDEBUG)
         
@@ -192,6 +226,37 @@ class BrightCoveProvider(Provider):
         return None
 
     def BuildAmfRequest(self, key, url, exp_id, contentRefId = None, contentId = None):
+       self.log(u'ContentRefId:' + str(contentRefId) + u'contentId:' + str(contentId) + u', ExperienceId:' + str(exp_id) + u', URL:' + url)  
+
+       method = u"com.brightcove.experience.ExperienceRuntimeFacade.getDataForExperience"
+       className = method[0:method.rfind('.')]
+       hashValue = self.GetAmfClassHash(className)
+
+       self.log(u'hashValue:' + str(hashValue))
+ 
+       pyamf.register_class(ViewerExperienceRequest, u'com.brightcove.experience.ViewerExperienceRequest')
+       pyamf.register_class(ContentOverride, u'com.brightcove.experience.ContentOverride')
+       content_override = ContentOverride(contentRefId = contentRefId, contentId = contentId)
+       viewer_exp_req = ViewerExperienceRequest(url, [content_override], int(exp_id), key)
+    
+       self.log( content_override.tostring() )
+       self.log( viewer_exp_req.tostring() )
+    
+       env = remoting.Envelope(amfVersion=3)
+       env.bodies.append(
+          (
+             "/1",
+             remoting.Request(
+                target=method,
+                body=[hashValue, viewer_exp_req],
+                envelope=env
+             )
+          )
+       )
+       return env
+
+    """
+    def BuildAmfRequest(self, key, url, exp_id, contentRefId = None, contentId = None):
        self.log(u'ContentRefId:' + str(contentRefId) + u', ExperienceId:' + str(exp_id) + u', URL:' + url)  
 
        method = u"com.brightcove.experience.ExperienceRuntimeFacade.getDataForExperience"
@@ -220,7 +285,7 @@ class BrightCoveProvider(Provider):
           )
        )
        return env
-
+    """
     def BuildAmfRequest_FindRelated(self, key, exp_id, pubId, videoPlayer, pageSize, pageNumber, getItemCount):
        self.log(u'ExperienceId:' + str(exp_id))  
 
@@ -271,7 +336,7 @@ class ViewerExperienceRequest(object):
 
 
    def tostring(self):
-      return u"TTLToken: %s, URL: %s, deliveryType: %s, contentOverrides: %s, experienceId: %s, playerKey: %s" % (self.TTLToken, self.URL, self.deliveryType, self.contentOverrides, self.experienceId, self.playerKey)
+      return u"TTLToken: %s, URL: %s, deliveryType: %s, contentOverrides: %s, experienceId: %s, playerKey: %s" % (self.TTLToken, self.URL, self.deliveryType, pformat(self.contentOverrides), self.experienceId, self.playerKey)
 
 class ContentOverride(object):
    def __init__(self, contentId = float(0), contentIds = None, contentRefId = None, contentRefIds = None, contentType = 0, featureId = float(0), featuredRefId = None, contentRefIdtarget='videoPlayer'):

@@ -91,7 +91,8 @@ class TG4Provider(BrightCoveProvider):
             self.AddMenuItem(listItems, u"Categories", u'Catag\u00f3ir\u00ed', u'&categories=1')
             self.AddMenuItem(listItems, u"Popular", u"Is Coitianta", u'&popular=1')
 
-            self.AddLiveMenuItem(listItems, u"Live", u"Beo", u'&live=1')
+            # TODO Fix live TV
+            ##self.AddLiveMenuItem(listItems, u"Live", u"Beo", u'&live=1')
 
             xbmcplugin.addDirectoryItems( handle=self.pluginHandle, items=listItems )
             xbmcplugin.endOfDirectory( handle=self.pluginHandle, succeeded=True )
@@ -483,9 +484,13 @@ class TG4Provider(BrightCoveProvider):
                     self.log(u"Title: " + title)
                     
                     if self.languageCode == u'ie':
-                        description = item[u'longDescription']
-                    else:
                         description = item[u'customFields'][u'longdescgaeilge']
+                    else:
+                        if u'longDescription' in item:
+                            description = item[u'longDescription']
+                        else:
+                            description = item[u'shortDescription']
+                        
                     
                     dateString = item[u'customFields'][u'date']
                     airDate = self.GetAirDate(dateString)
@@ -716,11 +721,11 @@ class TG4Provider(BrightCoveProvider):
             if self.languageCode == u'ie':
                 longDescription = mediaDTO[u'customFields'][u'longdescgaeilge']
             else:
-                longDescription = mediaDTO[u'longDescription']
+                if u'longDescription' in mediaDTO:
+                    longDescription = mediaDTO[u'longDescription']
+                else:
+                    longDescription = mediaDTO[u'shortDescription']
                 
-            if longDescription is None:
-                longDescription = mediaDTO[u'shortDescription']
-                    
             pattern="\d+"
             match=re.search(pattern,mediaDTO[u'customFields'][u'episode'])
             episodeNumber = int(match.group(0))

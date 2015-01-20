@@ -14,6 +14,7 @@ import HTMLParser
 from cookielib import Cookie
 from rtmp import RTMP
 
+from pprint import pformat
 import xbmc
 import xbmcgui
 
@@ -87,9 +88,12 @@ class Provider(object):
         self.log(u"mycgi.ParamCount(): " + unicode(mycgi.ParamCount()), xbmc.LOGDEBUG)
         self.resumeEnabled = self.addon.getSetting(u'resume_enabled') == u'true'
         self.watchedEnabled = self.addon.getSetting(u'show_watched') == u'true'
+
+        self.log("mycgi: " + pformat(mycgi._GetParamDict()))
  
         (forwardedIP, episodeId, playFromStart, resume, deleteResume, forceResumeUnlock, clearCache, watched, unwatched) = mycgi.Params( u'forwardedip', u'episodeId', PLAYFROMSTART, RESUME, DELETERESUME, FORCERESUMEUNLOCK, u'clearcache', u'watched', u'unwatched')
         
+        self.log("unicode((forwardedIP, episodeId, playFromStart, resume, deleteResume, forceResumeUnlock, clearCache, watched, unwatched)): " + unicode((forwardedIP, episodeId, playFromStart, resume, deleteResume, forceResumeUnlock, clearCache, watched, unwatched))) 
         if self.httpManager.GetIsForwardedForIP():
              forwardedIP = self.CreateForwardedForIP(forwardedIP)
              
@@ -275,6 +279,9 @@ class Provider(object):
     def GetProviderId(self):
         pass
     
+    def GetProviderName(self):
+        return self.GetProviderId()
+    
     def ShowRootMenu(self):
         pass
     
@@ -370,7 +377,7 @@ class Provider(object):
             return False
 
         try:
-            player = self.GetPlayer(resumeKey, live=False, playerName=self.GetProviderId())
+            player = self.GetPlayer(resumeKey, live=False, playerName=self.GetProviderName())
         except PlayerLockException:
             exception_dialog = xbmcgui.Dialog()
             exception_dialog.ok(u"Stream Already Playing", u"Unable to open stream", u" - To continue, stop all other streams (try pressing u'x')[CR] - If you are sure there are no other streams [CR]playing, remove the resume lock (check addon settings -> advanced)")
@@ -678,6 +685,7 @@ class Provider(object):
  
     def ResumeWatchListItem(self, url, episodeId, contextMenuItems, infoLabels, thumbnail):
         if self.watchedEnabled:
+            self.log("url: %s, episodeId: %s" % (url, episodeId))
             if Watched.isWatched(episodeId):
                 infoLabels['PlayCount']  = 1
                 contextMenuItems.append((u'Mark as unwatched', u"XBMC.RunPlugin(%s&unwatched=1)" % url))

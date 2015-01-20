@@ -116,19 +116,19 @@ def ShowProviders():
 	
 	providers = providerfactory.getProviderList()
 
-
 	for provider in providers:
 		if not provider.ShowMe():
 			continue
 		
 		provider.SetResourceFolder(RESOURCE_PATH)
-		providerName = provider.GetProviderId()
+		providerId = provider.GetProviderId()
+		providerName = provider.GetProviderName()
 		log(u"Adding " + providerName + u" provider", xbmc.LOGDEBUG)
 		newListItem = xbmcgui.ListItem( providerName )
-		url = baseURL + u'?provider=' + providerName
+		url = baseURL + u'?provider=' + providerId
 
 		log(u"url: " + url, xbmc.LOGDEBUG)
-		thumbnailPath = provider.GetThumbnailPath(providerName)
+		thumbnailPath = provider.GetThumbnailPath(providerId)
 		log(providerName + u" thumbnail: " + thumbnailPath, xbmc.LOGDEBUG)
 		newListItem.setThumbnailImage(thumbnailPath)
 		newListItem.addContextMenuItems( contextMenuItems )
@@ -154,6 +154,9 @@ def InitTimeout():
 
 def TestForwardedIP(forwardedIP):
 	try:
+		html = None
+		html = httpManager.GetWebPageDirect( "http://checkmyip.com/")
+		log(u"CheckMyIP.com:\n\n%s\n\n\n" % html)
 		html = None
 		log(u"TestForwardedIP: " + forwardedIP)
 		httpManager.EnableForwardedForIP()
