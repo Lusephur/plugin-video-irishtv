@@ -445,13 +445,23 @@ msgctxt "#30107"
 msgid "Getting channel information"
 msgstr ""
 
-#empty strings from id 30108 to 30109
+msgctxt "#30108"
+msgid "Error processing '%s' category"
+msgstr ""
+
+msgctxt "#30109"
+msgid "Error showing A to Z"
+msgstr ""
 
 msgctxt "#30110"
 msgid "Default action on select"
 msgstr ""
 
-#empty strings from id 30111 to 30119
+msgctxt "#30111"
+msgid "Error performing search"
+msgstr ""
+
+#empty strings from id 30112 to 30119
 
 msgctxt "#30120"
 msgid "Ask"

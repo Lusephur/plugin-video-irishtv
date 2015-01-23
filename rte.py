@@ -51,12 +51,20 @@ class RTEProvider(Provider):
     def GetProviderId(self):
         return u"RTE"
 
+    def GetProviderName(self):
+        return u"RTE [Not working]"
+
     def ExecuteCommand(self, mycgi):
         return super(RTEProvider, self).ExecuteCommand(mycgi)
 
     def ShowRootMenu(self):
         self.log(u"", xbmc.LOGDEBUG)
         
+        dialog = xbmcgui.Dialog()
+        dialog.ok("Return", "This section doesn't work")
+        
+        return False
+               
         try:
             html = None
             html = self.httpManager.GetWebPage(rootMenuUrl, 60)

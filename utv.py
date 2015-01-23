@@ -229,8 +229,8 @@ class UTVProvider(BrightCoveProvider):
                 msg = u"html:\n\n%s\n\n" % html
                 exception.addLogMessage(msg)
             
-            # Cannot show root menu
-            exception.addLogMessage(self.language(30010))
+            # "Error processing categories"
+            exception.addLogMessage(self.language(30058))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
 
@@ -313,7 +313,7 @@ class UTVProvider(BrightCoveProvider):
             if not isinstance(exception, LoggingException):
                 exception = LoggingException.fromException(exception)
 
-            # Not fatal, just means that we don't have the news option
+            # Not fatal, just means that we don't show this menu item
             exception.process(severity = xbmc.LOGWARNING)
 
 
@@ -354,20 +354,10 @@ class UTVProvider(BrightCoveProvider):
                 msg = u"html:\n\n%s\n\n" % html
                 exception.addLogMessage(msg)
                 
-            # "Error creating calendar list"
-            message = self.language(30064)
-            details = utils.valueIfDefined(minDateString, u'minDateString') + u", "
-            details = details + utils.valueIfDefined(maxDateString, u'maxDateString') + u", "
-            
-            if utils.variableDefined( currentDate ):
-                details = details + u"currentDate: " + unicode(currentDate) + u", "
-            else:
-                details = details + u"currentDate: Not defined"
-                
-            details = details + utils.valueIfDefined(url, u'url')
-            
+            # "Error processing '%s' category"
+            message = self.language(30108) %categoryId
+
             exception.addLogMessage(logMessage = message + u"\n" + details)
-            # "Error creating calendar list"
             exception.process(message, "", self.logLevel(xbmc.LOGERROR))
             return False
 
@@ -448,11 +438,10 @@ class UTVProvider(BrightCoveProvider):
                 msg = u"html:\n\n%s\n\n" % html
                 exception.addLogMessage(msg)
                 
-            # "Error creating calendar list"
-            message = self.language(30064)
+            # "Error showing A to Z"
+            message = self.language(30109)
             
             exception.addLogMessage(logMessage = message + u"\n")
-            # "Error creating calendar list"
             exception.process(message, "", self.logLevel(xbmc.LOGERROR))
             return False
 
@@ -630,8 +619,8 @@ class UTVProvider(BrightCoveProvider):
                 msg = u"%s:\n\n%s\n\n" % (urlRoot + url, html)
                 exception.addLogMessage(msg)
 
-            # Error preparing or playing stream
-            exception.addLogMessage(self.language(40340))
+            # "Error getting list of shows"
+            exception.addLogMessage(self.language(30049))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
             
@@ -789,8 +778,8 @@ class UTVProvider(BrightCoveProvider):
                 msg = u"%s:\n\n%s\n\n" % (urlRoot + url, html)
                 exception.addLogMessage(msg)
 
-            # Error preparing or playing stream
-            exception.addLogMessage(self.language(40340))
+            # "Error getting list of shows"
+            exception.addLogMessage(self.language(30049))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
             
@@ -887,7 +876,8 @@ class UTVProvider(BrightCoveProvider):
             rtmpVar = None
             httpUrl = None
             if streamUrl.upper().startswith("RTMP"):
-                rtmpVar = self.GetRTMPVarFromUrl(streamUrl, appFormat, episodeId, pageUrl, live)
+                rtmpVar = self.GetRTMPVarFromUrl(streamUrl, appFormat, episodeId, pageUrl = urlRoot + showUrl, live = False)
+                #self.log("rtmp: %s" % pformat(rtmpVar.getDumpCommand()), xbmc.DEBUG)
             else:
                 httpUrl = streamUrl
 
@@ -989,8 +979,8 @@ class UTVProvider(BrightCoveProvider):
                 msg = u"%s:\n\n%s\n\n" % (urlRoot, html)
                 exception.addLogMessage(msg)
 
-            # Error preparing or playing stream
-            exception.addLogMessage(self.language(40340))
+            # "Error getting list of shows"
+            exception.addLogMessage(self.language(30049))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
             
@@ -1154,8 +1144,8 @@ class UTVProvider(BrightCoveProvider):
                 msg = u"%s:\n\n%s\n\n" % (urlRoot + url, html)
                 exception.addLogMessage(msg)
 
-            # Error preparing or playing stream
-            exception.addLogMessage(self.language(40340))
+            # Error performing search
+            exception.addLogMessage(self.language(30111))
             exception.process(severity = self.logLevel(xbmc.LOGERROR))
             return False
             

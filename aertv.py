@@ -686,15 +686,15 @@ class AerTVProvider(BrightCoveProvider):
     
             viewExperienceUrl = urlRoot + u'/#' + channel
             
-            #streamType = unicode(self.addon.getSetting( u'AerTV_stream_type' ))
-            #self.log(u"Stream type setting: " + streamType)
+            streamType = unicode(self.addon.getSetting( u'AerTV_stream_type' ))
+            self.log(u"Stream type setting: " + streamType)
             
             try:
                 if self.dialog.iscanceled():
                     return False
                 # "Getting stream url"
                 self.dialog.update(25, self.language(30087))
-                streamUrl = self.GetStreamUrl(playerKey, viewExperienceUrl, playerId, contentRefId = channel)
+                streamUrl = self.GetStreamUrl(playerKey, viewExperienceUrl, playerId, contentRefId = channel, streamType = streamType)
                 self.log(u"streamUrl: %s" % streamUrl)
             except (Exception) as exception:
                 if not isinstance(exception, LoggingException):
